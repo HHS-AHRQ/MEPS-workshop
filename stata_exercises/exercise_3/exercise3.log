@@ -1,0 +1,157 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2019\STATA\PROG\exercise6.log
+  log type:  text
+ opened on:  28 Aug 2018, 13:19:17
+
+. cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2019\STATA\DATA
+\\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2019\STATA\DATA
+
+. 
+. // rename year specific variables prior to combining files
+. use dupersid inscov15 perwt15f varstr varpsu povcat15 agelast totslf15 using h181
+
+. rename inscov15 inscov
+
+. rename perwt15f perwt 
+
+. rename povcat15 povcat 
+
+. rename totslf15 totslf
+
+. tempfile yr1
+
+. save "`yr1'"
+file C:\Users\CYu\AppData\Local\Temp\ST_00000001.tmp saved
+
+. 
+. use dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16 using h192
+
+. rename inscov16 inscov
+
+. rename perwt16f perwt 
+
+. rename povcat16 povcat 
+
+. rename totslf16 totslf
+
+. 
+. append using "`yr1'", generate(yearnum)
+
+. 
+. gen poolwt=perwt/2
+
+. gen subpop=(agelast>=26 & agelast<=30 & inscov==3 & povcat==5)
+
+. 
+. tab1 agelast inscov povcat if subpop==1
+
+-> tabulation of agelast if subpop==1 
+
+   person's |
+   age last |
+       time |
+   eligible |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         26 |         24       17.91       17.91
+         27 |         18       13.43       31.34
+         28 |         29       21.64       52.99
+         29 |         33       24.63       77.61
+         30 |         30       22.39      100.00
+------------+-----------------------------------
+      Total |        134      100.00
+
+-> tabulation of inscov if subpop==1 
+
+     health |
+  insurance |
+   coverage |
+  indicator |
+       2016 |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          3 |        134      100.00      100.00
+------------+-----------------------------------
+      Total |        134      100.00
+
+-> tabulation of povcat if subpop==1 
+
+ family inc |
+    as % of |
+    poverty |
+     line - |
+     catego |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          5 |        134      100.00      100.00
+------------+-----------------------------------
+      Total |        134      100.00
+
+. tab subpop yearnum
+
+           |        yearnum
+    subpop |         0          1 |     Total
+-----------+----------------------+----------
+         0 |    34,582     35,366 |    69,948 
+         1 |        73         61 |       134 
+-----------+----------------------+----------
+     Total |    34,655     35,427 |    70,082 
+
+
+. summarize
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+    dupersid |          0
+     agelast |     70,082    36.19831    22.81388          0         85
+      povcat |     70,082    3.315787    1.484308          1          5
+      inscov |     70,082    1.582646    .6883255          1          3
+      totslf |     70,082    460.0967    1564.307          0     104365
+-------------+---------------------------------------------------------
+       perwt |     70,082    9197.297    8310.505          0   99172.78
+      varstr |     70,082    1084.586    48.72456       1001       1165
+      varpsu |     70,082    1.634471    .6222755          1          3
+     yearnum |     70,082    .5055078    .4999732          0          1
+      poolwt |     70,082    4598.648    4155.252          0   49586.39
+-------------+---------------------------------------------------------
+      subpop |     70,082     .001912    .0436854          0          1
+
+. *tabmiss
+. 
+. svyset [pweight=poolwt], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
+
+      pweight: poolwt
+          VCE: linearized
+  Single unit: missing
+     Strata 1: varstr
+         SU 1: varpsu
+        FPC 1: <zero>
+
+. 
+. // weighted estimate on totslf for combined data w/age=26-30, uninsured whole year, and high income
+. svy, subpop(subpop): mean totslf
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =      68      Number of obs   =       34,198
+Number of PSUs   =     157      Population size =  146,847,101
+                                Subpop. no. obs =          106
+                                Subpop. size    = 594,516.3145
+                                Design df       =           89
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+      totslf |   241.5446   80.88406       80.8297    402.2595
+--------------------------------------------------------------
+Note: 97 strata omitted because they contain no subpopulation
+      members.
+
+. 
+. 
+. log close  
+      name:  <unnamed>
+       log:  \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2019\STATA\PROG\exercise6.log
+  log type:  text
+ closed on:  28 Aug 2018, 13:19:19
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

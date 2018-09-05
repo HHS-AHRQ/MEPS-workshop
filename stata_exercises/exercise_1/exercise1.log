@@ -1,0 +1,171 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\PROG\exercise1.log
+  log type:  text
+ opened on:  29 Aug 2018, 09:19:17
+
+. cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\DATA
+\\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\DATA
+
+. 
+. 
+. /* read in data from 2016 consolidated data file (hc-192) */
+. use totexp16 age16x age42x age31x varstr varpsu perwt16f using h192.dta
+
+.     
+. /* define expenditure variables  */
+. gen total=totexp16
+
+. 
+. /* create flag (1/0) variables for persons with an expense  */
+. foreach var in total {
+  2. gen x_`var'=(`var'>0)
+  3. }
+
+. 
+. /* create a summary variable from end of year, 42, and 31 variables*/
+. gen age=age16x if age16x>=0
+(256 missing values generated)
+
+. replace age=age42x if age42x>=0 & missing(age)
+(168 real changes made)
+
+. replace age=age31x if age31x>=0 & missing(age)
+(88 real changes made)
+
+. 
+. gen agecat=1 if age>=0 & age<=64
+(4,745 missing values generated)
+
+. replace agecat=2 if age>64
+(4,745 real changes made)
+
+. 
+. /* qc check on new variables*/
+. tab1  x_total 
+
+-> tabulation of x_total  
+
+    x_total |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      6,933       20.01       20.01
+          1 |     27,722       79.99      100.00
+------------+-----------------------------------
+      Total |     34,655      100.00
+
+. sum total if total>0
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+       total |     27,722    5406.703    14932.62          1     580640
+
+. 
+. list age age16x age42x age31x in 1/20, table
+
+     +--------------------------------+
+     | age   age16x   age42x   age31x |
+     |--------------------------------|
+  1. |  44       44       44       43 |
+  2. |  43       43       43       43 |
+  3. |  16       16       15       15 |
+  4. |  13       13       12       12 |
+  5. |  66       66       66       65 |
+     |--------------------------------|
+  6. |  20       20       20       19 |
+  7. |  34       34       33       33 |
+  8. |  69       69       68       68 |
+  9. |  44       44       44       43 |
+ 10. |   9        9        9        8 |
+     |--------------------------------|
+ 11. |  43       43       43       43 |
+ 12. |  42       42       42       42 |
+ 13. |  46       46       46       45 |
+ 14. |  19       19       18       18 |
+ 15. |  17       17       16       16 |
+     |--------------------------------|
+ 16. |  11       11       11       11 |
+ 17. |  10       10       10        9 |
+ 18. |   9        9        9        8 |
+ 19. |  15       15       15       15 |
+ 20. |  30       30       30       -1 |
+     +--------------------------------+
+
+. 
+. tab agecat
+
+     agecat |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          1 |     29,910       86.31       86.31
+          2 |      4,745       13.69      100.00
+------------+-----------------------------------
+      Total |     34,655      100.00
+
+. sum age if age>64
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |      4,745    73.98588    6.573204         65         85
+
+. 
+. /* identify the survey design characteristics */
+. svyset [pweight= perwt16f], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
+
+      pweight: perwt16f
+          VCE: linearized
+  Single unit: missing
+     Strata 1: varstr
+         SU 1: varpsu
+        FPC 1: <zero>
+
+.            
+. // mean expense per person with an expense
+. svy, subpop(x_total): mean total
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =     165      Number of obs   =       34,655
+Number of PSUs   =     368      Population size =  323,141,687
+                                Subpop. no. obs =       26,942
+                                Subpop. size    =  273,773,024
+                                Design df       =          203
+
+--------------------------------------------------------------
+             |             Linearized
+             |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+       total |   5908.292   133.8208      5644.435    6172.149
+--------------------------------------------------------------
+
+. 
+. // mean expense per person with an expense, by age category
+. svy, subpop(x_total): mean total, over(agecat)
+(running mean on estimation sample)
+
+Survey: Mean estimation
+
+Number of strata =     165      Number of obs   =       34,655
+Number of PSUs   =     368      Population size =  323,141,687
+                                Subpop. no. obs =       26,942
+                                Subpop. size    =  273,773,024
+                                Design df       =          203
+
+            1: agecat = 1
+            2: agecat = 2
+
+--------------------------------------------------------------
+             |             Linearized
+        Over |       Mean   Std. Err.     [95% Conf. Interval]
+-------------+------------------------------------------------
+total        |
+           1 |   4615.125   137.6071      4343.802    4886.447
+           2 |   11780.84    429.172      10934.63    12627.05
+--------------------------------------------------------------
+
+. 
+. log close
+      name:  <unnamed>
+       log:  \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\PROG\exercise1.log
+  log type:  text
+ closed on:  29 Aug 2018, 09:19:19
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

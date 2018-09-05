@@ -1,0 +1,262 @@
+1                                           The SAS System            09:17 Wednesday, August 29, 2018
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M2) 
+      Licensed to SOCIAL & SCIENTIFIC SYSTEMS INC/AHRQ4, Site 70109165.
+NOTE: This session is executing on the X64_8PRO  platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 13.2
+
+NOTE: Additional host information:
+
+ X64_8PRO WIN 6.2.9200  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.28 seconds
+      cpu time            0.28 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is \\source.ahrq.local\source\MEPS\_PUFINFO\autoexec.sas.
+
+local directory autoexec processed
+
+NOTE: AUTOEXEC processing completed.
+
+1          /*********************************************************************\
+2          
+3          PROGRAM: 	C:\MEPS\SAS\PROG\EXERCISE2.SAS
+4          
+5          PURPOSE:	THIS PROGRAM GENERATES SELECTED ESTIMATES FOR A 2016 VERSION OF THE Purchases and Expenses for Narcotic
+5        ! analgesics or Narcotic analgesic combos
+6          
+7          
+8              (1) FIGURE 1: TOTAL EXPENSE FOR Narcotic analgesics or Narcotic analgesic combos
+9          
+10             (2) FIGURE 2: TOTAL NUMBER OF PURCHASES OF Narcotic analgesics or Narcotic analgesic combos
+11         
+12             (3) FIGURE 3: TOTAL NUMBER OF PERSONS PURCHASING ONE OR MORE Narcotic analgesics or Narcotic analgesic combos
+13         
+14             (4) FIGURE 4: AVERAGE TOTAL, OUT OF POCKET, AND THIRD PARTY PAYER EXPENSE
+15                           FOR Narcotic analgesics or Narcotic analgesic combos PER PERSON WITH AN Narcotic analgesics or Narcotic
+15       !  analgesic combos MEDICINE PURCHASE
+16         
+17         INPUT FILES:  (1) C:\MEPS\SAS\DATA\H1192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
+18                       (2) C:\MEPS\SAS\DATA\H188A.SAS7BDAT (2016 PRESCRIBED MEDICINES PUF)
+19         
+20         \*********************************************************************/
+21         
+22         OPTIONS LS=132 PS=79 NODATE;
+23         
+24         *LIBNAME CDATA 'C:\MEPS\SAS\DATA';
+25         LIBNAME CDATA "\\programs.ahrq.local\programs\meps\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\Data";
+NOTE: Libref CDATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: \\programs.ahrq.local\programs\meps\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\Data
+26         
+27         TITLE1 '2018 AHRQ MEPS DATA USERS WORKSHOP';
+28         TITLE2 "EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016";
+29         
+30         PROC FORMAT;
+31           VALUE GTZERO
+32              0         = '0'
+33              0 <- HIGH = '>0'
+34              ;
+NOTE: Format GTZERO is already on the library WORK.FORMATS.
+NOTE: Format GTZERO has been output.
+35         RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+36         
+37         /*1) IDENTIFY Narcotic analgesics or Narcotic analgesic combos USING THERAPEUTIC CLASSIFICATION (TC) CODES*/
+38         
+2                                                          The SAS System
+
+39         DATA DRUG;
+40           SET CDATA.H188A;
+41           IF TC1S1_1 IN (60, 191) ; /*definition of Narcotic analgesics or Narcotic analgesic combos*/
+42         RUN;
+
+NOTE: There were 319685 observations read from the data set CDATA.H188A.
+NOTE: The data set WORK.DRUG has 12049 observations and 70 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.15 seconds
+      cpu time            0.09 seconds
+      
+
+43         
+44         TITLE3 "A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos";
+45         PROC PRINT DATA=DRUG (OBS=30);
+46         VAR RXRECIDX LINKIDX TC1S1_1 	RXXP16X RXSF16X;
+47          BY DUPERSID;
+48         RUN;
+
+NOTE: There were 30 observations read from the data set WORK.DRUG.
+NOTE: The PROCEDURE PRINT printed pages 1-2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+49         
+50         
+51         /*2) SUM DATA TO PERSON-LEVEL*/
+52         
+53         PROC SUMMARY DATA=DRUG NWAY;
+54           CLASS DUPERSID;
+55           VAR RXXP16X RXSF16X;
+56           OUTPUT OUT=PERDRUG (DROP=_TYPE_) sum=TOT OOP;
+57         RUN;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 12049 observations read from the data set WORK.DRUG.
+NOTE: The data set WORK.PERDRUG has 3254 observations and 4 variables.
+NOTE: PROCEDURE SUMMARY used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+58         
+59         TITLE3 "A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos";
+60         PROC PRINT DATA=PERDRUG (OBS=30);
+61         RUN;
+
+NOTE: There were 30 observations read from the data set WORK.PERDRUG.
+NOTE: The PROCEDURE PRINT printed page 3.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+62         
+63         DATA PERDRUG2;
+64          SET PERDRUG;
+65              RENAME _FREQ_ = N_PHRCHASE ;
+66              THIRD_PAYER   = TOT - OOP;
+67         RUN;
+
+NOTE: There were 3254 observations read from the data set WORK.PERDRUG.
+NOTE: The data set WORK.PERDRUG2 has 3254 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+68         
+69         /*3) MERGE THE PERSON-LEVEL EXPENDITURES TO THE FY PUF*/
+70         
+71         DATA  FY;
+72         MERGE CDATA.H192 (IN=AA KEEP=DUPERSID VARSTR VARPSU PERWT16F)
+73               PERDRUG2  (IN=BB KEEP=DUPERSID N_PHRCHASE TOT OOP THIRD_PAYER);
+74            BY DUPERSID;
+3                                                          The SAS System
+
+75         
+76               IF AA AND BB THEN DO;
+77                  SUB      = 1 ;
+78               END;
+79         
+80               ELSE IF NOT BB THEN DO;   /*FOR PERSONS WITHOUT ANY PURCHASE OF Narcotic analgesics or Narcotic analgesic combos*/
+81                  SUB         = 2 ;
+82                  N_PHRCHASE  = 0 ;
+83                  THIRD_PAYER = 0 ;
+84                  TOT         = 0 ;
+85                  OOP         = 0 ;
+86               END;
+87         
+88               IF AA;
+89         
+90               LABEL
+91                     THIRD_PAYER = 'TOTAL-OOP'
+92                     N_PHRCHASE  = '# OF PURCHASES PER PERSON'
+93                     SUB         = 'POPULATION FLAG FOR PERSONS WITH 1+ Narcotic analgesics or Narcotic analgesic combos'
+94                                 ;
+95         RUN;
+
+NOTE: There were 34655 observations read from the data set CDATA.H192.
+NOTE: There were 3254 observations read from the data set WORK.PERDRUG2.
+NOTE: The data set WORK.FY has 34655 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.57 seconds
+      cpu time            0.39 seconds
+      
+
+96         
+97         TITLE3 "SUPPORTING CROSSTABS FOR NEW VARIABLES";
+98         PROC FREQ DATA=FY;
+99           TABLES  SUB * N_PHRCHASE * TOT * OOP * THIRD_PAYER / LIST MISSING ;
+100          FORMAT N_PHRCHASE TOT OOP THIRD_PAYER gtzero. ;
+101        RUN;
+
+NOTE: There were 34655 observations read from the data set WORK.FY.
+NOTE: The PROCEDURE FREQ printed page 4.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.01 seconds
+      
+
+102        
+103        
+104        /*4) CALCULATE ESTIMATES ON EXPENDITURES AND USE*/
+105        
+106        ODS LISTING CLOSE;
+107        TITLE3 "PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016";
+108        PROC SURVEYMEANS DATA=FY NOBS SUMWGT SUM STD MEAN STDERR;
+109          STRATA  VARSTR ;
+110          CLUSTER VARPSU;
+111          WEIGHT  PERWT16F;
+112          DOMAIN  SUB ;
+113          VAR TOT N_PHRCHASE  OOP THIRD_PAYER ;
+114          ODS OUTPUT DOMAIN=OUT1;
+115        RUN;
+
+NOTE: Due to nonpositive weights, 1396 observation(s) were deleted.
+NOTE: The data set WORK.OUT1 has 8 observations and 10 variables.
+NOTE: PROCEDURE SURVEYMEANS used (Total process time):
+      real time           0.14 seconds
+      cpu time            0.14 seconds
+      
+
+116        ODS LISTING;
+117        
+118        TITLE3 "RESULTS FROM PROC SURVEYMEANS WITH A DOMAIN STATEMENT";
+119        PROC PRINT DATA=OUT1 (DROP=DOMAINLABEL) NOOBS;
+120        FORMAT N COMMA6.0 SUMWGT SUM  STDDEV comma15.0 MEAN STDERR comma9.2  ;
+121        RUN;
+
+NOTE: There were 8 observations read from the data set WORK.OUT1.
+NOTE: The PROCEDURE PRINT printed page 5.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+4                                                          The SAS System
+
+      cpu time            0.00 seconds
+      
+
+122        
+123        TITLE4 "SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos";
+124        PROC PRINT DATA=OUT1 (WHERE=(SUB=1)) NOOBS;
+125        VAR VARNAME VARLABEL N SUMWGT SUM STDDEV MEAN STDERR;
+126        FORMAT N COMMA6.0 SUMWGT SUM  STDDEV comma15.0 MEAN STDERR comma9.2  ;
+127        RUN;
+
+NOTE: There were 4 observations read from the data set WORK.OUT1.
+      WHERE SUB=1;
+NOTE: The PROCEDURE PRINT printed page 6.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           4.65 seconds
+      cpu time            1.17 seconds
+      

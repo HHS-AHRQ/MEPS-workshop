@@ -1,0 +1,185 @@
+1                                           The SAS System            14:51 Tuesday, September 4, 2018
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M2) 
+      Licensed to SOCIAL & SCIENTIFIC SYSTEMS INC/AHRQ4, Site 70109165.
+NOTE: This session is executing on the X64_8PRO  platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 13.2
+
+NOTE: Additional host information:
+
+ X64_8PRO WIN 6.2.9200  Workstation
+
+NOTE: SAS initialization used:
+      real time           0.29 seconds
+      cpu time            0.28 seconds
+      
+
+NOTE: AUTOEXEC processing beginning; file is \\source.ahrq.local\source\MEPS\_PUFINFO\autoexec.sas.
+
+local directory autoexec processed
+
+NOTE: AUTOEXEC processing completed.
+
+1          /**********************************************************************************
+2          
+3          PROGRAM:      C:\MEPS\SAS\PROG\EXERCISE8.SAS
+4          
+5          DESCRIPTION:  THIS PROGRAM ILLUSTRATES HOW TO POOL MEPS LONGITUDINAL DATA FILES FROM DIFFERENT PANELS
+6                        THE EXAMPLE USED IS PANELS 17-19 POPULATION AGE 26-30 WHO ARE UNINSURED BUT HAVE HIGH INCOME IN THE FIRST
+6        ! YEAR
+7          
+8          	            DATA FROM PANELS 17, 18, AND 19 ARE POOLED.
+9          
+10         INPUT FILE:   (1) C:\MEPS\SAS\DATA\H183.SAS7BDAT (PANEL 19 LONGITUDINAL FILE)
+11         	            (2) C:\MEPS\SAS\DATA\H172.SAS7BDAT (PANEL 18 LONGITUDINAL FILE)
+12         	            (3) C:\MEPS\SAS\DATA\H164.SAS7BDAT (PANEL 17 LONGITUDINAL FILE)
+13         
+14         *********************************************************************************/;
+15         *LIBNAME CDATA 'C:\MEPS\SAS\DATA';
+16         LIBNAME CDATA "\\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\DATA";
+NOTE: Libref CDATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\DATA
+17         
+18         OPTIONS NODATE;
+19         TITLE1 '2018 AHRQ MEPS DATA USERS WORKSHOP';
+20         TITLE2 'EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)';
+21         
+22         PROC FORMAT;
+23         	
+23       !  VALUE POVCAT
+24             1 = '1 POOR/NEGATIVE'
+25             2 = '2 NEAR POOR'
+26             3 = '3 LOW INCOME'
+27             4 = '4 MIDDLE INCOME'
+28             5 = '5 HIGH INCOME'
+29             ;
+NOTE: Format POVCAT has been output.
+30         
+31         	
+31       !  VALUE INSF
+32         	-1= '-1 INAPPLICABLE'
+33         	1 = '1 ANY PRIVATE'
+34         	2 = '2 PUBLIC ONLY'
+35         	3 = '3 UNINSURED';
+NOTE: Format INSF has been output.
+36         
+37             VALUE AGE
+38         	  -1= '-1 INAPPLICABLE'
+39             26-30='26-30'
+40             0-25, 31-HIGH='0-25, 31+';
+NOTE: Format AGE has been output.
+41         run;
+
+2                                                          The SAS System
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+42         
+43         /* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
+44         DATA POOL;
+45              LENGTH INSCOVY1 INSCOVY2 PANEL AGEY1X POVCATY1 VARSTR VARPSU 8;
+46         	   SET CDATA.H164 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+47         	       CDATA.H172 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+48         	       CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL);
+49              POOLWT = LONGWT/3 ;
+50         
+51              IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
+52              ELSE SUBPOP=2;
+53         
+54              LABEL SUBPOP='POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR'
+55                    INSCOVY2="HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2";
+56         RUN;
+
+NOTE: There were 17923 observations read from the data set CDATA.H164.
+NOTE: There were 16714 observations read from the data set CDATA.H172.
+NOTE: There were 15898 observations read from the data set CDATA.H183.
+NOTE: The data set WORK.POOL has 50535 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           4.39 seconds
+      cpu time            1.26 seconds
+      
+
+57         
+58         TITLE3 "CHECK MISSING VALUES ON THE COMBINED DATA";
+59         PROC MEANS DATA=POOL N NMISS;
+60         RUN;
+
+NOTE: Multiple concurrent threads will be used to summarize data.
+NOTE: There were 50535 observations read from the data set WORK.POOL.
+NOTE: The PROCEDURE MEANS printed page 1.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+
+61         
+62         TITLE3 'SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG';
+63         PROC FREQ DATA=POOL;
+64         TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
+65         FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF.;
+66         RUN;
+
+NOTE: There were 50535 observations read from the data set WORK.POOL.
+NOTE: The PROCEDURE FREQ printed page 2.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.09 seconds
+      cpu time            0.01 seconds
+      
+
+67         
+68         
+69         TITLE3 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST
+69       ! YEAR';
+70         PROC SURVEYMEANS DATA=POOL NOBS MEAN STDERR;
+71         	STRATUM VARSTR ;
+72         	CLUSTER VARPSU ;
+73         	WEIGHT  POOLWT;
+74         	DOMAIN  SUBPOP;
+75         	VAR  INSCOVY2;
+76         	CLASS INSCOVY2;
+77         	FORMAT INSCOVY2 INSF.;
+78         RUN;
+
+NOTE: Only one cluster in a stratum in domain POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR for variable(s) 
+      INSCOVY2. The estimate of variance for INSCOVY2 will omit this stratum.
+NOTE: The PROCEDURE SURVEYMEANS printed pages 3-4.
+NOTE: PROCEDURE SURVEYMEANS used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.15 seconds
+3                                                          The SAS System
+
+      
+
+79         
+80         
+81         TITLE3 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST
+81       ! YEAR, surveyfreq version';
+82         PROC SURVEYfreq DATA=POOL ;
+83         	STRATUM VARSTR ;
+84         	CLUSTER VARPSU ;
+85         	WEIGHT  POOLWT;
+86         	table  subpop*INSCOVY2;
+87         	FORMAT INSCOVY2 INSF.;
+88         RUN;
+
+NOTE: The PROCEDURE SURVEYFREQ printed page 5.
+NOTE: PROCEDURE SURVEYFREQ used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.06 seconds
+      
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           5.90 seconds
+      cpu time            2.06 seconds
+      
