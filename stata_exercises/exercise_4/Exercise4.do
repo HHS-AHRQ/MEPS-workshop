@@ -16,21 +16,25 @@ clear
 set more off
 capture log close
 /*log using c:\meps\stata\prog\exercise8.log, replace
-cd c:\meps\stata\data*/
+cd c:\meps\stata\data
 
 log using \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\PROG\exercise8.log, replace
 cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\DATA
+*/
 
 // pool three panels of data to get sufficient sample size
-use dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel using h183
+import sasxport "C:\MEPS\h183.ssp"
+keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel  
 tempfile panel19
 save "`panel19'"
 
-use dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel using h172
+import sasxport "C:\MEPS\h172.ssp"
+keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel 
 tempfile panel18
 save "`panel18'"
 
-use dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel using h164
+import sasxport "C:\MEPS\h164.ssp"
+keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel 
 
 append using "`panel19'" "`panel18'"
 

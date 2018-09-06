@@ -23,14 +23,19 @@
 clear
 set more off
 capture log close
-/*log using c:\meps\stata\prog\exercise2.log, replace
-cd c:\meps\stata\data*/
+/*
+log using c:\meps\stata\prog\exercise2.log, replace
+cd c:\meps\stata\data
 
 log using \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\PROG\exercise2.log, replace
 cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\DATA
+*/
 
 // 1) identify Narcotic analgesics or Narcotic analgesic combos using therapeutic classification (tc) codes
-use dupersid rxrecidx linkidx tc1s1_1 rxxp16x rxsf16x if tc1s1_1==60 | tc1s1_1==191 using h188a
+import sasxport "C:\MEPS\h188a.ssp"
+keep dupersid rxrecidx linkidx tc1s1_1 rxxp16x rxsf16x 
+keep if (tc1s1_1==60 | tc1s1_1==191)
+
 list dupersid rxrecidx linkidx rxxp16x rxsf16x in 1/30, table
 tab1 tc1s1_1
 
@@ -49,7 +54,8 @@ gen third_payer   = tot - oop
 tempfile perdrug
 save "`perdrug'"
 
-use dupersid varstr varpsu perwt16f using h192
+import sasxport "C:\MEPS\h192.ssp"
+keep dupersid varstr varpsu perwt16f
 sort dupersid
 
 merge 1:m dupersid using "`perdrug'", keep(master matches)
@@ -69,5 +75,5 @@ svy, subpop(sub): mean n_purchase tot oop third_payer, cformat(%8.3g)
 svy, subpop(sub): total n_purchase tot oop third_payer
 estimates table, b(%13.0f) se(%11.0f)
 
-log close  
+*log close  
 exit, clear

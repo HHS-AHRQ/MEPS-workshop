@@ -14,19 +14,30 @@ PURPOSE:	THIS PROGRAM GENERATES SELECTED ESTIMATES FOR A 2016 VERSION OF THE Pur
     (4) FIGURE 4: AVERAGE TOTAL, OUT OF POCKET, AND THIRD PARTY PAYER EXPENSE
                   FOR Narcotic analgesics or Narcotic analgesic combos PER PERSON WITH AN Narcotic analgesics or Narcotic analgesic combos MEDICINE PURCHASE
 
-INPUT FILES:  (1) C:\MEPS\SAS\DATA\H1192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
+INPUT FILES:  (1) C:\MEPS\SAS\DATA\H192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
               (2) C:\MEPS\SAS\DATA\H188A.SAS7BDAT (2016 PRESCRIBED MEDICINES PUF)
 
 \*********************************************************************/
 
 OPTIONS LS=132 PS=79 NODATE;
+ods graphics off;
 
 *LIBNAME CDATA 'C:\MEPS\SAS\DATA';
-LIBNAME CDATA "\\programs.ahrq.local\programs\meps\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\Data";
+*LIBNAME CDATA "\\programs.ahrq.local\programs\meps\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\Data";
 
 TITLE1 '2018 AHRQ MEPS DATA USERS WORKSHOP';
 TITLE2 "EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016";
 
+/* LOAD SAS TRANSPORT FILES (.ssp) */
+FILENAME in_h188a 'C:\MEPS\h188a.ssp';
+proc xcopy in = in_h188a out = WORK IMPORT;
+run;
+
+FILENAME in_h192 'C:\MEPS\h192.ssp';
+proc xcopy in = in_h192 out = WORK IMPORT;
+run;
+
+/* CREATE FORMATS */
 PROC FORMAT;
   VALUE GTZERO
      0         = '0'
@@ -35,9 +46,8 @@ PROC FORMAT;
 RUN;
 
 /*1) IDENTIFY Narcotic analgesics or Narcotic analgesic combos USING THERAPEUTIC CLASSIFICATION (TC) CODES*/
-
 DATA DRUG;
-  SET CDATA.H188A;
+  SET h188a;
   IF TC1S1_1 IN (60, 191) ; /*definition of Narcotic analgesics or Narcotic analgesic combos*/
 RUN;
 
@@ -67,9 +77,8 @@ DATA PERDRUG2;
 RUN;
 
 /*3) MERGE THE PERSON-LEVEL EXPENDITURES TO THE FY PUF*/
-
 DATA  FY;
-MERGE CDATA.H192 (IN=AA KEEP=DUPERSID VARSTR VARPSU PERWT16F) 
+MERGE h192 (IN=AA KEEP=DUPERSID VARSTR VARPSU PERWT16F) 
       PERDRUG2  (IN=BB KEEP=DUPERSID N_PHRCHASE TOT OOP THIRD_PAYER);
    BY DUPERSID;
 

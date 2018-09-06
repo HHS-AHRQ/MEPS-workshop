@@ -13,25 +13,32 @@ INPUT FILE:   C:\MEPS\SAS\DATA\H192.SAS7BDAT (2016 FULL-YEAR FILE)
 
 *********************************************************************************/;
 OPTIONS LS=132 PS=79 NODATE;
+ods graphics off;
 
 *LIBNAME CDATA 'C:\MEPS\SAS\DATA';
-LIBNAME CDATA "\\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\DATA";
+*LIBNAME CDATA "\\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\DATA";
 
+/* LOAD SAS TRANSPORT FILES (.ssp) */
+FILENAME in_h192 'C:\MEPS\h192.ssp';
+proc xcopy in = in_h192 out = WORK IMPORT;
+run;
+
+/* CREATE FORMATS */
 PROC FORMAT;
   VALUE AGEF
      0-  64 = '0-64'
      65-HIGH = '65+'
-	          ;
+	;
 
   VALUE AGECAT
 	   1 = '0-64'
 	   2 = '65+'
-	     ;
+	;
 
   VALUE GTZERO
      0         = '0'
      0 <- HIGH = '>0'
-               ;
+	;
 RUN;
 
 TITLE1 '2018 AHRQ MEPS DATA USERS WORKSHOP';
@@ -39,10 +46,9 @@ TITLE2 "EXERCISE1.SAS: NATIONAL HEALTH CARE EXPENSES, 2016";
 
 /* READ IN DATA FROM 2016 CONSOLIDATED DATA FILE (HC-192) */
 DATA PUF192;
-  SET CDATA.H192 (KEEP= TOTEXP16 AGE16X AGE42X AGE31X
-	                      VARSTR   VARPSU   PERWT16F );
+  SET h192 (KEEP= TOTEXP16 AGE16X AGE42X AGE31X VARSTR VARPSU PERWT16F);
 
-  TOTAL                = TOTEXP16;
+  TOTAL = TOTEXP16;
 
   /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */  
   X_ANYSVCE=0;

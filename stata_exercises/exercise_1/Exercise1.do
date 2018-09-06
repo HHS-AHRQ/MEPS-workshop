@@ -26,14 +26,15 @@ clear
 set more off
 capture log close
 /*log using c:\meps\stata\prog\exercise1.log, replace
-cd c:\meps\stata\data*/
+cd c:\meps\stata\data
 
 log using \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\PROG\exercise1.log, replace
 cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\STATA\DATA
-
+*/
 
 /* read in data from 2016 consolidated data file (hc-192) */
-use totexp16 age16x age42x age31x varstr varpsu perwt16f using h192.dta
+import sasxport "C:\MEPS\h192.ssp"
+keep totexp16 age16x age42x age31x varstr varpsu perwt16f
     
 /* define expenditure variables  */
 gen total=totexp16
@@ -69,5 +70,4 @@ svy, subpop(x_total): mean total
 // mean expense per person with an expense, by age category
 svy, subpop(x_total): mean total, over(agecat)
 
-log close
 exit, clear
