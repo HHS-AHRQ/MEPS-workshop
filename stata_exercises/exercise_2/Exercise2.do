@@ -4,8 +4,6 @@
 *
 *PURPOSE:		THIS PROGRAM GENERATES SELECTED ESTIMATES FOR A 2016 VERSION OF Purchases and Expenses for Narcotic analgesics or Narcotic analgesic combos
 *          	
-*                                       
-*
 *    				(1) FIGURE 1: TOTAL EXPENSE FOR Narcotic analgesics or Narcotic analgesic combos
 *
 *    				(2) FIGURE 2: TOTAL NUMBER OF PURCHASES OF Narcotic analgesics or Narcotic analgesic combos

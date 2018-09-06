@@ -2,21 +2,12 @@
 *
 *PROGRAM:     C:\MEPS\STATA\PROG\EXERCISE1.do
 *
-*DESCRIPTION: THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE, 2016: *8/28/18 NOTE comment out BY TYPE OF SERVICE for now, will remove it when finalize EXPENSES BY TYPE OF SERVICE, 2016:
+*DESCRIPTION: THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE, 2016: 
 *
-*	           	(1) PERCENTAGE DISTRIBUTION OF EXPENSES BY TYPE OF SERVICE
-*	           	(2) PERCENTAGE OF PERSONS WITH AN EXPENSE, BY TYPE OF SERVIC
-*	           	(3) MEAN EXPENSE PER PERSON WITH AN EXPENSE, BY TYPE OF SERVICE
+*	           (1) OVERALL EXPENSES 
+*	           (2) PERCENTAGE OF PERSONS WITH AN EXPENSE
+*	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE
 *
-*             DEFINED SERVICE CATEGORIES ARE:
-*                HOSPITAL INPATIENT
-*                AMBULATORY SERVICE: OFFICE-BASED & HOSPITAL OUTPATIENT VISITS
-*                PRESCRIBED MEDICINES
-*                DENTAL VISITS
-*                EMERGENCY ROOM
-*                HOME HEALTH CARE (AGENCY & NON-AGENCY) AND OTHER (TOTAL EXPENDITURES - ABOVE EXPENDITURE CATEGORIES)
-*
-*            	NOTE: EXPENSES INCLUDE BOTH FACILITY AND PHYSICIAN EXPENSES.
 *
 *INPUT FILE:  C:\MEPS\STATA\DATA\H192.dta (2016 FULL-YEAR FILE)
 *
@@ -63,7 +54,14 @@ sum age if age>64
 
 /* identify the survey design characteristics */
 svyset [pweight= perwt16f], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
+
+// overall expenses
+svy: mean total
+svy: total total
            
+// percentage of persons with an expense
+svy: mean x_total		   
+		   
 // mean expense per person with an expense
 svy, subpop(x_total): mean total
 
