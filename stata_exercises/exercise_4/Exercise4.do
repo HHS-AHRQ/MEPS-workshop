@@ -23,6 +23,10 @@ cd \\programs.ahrq.local\programs\MEPS\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_
 */
 
 // pool three panels of data to get sufficient sample size
+
+/* Stata-IC can't load longitudinal files (too many variables) */
+/* Using premade file instead (see below) */
+/*
 import sasxport "C:\MEPS\h183.ssp"
 keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel  
 tempfile panel19
@@ -37,6 +41,9 @@ import sasxport "C:\MEPS\h164.ssp"
 keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel 
 
 append using "`panel19'" "`panel18'"
+*/
+
+import sasxport "Ex_4_Long.ssp"
 
 gen poolwt=longwt/3
 gen subpop=(agey1x>=26 & agey1x<=30 & inscovy1==3 & povcaty1==5)
@@ -56,5 +63,5 @@ svyset [pweight=poolwt], strata( varstr) psu(varpsu) vce(linearized) singleunit(
 // in the first year
 svy, subpop(subpop): tabulate inscovy2, cell se obs
 
-log close  
+*log close  
 exit, clear
