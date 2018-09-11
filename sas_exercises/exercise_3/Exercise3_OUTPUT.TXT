@@ -1,4 +1,4 @@
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                1
+                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                1
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       UNWEIGHTED FREQUENCY FOR 2015 FY PERSONS WITH AGE 26-30
 
@@ -22,7 +22,7 @@
                        5 HIGH INCOME      1 ANY PRIVATE         547       23.80          2222        96.69  
                        5 HIGH INCOME      2 PUBLIC ONLY          29        1.26          2251        97.95  
                        5 HIGH INCOME      3 UNINSURED            47        2.05          2298       100.00  
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                2
+                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                2
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       UNWEIGHTED FREQUENCY FOR 2016 FY PERSONS WITH AGE 26-30
 
@@ -46,7 +46,7 @@
                        5 HIGH INCOME      1 ANY PRIVATE         490       23.39          2011        95.99  
                        5 HIGH INCOME      2 PUBLIC ONLY          25        1.19          2036        97.18  
                        5 HIGH INCOME      3 UNINSURED            59        2.82          2095       100.00  
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                3
+                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                3
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                              CHECK MISSING VALUES ON THE COMBINED DATA
 
@@ -65,7 +65,7 @@
                    POOLWT                                                                          67152        0
                    SUBPOP      POPULATION WITH AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME    67152        0
                    ----------------------------------------------------------------------------------------------
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                4
+                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                4
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
 
@@ -128,44 +128,12 @@
                           2    31+             5         1       10842       16.15         65455        97.47  
                           2    31+             5         2        1206        1.80         66661        99.27  
                           2    31+             5         3         491        0.73         67152       100.00  
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                5
+                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                   WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
+                   SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
-                                                     The SURVEYMEANS Procedure
+                                                                                                SE of
+                                     Variable Label                       N         Mean         Mean
 
-                                                            Data Summary
-
-                                                Number of Strata                 165
-                                                Number of Clusters               371
-                                                Number of Observations         67152
-                                                Sum of Weights             322282469
-
-
-                                                            Statistics
- 
-                                                                                                     Std Error
-                     Variable    Label                                       N            Mean         of Mean
-                     -----------------------------------------------------------------------------------------
-                     TOTSLF      TOTAL AMT PAID BY SELF/FAMILY           67152      614.919349       12.587591
-                     -----------------------------------------------------------------------------------------
-                                                 2019 AHRQ MEPS DATA USERS WORKSHOP                                                6
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
-                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-
-                                                     The SURVEYMEANS Procedure
-
-                                                    Domain Statistics in SUBPOP
- 
-              POPULATION
-                    WITH
-              AGE=26-30,
-               UNINSURED
-                   WHOLE
-               YEAR, AND
-                    HIGH                                                                                    Std Error
-                  INCOME    Variable    Label                                       N            Mean         of Mean
-              -------------------------------------------------------------------------------------------------------
-                       1    TOTSLF      TOTAL AMT PAID BY SELF/FAMILY             106      241.544601       80.884060
-                       2    TOTSLF      TOTAL AMT PAID BY SELF/FAMILY           67046      615.609388       12.594791
-              -------------------------------------------------------------------------------------------------------
+                              TOTAL AMT PAID BY SELF/FAMILY             106        241.5      80.8841

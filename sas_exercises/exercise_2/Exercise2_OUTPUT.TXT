@@ -137,26 +137,13 @@
                   2    0             0      0      0                 31401       90.61         34655       100.00  
                                                  2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
                                EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
-                                       RESULTS FROM PROC SURVEYMEANS WITH A DOMAIN STATEMENT
-
-SUB VARNAME     VARLABEL                                      N          SUMWGT             SUM          STDDEV      MEAN    STDERR
-
- 1  TOT         SUM OF PAYMENTS RXSF16X-RXOU16X(IMPUTED)  3,175      34,060,347   8,131,321,798     680,339,817    238.73     19.29
- 1  N_PHRCHASE  # OF PURCHASES PER PERSON                 3,175      34,060,347     121,674,856       4,928,822      3.57      0.10
- 1  OOP         AMOUNT PAID, SELF OR FAMILY (IMPUTED)     3,175      34,060,347   1,422,839,748     141,147,575     41.77      3.78
- 1  THIRD_PAYER TOTAL-OOP                                 3,175      34,060,347   6,708,482,050     629,279,347    196.96     18.24
- 2  TOT         SUM OF PAYMENTS RXSF16X-RXOU16X(IMPUTED) 30,084     289,081,339               0               0      0.00      0.00
- 2  N_PHRCHASE  # OF PURCHASES PER PERSON                30,084     289,081,339               0               0      0.00      0.00
- 2  OOP         AMOUNT PAID, SELF OR FAMILY (IMPUTED)    30,084     289,081,339               0               0      0.00      0.00
- 2  THIRD_PAYER TOTAL-OOP                                30,084     289,081,339               0               0      0.00      0.00
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                6
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
-                                       RESULTS FROM PROC SURVEYMEANS WITH A DOMAIN STATEMENT
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
                    SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
-  VARNAME     VARLABEL                                      N          SUMWGT             SUM          STDDEV      MEAN    STDERR
+                                                            Population                 SE of                                 SE of
+  Variable Label                                       N          Size       Mean       Mean              Total              Total
 
-  TOT         SUM OF PAYMENTS RXSF16X-RXOU16X(IMPUTED)  3,175      34,060,347   8,131,321,798     680,339,817    238.73     19.29
-  N_PHRCHASE  # OF PURCHASES PER PERSON                 3,175      34,060,347     121,674,856       4,928,822      3.57      0.10
-  OOP         AMOUNT PAID, SELF OR FAMILY (IMPUTED)     3,175      34,060,347   1,422,839,748     141,147,575     41.77      3.78
-  THIRD_PAYER TOTAL-OOP                                 3,175      34,060,347   6,708,482,050     629,279,347    196.96     18.24
+  SUM OF PAYMENTS RXSF16X-RXOU16X(IMPUTED)         3,175    34,060,347      238.7    19.2872      8,131,321,798        680,339,817
+  # OF PURCHASES PER PERSON                        3,175    34,060,347        3.6     0.0958        121,674,856          4,928,822
+  AMOUNT PAID, SELF OR FAMILY (IMPUTED)            3,175    34,060,347       41.8     3.7785      1,422,839,748        141,147,575
+  TOTAL-OOP                                        3,175    34,060,347      197.0    18.2409      6,708,482,050        629,279,347

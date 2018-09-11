@@ -97,96 +97,10 @@
                            EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
         INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
 
-                                                     The SURVEYMEANS Procedure
+                                                                                       SE of
+                                    Variable Level                N    Proportion    Proportion
 
-                                                            Data Summary
-
-                                                Number of Strata                 165
-                                                Number of Clusters               368
-                                                Number of Observations         50535
-                                                Sum of Weights             321719891
-
-
-                                                      Class Level Information
- 
- CLASS
- Variable    Label                                              Levels    Values
-
- INSCOVY2    HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2           4    -1 INAPPLICABLE 1 ANY PRIVATE 2 PUBLIC ONLY 3 UNINSURED  
-
-
-                                                             Statistics
- 
-                                                                                                                       Std Error
-    Variable    Level              Label                                                       N            Mean         of Mean
-    ----------------------------------------------------------------------------------------------------------------------------
-    INSCOVY2    -1 INAPPLICABLE    HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2             481        0.009956        0.000622
-                1 ANY PRIVATE      HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2           25692        0.646146        0.007558
-                2 PUBLIC ONLY      HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2           17180        0.241093        0.005998
-                3 UNINSURED        HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2            7182        0.102805        0.003494
-    ----------------------------------------------------------------------------------------------------------------------------
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                4
-                           EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
-        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
-
-                                                     The SURVEYMEANS Procedure
-
-                                                     Domain Statistics in SUBPOP
- 
-POPULATION
-      WITH
-AGE=26-30,
-UNINSURED,
-  AND HIGH
- INCOME IN                                                                                                                 Std Error
-FIRST YEAR   Variable   Level             Label                                                      N           Mean        of Mean
-------------------------------------------------------------------------------------------------------------------------------------
-         1   INSCOVY2   -1 INAPPLICABLE   HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2              0              0              0
-                        1 ANY PRIVATE     HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2             15       0.232799       0.066438
-                        2 PUBLIC ONLY     HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2              4       0.034948       0.019375
-                        3 UNINSURED       HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2             59       0.732254       0.067309
-         2   INSCOVY2   -1 INAPPLICABLE   HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2            481       0.009973       0.000623
-                        1 ANY PRIVATE     HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2          25677       0.646844       0.007577
-                        2 PUBLIC ONLY     HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2          17176       0.241442       0.006006
-                        3 UNINSURED       HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2           7123       0.101741       0.003483
-------------------------------------------------------------------------------------------------------------------------------------
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
-                           EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
-INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR, surveyfreq vers
-
-                                                      The SURVEYFREQ Procedure
-
-                                                            Data Summary
-
-                                                Number of Strata                 165
-                                                Number of Clusters               368
-                                                Number of Observations         50535
-                                                Sum of Weights             321719891
-
-
-                                                     Table of SUBPOP by INSCOVY2
- 
-                                                                 Weighted    Std Dev of               Std Err of
-                    SUBPOP    INSCOVY2            Frequency     Frequency      Wgt Freq    Percent       Percent
-                    --------------------------------------------------------------------------------------------
-                         1    -1 INAPPLICABLE             0             .             .      .             .    
-                              1 ANY PRIVATE              15        126368         42278     0.0393        0.0131
-                              2 PUBLIC ONLY               4         18970         10540     0.0059        0.0033
-                              3 UNINSURED                59        397484         68168     0.1235        0.0212
-
-                              Total                      78        542822         81412     0.1687        0.0252
-                    --------------------------------------------------------------------------------------------
-                         2    -1 INAPPLICABLE           481       3202959        206882     0.9956        0.0622
-                              1 ANY PRIVATE           25677     207751569       5229886    64.5753        0.7570
-                              2 PUBLIC ONLY           17176      77545579       2357642    24.1034        0.5997
-                              3 UNINSURED              7123      32676963       1292624    10.1570        0.3476
-
-                              Total                   50457     321177069       6718515    99.8313        0.0252
-                    --------------------------------------------------------------------------------------------
-                     Total    -1 INAPPLICABLE           481       3202959        206882     0.9956        0.0622
-                              1 ANY PRIVATE           25692     207877937       5230127    64.6146        0.7558
-                              2 PUBLIC ONLY           17180      77564550       2358161    24.1093        0.5998
-                              3 UNINSURED              7182      33074446       1299474    10.2805        0.3494
-
-                              Total                   50535     321719891       6725054    100.000              
-                    --------------------------------------------------------------------------------------------
+                                    -1 INAPPLICABLE               0        0.000      0.000000 
+                                    1 ANY PRIVATE                15        0.233      0.066438 
+                                    2 PUBLIC ONLY                 4        0.035      0.019375 
+                                    3 UNINSURED                  59        0.732      0.067309 

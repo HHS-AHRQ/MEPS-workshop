@@ -14,30 +14,26 @@ PURPOSE:	THIS PROGRAM GENERATES SELECTED ESTIMATES FOR A 2016 VERSION OF THE Pur
     (4) FIGURE 4: AVERAGE TOTAL, OUT OF POCKET, AND THIRD PARTY PAYER EXPENSE
                   FOR Narcotic analgesics or Narcotic analgesic combos PER PERSON WITH AN Narcotic analgesics or Narcotic analgesic combos MEDICINE PURCHASE
 
-INPUT FILES:  (1) C:\MEPS\SAS\DATA\H192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
+INPUT FILES:  (1) C:\MEPS\SAS\DATA\H1192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
               (2) C:\MEPS\SAS\DATA\H188A.SAS7BDAT (2016 PRESCRIBED MEDICINES PUF)
 
-\*********************************************************************/
+*********************************************************************/
+/* IMPORTANT NOTES: Use the next 6 lines of code, if you want to specify an alternative destination for SAS log and 
+SAS procedure output.*/
 
-OPTIONS LS=132 PS=79 NODATE;
-ods graphics off;
+%LET MyFolder= U:\Workshop_Fall2018_PradipM\Exercise_2;
+OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
+FILENAME MYLOG "&MyFolder\Exercise2_log.TXT";
+FILENAME MYPRINT "&MyFolder\Exercise2_OUTPUT.TXT";
+PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
+RUN;
 
-*LIBNAME CDATA 'C:\MEPS\SAS\DATA';
-*LIBNAME CDATA "\\programs.ahrq.local\programs\meps\AHRQ4_CY2\B_CFACT\BJ001DVK\Workshop_2018_Fall\SAS\Data";
+proc datasets lib=work nolist kill; quit; /* delete  all files in the WORK library */
+LIBNAME CDATA 'C:\MEPS\SAS\DATA';
 
 TITLE1 '2018 AHRQ MEPS DATA USERS WORKSHOP';
 TITLE2 "EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016";
 
-/* LOAD SAS TRANSPORT FILES (.ssp) */
-FILENAME in_h188a 'C:\MEPS\h188a.ssp';
-proc xcopy in = in_h188a out = WORK IMPORT;
-run;
-
-FILENAME in_h192 'C:\MEPS\h192.ssp';
-proc xcopy in = in_h192 out = WORK IMPORT;
-run;
-
-/* CREATE FORMATS */
 PROC FORMAT;
   VALUE GTZERO
      0         = '0'
@@ -46,14 +42,15 @@ PROC FORMAT;
 RUN;
 
 /*1) IDENTIFY Narcotic analgesics or Narcotic analgesic combos USING THERAPEUTIC CLASSIFICATION (TC) CODES*/
+
 DATA DRUG;
-  SET h188a;
+  SET CDATA.H188A;
   IF TC1S1_1 IN (60, 191) ; /*definition of Narcotic analgesics or Narcotic analgesic combos*/
 RUN;
 
 TITLE3 "A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos";
 PROC PRINT DATA=DRUG (OBS=30);
-VAR RXRECIDX LINKIDX TC1S1_1 	RXXP16X RXSF16X;
+VAR RXRECIDX LINKIDX TC1S1_1 RXXP16X RXSF16X;
  BY DUPERSID;
 RUN;
 
@@ -77,8 +74,9 @@ DATA PERDRUG2;
 RUN;
 
 /*3) MERGE THE PERSON-LEVEL EXPENDITURES TO THE FY PUF*/
+
 DATA  FY;
-MERGE h192 (IN=AA KEEP=DUPERSID VARSTR VARPSU PERWT16F) 
+MERGE CDATA.H192 (IN=AA KEEP=DUPERSID VARSTR VARPSU PERWT16F) 
       PERDRUG2  (IN=BB KEEP=DUPERSID N_PHRCHASE TOT OOP THIRD_PAYER);
    BY DUPERSID;
 
@@ -110,21 +108,32 @@ PROC FREQ DATA=FY;
 RUN;
 
 
-/*4) CALCULATE ESTIMATES ON EXPENDITURES AND USE*/
+/*4) CALCULATE ESTIMATES ON USE AND EXPENDITURES*/
 
-ODS LISTING CLOSE;
+ODS EXCLUDE ALL; /* Suppress the printing of output */
 TITLE3 "PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016";
 PROC SURVEYMEANS DATA=FY NOBS SUMWGT SUM STD MEAN STDERR;
   STRATA  VARSTR ;
   CLUSTER VARPSU;
   WEIGHT  PERWT16F;
-  DOMAIN  SUB('1') ;
-  VAR TOT N_PHRCHASE  OOP THIRD_PAYER ;
-  ODS OUTPUT DOMAIN=OUT1;
+   VAR TOT N_PHRCHASE  OOP THIRD_PAYER ;
+   DOMAIN  SUB('1');
+  ODS OUTPUT DOMAIN=work.domain_results;
 RUN;
-ODS LISTING;
 
-TITLE3 "RESULTS FROM PROC SURVEYMEANS WITH A DOMAIN STATEMENT";
-PROC PRINT DATA=OUT1 (DROP=DOMAINLABEL) NOOBS;
-FORMAT N COMMA6.0 SUMWGT SUM  STDDEV comma15.0 MEAN STDERR comma9.2  ;
+ODS EXCLUDE NONE; /* Unsuppress the printing of output */
+TITLE4 "SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos";
+proc print data= work.domain_results noobs split='*';
+ var   VARLABEL N  SumWgt  mean StdErr  Sum stddev;
+ label SumWgt = 'Population*Size'
+       mean = 'Mean'
+       StdErr = 'SE of Mean'
+       Sum = 'Total'
+       Stddev = 'SE of*Total';
+       format N SumWgt Comma12. mean comma9.1 stderr 9.4
+              sum Stddev comma17.;
+run;
+ODS _ALL_ CLOSE;
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
+PROC PRINTTO;
 RUN;
