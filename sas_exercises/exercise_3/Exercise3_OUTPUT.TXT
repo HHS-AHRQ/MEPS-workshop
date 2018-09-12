@@ -131,7 +131,6 @@
                                                  2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
                               EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                   WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-                   SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
                                                                                                 SE of
                                      Variable Label                       N         Mean         Mean

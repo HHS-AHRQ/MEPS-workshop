@@ -124,7 +124,7 @@ PROC SURVEYMEANS DATA=POOL NOBS MEAN STDERR;
 RUN;
 
 ODS EXCLUDE NONE; /* Unsuppress the printing of output */
-TITLE4 "SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos";
+TITLE3 'WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME';
 proc print data= work.domain_results noobs split='*';
  var   VARLABEL N  mean StdErr  ;
  label mean = 'Mean'
