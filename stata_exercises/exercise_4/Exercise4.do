@@ -43,7 +43,7 @@ keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel
 append using "`panel19'" "`panel18'"
 */
 
-import sasxport "Ex_4_Long.ssp"
+import sasxport "Ex4_Long.ssp"
 
 gen poolwt=longwt/3
 gen subpop=(agey1x>=26 & agey1x<=30 & inscovy1==3 & povcaty1==5)
