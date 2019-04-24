@@ -1,17 +1,20 @@
 
-
+*Ex12_download_unzip_create_macro.sas;
 /***********************************************************************
 This program automates the following:
-- unzips a transport file from the MEPS website
-- converts the transport file into a SAS data file
-PLEASE CHANGE THE USER-SPECIFIED FOLDER NAME IN THE LIBNAME STATEMENT BELOW
-(AT THE END OF THIS PROGRAM)
-Written by: Pradip Muhuri with some assistance from "Technical Support" 
-at SAS Institute, Cary, NC 
+- downloading multiple SAS transport files from the MEPS website
+- unzipping those files
+- converting the unzipped transport files into SAS data sets
+YOU MAY NEED TO CHANGE THE SPECIFICATION OF THE FOLDER NAME:
+  -  IN THE FILENAME STATEMENT
+  -  IN THE LIBNAME STATEMENT BELOW.
+Written by: Pradip Muhuri  
+Acknowledgements: Thanks to SAS(R) Institute for providing support 
+to the revision/expansion of the original program.
 ************************************************************************/
 
 %macro load_MEPS(filename);
-	filename inzip1 "u:\&filename.ssp.zip";
+	filename inzip1 "C:\Data\&filename.ssp.zip";
 	proc http 
 	 url="https://meps.ahrq.gov/data_files/pufs/&filename.ssp.zip"  
 	 out=inzip1;
@@ -19,7 +22,7 @@ at SAS Institute, Cary, NC
 	/*
 	From: https://blogs.sas.com/content/sasdummy/2015/05/11/using-filename-zip-to-unzip-and-read-data-files-in-sas/ 
 	*/
-	filename inzip2 zip "u:\&filename.ssp.zip" ;
+	filename inzip2 zip "c:\Data\&filename.ssp.zip" ;
 	 
 	/* Read the "members" (files) from the ZIP file */
 	data contents(keep=memname isFolder);
@@ -60,7 +63,7 @@ at SAS Institute, Cary, NC
 	   stop;
 	run;
 	 libname test xport "%sysfunc(getoption(work))/&memname.";
-	 libname myfolder "U:\Workshop_Fall2018_PradipM";  /* User-specified folder name */
+	 libname myfolder "C:\Data";  /* User-specified folder name */
 
 	 /*verify folder names*/
 	 %PUT %SYSFUNC(PATHNAME(WORK));
@@ -70,12 +73,9 @@ at SAS Institute, Cary, NC
 
 /* Form the MEPS website, download/unzip the follwong SAS transport files
    and then convert them into SAS data files in a pernament folder:
-   - 2015 Full-Year Consolidated PUF
+   - 2006-2016 Full-Year Consolidated PUFs
    - 2016 Full-Year Consolidated PUF
-   - Panel 17 Longitudinal PUF
-   - Panel 18 Longitudinal PUF
-   - Panel 19 Longitudinal PUF
-   - 2016 Prescribed Medicine PUF
+  
 */
 %load_MEPS(h181)
 %load_MEPS(h192)
@@ -83,7 +83,3 @@ at SAS Institute, Cary, NC
 %load_MEPS(h172)
 %load_MEPS(h183)
 %load_MEPS(h188a)
-
-
-
-

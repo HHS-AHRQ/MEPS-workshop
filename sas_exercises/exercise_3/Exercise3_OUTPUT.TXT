@@ -1,5 +1,5 @@
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                1
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        1
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       UNWEIGHTED FREQUENCY FOR 2015 FY PERSONS WITH AGE 26-30
 
                                                          The FREQ Procedure
@@ -22,8 +22,8 @@
                        5 HIGH INCOME      1 ANY PRIVATE         547       23.80          2222        96.69  
                        5 HIGH INCOME      2 PUBLIC ONLY          29        1.26          2251        97.95  
                        5 HIGH INCOME      3 UNINSURED            47        2.05          2298       100.00  
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                2
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        2
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       UNWEIGHTED FREQUENCY FOR 2016 FY PERSONS WITH AGE 26-30
 
                                                          The FREQ Procedure
@@ -46,8 +46,8 @@
                        5 HIGH INCOME      1 ANY PRIVATE         490       23.39          2011        95.99  
                        5 HIGH INCOME      2 PUBLIC ONLY          25        1.19          2036        97.18  
                        5 HIGH INCOME      3 UNINSURED            59        2.82          2095       100.00  
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                3
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        3
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                              CHECK MISSING VALUES ON THE COMBINED DATA
 
                                                         The MEANS Procedure
@@ -65,8 +65,8 @@
                    POOLWT                                                                          67152        0
                    SUBPOP      POPULATION WITH AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME    67152        0
                    ----------------------------------------------------------------------------------------------
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                4
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        4
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                                       SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
 
                                                          The FREQ Procedure
@@ -128,8 +128,8 @@
                           2    31+             5         1       10842       16.15         65455        97.47  
                           2    31+             5         2        1206        1.80         66661        99.27  
                           2    31+             5         3         491        0.73         67152       100.00  
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
-                              EXERCISE6.SAS: POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        5
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2015 and 2016)
                   WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
                                                                                                 SE of

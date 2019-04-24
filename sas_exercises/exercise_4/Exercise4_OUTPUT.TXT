@@ -1,5 +1,5 @@
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                1
-                           EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        1
+                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
                                              CHECK MISSING VALUES ON THE COMBINED DATA
 
                                                         The MEANS Procedure
@@ -18,8 +18,8 @@
                  POOLWT                                                                             50535        0
                  SUBPOP      POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR    50535        0
                  -------------------------------------------------------------------------------------------------
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                2
-                           EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        2
+                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
                                       SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
 
                                                          The FREQ Procedure
@@ -93,8 +93,8 @@
              2    3 UNINSURED        26-30              2 NEAR POOR             130        0.26         50015        98.97  
              2    3 UNINSURED        26-30              3 LOW INCOME            240        0.47         50255        99.45  
              2    3 UNINSURED        26-30              4 MIDDLE INCOME         280        0.55         50535       100.00  
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                3
-                           EXERCISE8.SAS: POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        3
+                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
         INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
 
                                                                                        SE of

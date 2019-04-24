@@ -1,5 +1,5 @@
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                1
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        1
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
                         A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
 
 ------------------------------------------------- PERSON ID (DUID + PID)=10002101 --------------------------------------------------
@@ -75,8 +75,8 @@
                                 25    100291010761002    100291010761      191        15.12      1.12 
                                 26    100291010761003    100291010761      191        15.12      1.12 
                                 27    100291010761004    100291010761      191        15.12      1.12 
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                2
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        2
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
                         A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
 
 ------------------------------------------------- PERSON ID (DUID + PID)=10031102 --------------------------------------------------
@@ -86,8 +86,8 @@
                                 28    100311020221001    100311020221       60        1.34        0   
                                 29    100311020711001    100311020711       60        9.30        0   
                                 30    100311020711002    100311020711       60        7.08        0   
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                3
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        3
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
                   A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos
 
                                             Obs    DUPERSID    _FREQ_      TOT        OOP
@@ -122,8 +122,8 @@
                                              28    10136102       1       10.68      0.52
                                              29    10139101       1       65.99      1.00
                                              30    10144101       1        9.40      0.90
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                4
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        4
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
                                                SUPPORTING CROSSTABS FOR NEW VARIABLES
 
                                                          The FREQ Procedure
@@ -135,8 +135,8 @@
                   1    >0            >0     >0     0                   957        2.76          1662         4.80  
                   1    >0            >0     >0     >0                 1592        4.59          3254         9.39  
                   2    0             0      0      0                 31401       90.61         34655       100.00  
-                                                 2018 AHRQ MEPS DATA USERS WORKSHOP                                                5
-                               EXERCISE2.SAS: Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        5
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
              PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
                    SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
