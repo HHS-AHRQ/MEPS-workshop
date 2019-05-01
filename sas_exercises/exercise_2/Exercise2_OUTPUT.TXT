@@ -138,6 +138,56 @@
                                          2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        5
                                        Narcotic analgesics or Narcotic analgesic combos, 2016
              PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
+
+                                                     The SURVEYMEANS Procedure
+
+                                                            Data Summary
+
+                                        Number of Strata                                 165
+                                        Number of Clusters                               368
+                                        Number of Observations                         34655
+                                        Number of Observations Used                    33259
+                                        Number of Obs with Nonpositive Weights          1396
+                                        Sum of Weights                             323141687
+
+
+                                                            Statistics
+ 
+                                                             Sum of                       Std Error                       Std Error
+Variable       Label                              N         Weights            Mean         of Mean             Sum          of Sum
+-----------------------------------------------------------------------------------------------------------------------------------
+TOT            SUM OF PAYMENTS                33259       323141687       25.163333        2.114099      8131321798       680339817
+               RXSF16X-RXOU16X                                                                                                     
+               (IMPUTED)                                                                                                           
+N_PHRCHASE     # OF PURCHASES PER             33259       323141687        0.376537        0.014236       121674856         4928822
+               PERSON                                                                                                              
+OOP            AMOUNT PAID, SELF OR           33259       323141687        4.403145        0.418861      1422839748       141147575
+               FAMILY (IMPUTED)                                                                                                    
+THIRD_PAYER    TOTAL-OOP                      33259       323141687       20.760188        1.973566      6708482050       629279347
+-----------------------------------------------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        6
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
+
+                                                     The SURVEYMEANS Procedure
+
+                                                     Statistics for SUB Domains
+ 
+                                                                   Sum of                   Std Error                   Std Error
+       SUB  Variable     Label                            N       Weights          Mean       of Mean           Sum        of Sum
+  -------------------------------------------------------------------------------------------------------------------------------
+         1  TOT          SUM OF PAYMENTS               3175      34060347    238.732792     19.287180    8131321798     680339817
+                         RXSF16X-RXOU16X                                                                                         
+                         (IMPUTED)                                                                                               
+            N_PHRCHASE   # OF PURCHASES PER            3175      34060347      3.572332      0.095813     121674856       4928822
+                         PERSON                                                                                                  
+            OOP          AMOUNT PAID, SELF OR          3175      34060347     41.774082      3.778515    1422839748     141147575
+                         FAMILY (IMPUTED)                                                                                        
+            THIRD_PAYER  TOTAL-OOP                     3175      34060347    196.958710     18.240899    6708482050     629279347
+  -------------------------------------------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        7
+                                       Narcotic analgesics or Narcotic analgesic combos, 2016
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
                    SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
                                                             Population                 SE of                                 SE of

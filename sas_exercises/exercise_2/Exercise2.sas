@@ -21,7 +21,7 @@ INPUT FILES:  (1) C:\DATA\H1192.SAS7BDAT (2016 FULL-YEAR CONSOLIDATED PUF)
 /* IMPORTANT NOTES: Use the next 6 lines of code, if you want to specify an alternative destination for SAS log and 
 SAS procedure output.*/
 
-%LET MyFolder= U:\_MEPS_Workshop_Spring_2019\Exercise_2;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2019\Spring2019\Exercise_2;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise2_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise2_OUTPUT.TXT";
@@ -48,6 +48,8 @@ DATA DRUG;
   IF TC1S1_1 IN (60, 191) ; /*definition of Narcotic analgesics or Narcotic analgesic combos*/
 RUN;
 
+ODS HTML CLOSE; /* This will make the default HTML output no longer active,
+                  and the output will not be displayed in the Results Viewer.*/
 TITLE3 "A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos";
 PROC PRINT DATA=DRUG (OBS=30);
 VAR RXRECIDX LINKIDX TC1S1_1 RXXP16X RXSF16X;
@@ -109,8 +111,8 @@ RUN;
 
 
 /*4) CALCULATE ESTIMATES ON USE AND EXPENDITURES*/
-
-ODS EXCLUDE ALL; /* Suppress the printing of output */
+ods graphics off; /*Suppress the graphics */
+ods listing; /* Open the listing destination*/
 TITLE3 "PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016";
 PROC SURVEYMEANS DATA=WORK.FY NOBS SUMWGT SUM STD MEAN STDERR;
   STRATA  VARSTR ;
@@ -121,7 +123,6 @@ PROC SURVEYMEANS DATA=WORK.FY NOBS SUMWGT SUM STD MEAN STDERR;
   ODS OUTPUT DOMAIN=work.domain_results;
 RUN;
 
-ODS EXCLUDE NONE; /* Unsuppress the printing of output */
 TITLE4 "SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos";
 proc print data= work.domain_results noobs split='*';
  var   VARLABEL N  SumWgt  mean StdErr  Sum stddev;
@@ -133,7 +134,7 @@ proc print data= work.domain_results noobs split='*';
        format N SumWgt Comma12. mean 9.1 stderr 9.4
               sum Stddev comma17.;
 run;
-ODS LISTING ;
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
+ only if used earlier */
 PROC PRINTTO;
 RUN;

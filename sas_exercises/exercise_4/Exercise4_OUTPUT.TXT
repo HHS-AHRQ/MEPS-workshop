@@ -1,31 +1,29 @@
                                          2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        1
-                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
                                              CHECK MISSING VALUES ON THE COMBINED DATA
 
                                                         The MEANS Procedure
 
-                                                                                                                 N
-                 Variable    Label                                                                      N     Miss
-                 -------------------------------------------------------------------------------------------------
-                 INSCOVY1    HEALTH INSURANCE COVERAGE INDICATOR 12                                 50535        0
-                 INSCOVY2    HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2                          50535        0
-                 PANEL       PANEL NUMBER                                                           50535        0
-                 AGEY1X      AGE AS OF 12/31/12 (EDITED/IMPUTED)                                    50535        0
-                 POVCATY1    FAMLY INC AS % OF POVERTY LINE-CATEGO 12                               50535        0
-                 VARSTR      VARIANCE ESTIMATION STRATUM                                            50535        0
-                 VARPSU      VARIANCE ESTIMATION PSU                                                50535        0
-                 LONGWT      LONGITUDINAL WEIGHT - PANEL 17                                         50535        0
-                 POOLWT                                                                             50535        0
-                 SUBPOP      POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR    50535        0
-                 -------------------------------------------------------------------------------------------------
+                                                                                                    N
+                               Variable    Label                                           N     Miss
+                               ----------------------------------------------------------------------
+                               PANEL       PANEL NUMBER                                50535        0
+                               AGEY1X      AGE AS OF 12/31/12 (EDITED/IMPUTED)         50535        0
+                               POVCATY1    FAMLY INC AS % OF POVERTY LINE-CATEGO 12    50535        0
+                               INSCOVY1    HEALTH INSURANCE COVERAGE INDICATOR 12      50535        0
+                               INSCOVY2    HEALTH INSURANCE COVERAGE INDICATOR 13      50535        0
+                               LONGWT      LONGITUDINAL WEIGHT - PANEL 17              50535        0
+                               VARPSU      VARIANCE ESTIMATION PSU                     50535        0
+                               VARSTR      VARIANCE ESTIMATION STRATUM                 50535        0
+                               POOLWT                                                  50535        0
+                               SUBPOP                                                  50535        0
+                               ----------------------------------------------------------------------
                                          2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        2
-                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
                                       SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
 
                                                          The FREQ Procedure
 
-                                POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR
- 
                                                                        Cumulative    Cumulative
                                     SUBPOP    Frequency     Percent     Frequency      Percent
                                     -----------------------------------------------------------
@@ -94,13 +92,90 @@
              2    3 UNINSURED        26-30              3 LOW INCOME            240        0.47         50255        99.45  
              2    3 UNINSURED        26-30              4 MIDDLE INCOME         280        0.55         50535       100.00  
                                          2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        3
-                                   POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, 19)
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
         INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
 
-                                                                                       SE of
-                                    Variable Level                N    Proportion    Proportion
+                                                     The SURVEYMEANS Procedure
 
-                                    -1 INAPPLICABLE               0        0.000      0.000000 
-                                    1 ANY PRIVATE                15        0.233      0.066438 
-                                    2 PUBLIC ONLY                 4        0.035      0.019375 
-                                    3 UNINSURED                  59        0.732      0.067309 
+                                                            Data Summary
+
+                                                Number of Strata                 165
+                                                Number of Clusters               368
+                                                Number of Observations         50535
+                                                Sum of Weights             321719891
+
+
+                                                      Class Level Information
+ 
+             Variable    Label                     Levels    Values
+
+             INSCOVY2    HEALTH INSURANCE               4    -1 INAPPLICABLE 1 ANY PRIVATE 2 PUBLIC ONLY 3 UNINSURED  
+                         COVERAGE INDICATOR                                                                           
+                         13                                                                                           
+
+
+                                                            Statistics
+ 
+                                                                                                          Std Error
+                Variable    Level              Label                              N            Mean         of Mean
+                ---------------------------------------------------------------------------------------------------
+                INSCOVY2    -1 INAPPLICABLE    HEALTH INSURANCE                 481        0.009956        0.000622
+                                               COVERAGE INDICATOR                                                  
+                                               13                                                                  
+                            1 ANY PRIVATE      HEALTH INSURANCE               25692        0.646146        0.007558
+                                               COVERAGE INDICATOR                                                  
+                                               13                                                                  
+                            2 PUBLIC ONLY      HEALTH INSURANCE               17180        0.241093        0.005998
+                                               COVERAGE INDICATOR                                                  
+                                               13                                                                  
+                            3 UNINSURED        HEALTH INSURANCE                7182        0.102805        0.003494
+                                               COVERAGE INDICATOR                                                  
+                                               13                                                                  
+                ---------------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        4
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
+        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
+
+                                                     The SURVEYMEANS Procedure
+
+                                                   Statistics for SUBPOP Domains
+ 
+                                                                                                                Std Error
+            SUBPOP    Variable    Level              Label                              N            Mean         of Mean
+          ---------------------------------------------------------------------------------------------------------------
+                 1    INSCOVY2    -1 INAPPLICABLE    HEALTH INSURANCE                   0               0               0
+                                                     COVERAGE INDICATOR                                                  
+                                                     13                                                                  
+                                  1 ANY PRIVATE      HEALTH INSURANCE                  15        0.232799        0.066438
+                                                     COVERAGE INDICATOR                                                  
+                                                     13                                                                  
+                                  2 PUBLIC ONLY      HEALTH INSURANCE                   4        0.034948        0.019375
+                                                     COVERAGE INDICATOR                                                  
+                                                     13                                                                  
+                                  3 UNINSURED        HEALTH INSURANCE                  59        0.732254        0.067309
+                                                     COVERAGE INDICATOR                                                  
+                                                     13                                                                  
+          ---------------------------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        5
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
+        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
+
+       Domain
+  Obs  Label   SUBPOP  VarName      VarLevel                     VarLabel                            N          Mean        StdErr
+
+   1   SUBPOP     1    INSCOVY2  -1 INAPPLICABLE  HEALTH INSURANCE COVERAGE INDICATOR 13             0             0             0
+   2   SUBPOP     1    INSCOVY2  1 ANY PRIVATE    HEALTH INSURANCE COVERAGE INDICATOR 13            15      0.232799      0.066438
+   3   SUBPOP     1    INSCOVY2  2 PUBLIC ONLY    HEALTH INSURANCE COVERAGE INDICATOR 13             4      0.034948      0.019375
+   4   SUBPOP     1    INSCOVY2  3 UNINSURED      HEALTH INSURANCE COVERAGE INDICATOR 13            59      0.732254      0.067309
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)                                        6
+                                 POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)
+        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
+
+                                       Variable                                       SE of
+                                         Level                   N    Proportion    Proportion
+
+                                     1 ANY PRIVATE              15        0.233      0.066438 
+                                     2 PUBLIC ONLY               4        0.035      0.019375 
+                                     3 UNINSURED                59        0.732      0.067309 
+                                                      ============    ==========
+                                                                78        1.000               

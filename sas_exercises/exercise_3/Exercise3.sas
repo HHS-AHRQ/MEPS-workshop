@@ -18,10 +18,11 @@ INPUT FILE:     (1) C:\DATA\H192.SAS7BDAT (2016 FULL-YEAR FILE)
 	            (2) C:\DATA\H181.SAS7BDAT (2015 FULL-YEAR FILE)
 
 *********************************************************************************/;
-/* IMPORTANT NOTES: Use the next 6 lines of code, if you want to specify an alternative destination for SAS log and 
-SAS procedure output.*/
+/* IMPORTANT NOTE: Use the next 6 lines of code, only if you want to specify an 
+alternative destination for SAS log and SAS procedure output. 
+Otherwise comment  out those six statements */
 
-%LET MyFolder= U:\_MEPS_Workshop_Spring_2019\Exercise_3;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2019\Spring2019\Exercise_3;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise3_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise3_OUTPUT.TXT";
@@ -59,7 +60,8 @@ DATA YR1;
 	SET CDATA.H181 (KEEP= DUPERSID INSCOV15 PERWT15F VARSTR VARPSU POVCAT15 AGELAST TOTSLF15);
      IF PERWT15F>0;
 RUN;
-
+ODS HTML CLOSE; /* This will make the default HTML output no longer active,
+                  and the output will not be displayed in the Results Viewer.*/
 TITLE3 'UNWEIGHTED FREQUENCY FOR 2015 FY PERSONS WITH AGE 26-30';
 PROC FREQ DATA= YR1 (WHERE=(26 LE AGELAST LE 30));
 	TABLES POVCAT15*INSCOV15/ LIST MISSING ;
@@ -89,8 +91,7 @@ DATA YR2X;
 RUN;
 
 DATA WORK.POOL;
-     LENGTH INSCOV AGELAST POVCAT VARSTR VARPSU 8;
-	SET WORK.YR1X WORK.YR2X;
+     SET WORK.YR1X WORK.YR2X;
      POOLWT = PERWT/2 ;
    
      IF 26 LE AGELAST LE 30 AND POVCAT=5 AND INSCOV=3 THEN SUBPOP=1;
@@ -109,8 +110,8 @@ PROC FREQ DATA=WORK.POOL;
 	TABLES SUBPOP SUBPOP*AGELAST*POVCAT*INSCOV/ LIST MISSING ;
 	FORMAT  AGELAST AGE. ;
 RUN;
-
-ODS EXCLUDE ALL; /* Suppress the printing of output */
+ods graphics off; /*Suppress the graphics */
+ods listing; /* Open the listing destination*/
 TITLE3 'WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME';
 PROC SURVEYMEANS DATA=WORK.POOL NOBS MEAN STDERR;
 	STRATUM VARSTR ;
@@ -121,7 +122,6 @@ PROC SURVEYMEANS DATA=WORK.POOL NOBS MEAN STDERR;
 	ODS OUTPUT DOMAIN=work.domain_results;
 RUN;
 
-ODS EXCLUDE NONE; /* Unsuppress the printing of output */
 TITLE3 'WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME';
 proc print data= work.domain_results noobs split='*';
  var   VARLABEL N  mean StdErr  ;
@@ -129,8 +129,8 @@ proc print data= work.domain_results noobs split='*';
        StdErr = 'SE of Mean';
        format N Comma12. mean comma9.1 stderr 9.4;             
 run;
-ODS LISTING;
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
+ only if used earlier */
 PROC PRINTTO;
 RUN;
  
