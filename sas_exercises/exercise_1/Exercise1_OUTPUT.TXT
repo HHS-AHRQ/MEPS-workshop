@@ -1,5 +1,6 @@
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        1
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   1
+                                                                  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)
                                             Supporting crosstabs for the flag variables
 
                                                          The FREQ Procedure
@@ -76,9 +77,9 @@
                                    59    0-64             415        1.20         28085        81.04  
                                    60    0-64             412        1.19         28497        82.23  
                                    61    0-64             346        1.00         28843        83.23  
-                                   62    0-64             377        1.09         29220        84.32  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        2
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   2
+                                                                  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)
                                             Supporting crosstabs for the flag variables
 
                                                          The FREQ Procedure
@@ -86,6 +87,7 @@
                                                                               Cumulative    Cumulative
                               AGELAST      AGECAT    Frequency     Percent     Frequency      Percent
                               ------------------------------------------------------------------------
+                                   62    0-64             377        1.09         29220        84.32  
                                    63    0-64             356        1.03         29576        85.34  
                                    64    0-64             334        0.96         29910        86.31  
                                    65    65+              325        0.94         30235        87.25  
@@ -109,9 +111,11 @@
                                    83    65+              115        0.33         33997        98.10  
                                    84    65+              115        0.33         34112        98.43  
                                    85    65+              543        1.57         34655       100.00  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        3
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   3
+                                                                  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)
                                       PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES
+                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
 
                                                      The SURVEYMEANS Procedure
 
@@ -134,9 +138,11 @@
  TOTAL        TOTAL HEALTH CARE              33259       323141687     5005.640169      116.958245     1.617531E12     50638644399
               EXP 16                                                                                                              
  ---------------------------------------------------------------------------------------------------------------------------------
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        4
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   4
+                                                                  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)
                                                PERCENTAGE OF PERSONS WITH AN EXPENSE
+                  CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS
 
                                                                                                               SE of
                                                                                                              Number
@@ -145,17 +151,20 @@
                             N            Size    Proportion    Proportion              Expense          Any Expense
 
                        33,259     323,141,687        0.85       0.00359            273,773,024            6,396,258
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        5
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
-                                                          OVERALL EXPENSES
+                                                                                                                                   5
+                                                                  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)
+                                           OVERALL EXPENSES AMONG PERSONS WITH AN EXPENSE
+                  CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS
 
                                     Population                     SE of                Total                SE of
                              N            Size      Mean($)      Mean($)          Expense ($)     Total Expense($)
 
                         33,259     323,141,687     5,005.64    116.95824    1,617,531,007,314       50,638,644,399
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        6
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   6
+                                                                  
                             MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
 
                                                      The SURVEYMEANS Procedure
 
@@ -177,9 +186,10 @@
   TOTAL       TOTAL HEALTH CARE              33259       323141687     5005.640169      116.958245     1.617531E12     50638644399
               EXP 16                                                                                                              
   --------------------------------------------------------------------------------------------------------------------------------
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        7
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   7
+                                                                  
                             MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
 
                                                      The SURVEYMEANS Procedure
 
@@ -191,9 +201,10 @@
            1  TOTAL     TOTAL HEALTH CARE            26942     273773024   5908.292149    133.820806   1.617531E12   50638644399
                         EXP 16                                                                                                  
    -----------------------------------------------------------------------------------------------------------------------------
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        8
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   8
+                                                                  
                             MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
 
                                                      The SURVEYMEANS Procedure
 
@@ -207,9 +218,10 @@ X_ANYSVCE  AGECAT    Variable  Label                         N       Weights    
            65+       TOTAL     TOTAL HEALTH CARE          4429      49406702         11781    429.171956  582052417044   26901634384
                                EXP 16                                                                                               
 ------------------------------------------------------------------------------------------------------------------------------------
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)                                        9
-                                                NATIONAL HEALTH CARE EXPENSES, 2016
+                                                                                                                                   9
+                                                                  
                             MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+                  CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS
 
             Age                           Population                     SE of                Total                SE of
             Group                  N            Size      Mean($)      Mean($)          Expense ($)     Total Expense($)

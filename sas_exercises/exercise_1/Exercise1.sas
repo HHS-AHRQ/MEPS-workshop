@@ -41,9 +41,10 @@ PROC FORMAT;
       0         = 'No expense'
       1         = 'Any expense';
 RUN;
-
-TITLE1 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)';
-TITLE2 "NATIONAL HEALTH CARE EXPENSES, 2016";
+TITLE1 ' ';
+TITLE2 ' ';
+TITLE3 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)';
+TITLE4 "NATIONAL HEALTH CARE EXPENSES, 2016";
 
 /* READ IN DATA FROM 2016 CONSOLIDATED DATA FILE (HC-192) */
 DATA WORK.PUF192;
@@ -61,7 +62,7 @@ DATA WORK.PUF192;
 RUN;
 ODS HTML CLOSE; /* This will make the default HTML output no longer active,
                   and the output will not be displayed in the Results Viewer.*/
-TITLE3 "Supporting crosstabs for the flag variables";
+TITLE4 "Supporting crosstabs for the flag variables";
 PROC FREQ DATA=PUF192;
    TABLES X_ANYSVCE*TOTAL
           AGELAST*AGECAT
@@ -73,7 +74,8 @@ RUN;
  
 ods graphics off; /*Suppress the graphics */
 ods listing; /* Open the listing destination*/
-TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
+TITLE4 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
+TITLE5 "AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS";
 PROC SURVEYMEANS DATA=WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
 	STRATUM VARSTR;
 	CLUSTER VARPSU;
@@ -82,7 +84,8 @@ PROC SURVEYMEANS DATA=WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
 	ods output Statistics=work.Overall_results;
 RUN;
 
-TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE';
+TITLE4 'PERCENTAGE OF PERSONS WITH AN EXPENSE';
+TITLE5 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
 proc print data=work.Overall_results (firstobs=1 obs=1) noobs split='*'; 
 var  N  SumWgt  mean StdErr  Sum stddev;
  label SumWgt = 'Population*Size'
@@ -94,7 +97,8 @@ var  N  SumWgt  mean StdErr  Sum stddev;
               sum Stddev comma17.;
 run;
 
-TITLE3 'OVERALL EXPENSES';
+TITLE4 'OVERALL EXPENSES AMONG PERSONS WITH AN EXPENSE';
+TITLE5 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
 proc print data=work.Overall_results (firstobs=2) noobs split='*'; 
 var  N  SumWgt  mean StdErr  Sum stddev;
  label SumWgt = 'Population*Size'
@@ -107,6 +111,7 @@ var  N  SumWgt  mean StdErr  Sum stddev;
 run;
 
 TITLE3 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
+TITLE4 "AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS";
 PROC SURVEYMEANS DATA= WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
 	STRATUM VARSTR ;
 	CLUSTER VARPSU ;
@@ -117,6 +122,7 @@ PROC SURVEYMEANS DATA= WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
 	ods output domain= work.domain_results;
 RUN;
 
+TITLE4 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
 proc print data= work.domain_results noobs split='*';
  var AGECAT  N  SumWgt  mean StdErr  Sum stddev;
  label AGECAT = 'Age Group'
