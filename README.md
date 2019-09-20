@@ -32,7 +32,7 @@ Purchases and expenses for narcotic analgesics or narcotic analgesic combos for 
 
 Data files needed:
 [FYC 2017 (h201)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-201) and
-[RX 2017 (h197a)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-197A)
+[PMED 2017 (h197a)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-197A)
 
 #### Exercise 3
 This program illustrates how to pool MEPS data files from different years. The example used is the MEPS population ages 26-30 who are uninsured but have high income.
