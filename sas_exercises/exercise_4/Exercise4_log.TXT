@@ -1,159 +1,148 @@
 NOTE: PROCEDURE PRINTTO used (Total process time):
       real time           0.04 seconds
-      cpu time            0.03 seconds
+      cpu time            0.00 seconds
       
 
-880  
-881  proc datasets lib=work nolist kill;
+1984  
+1985  proc datasets lib=work nolist kill;
 NOTE: Deleting WORK.DOMAIN_RESULTS (memtype=DATA).
 NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
 NOTE: Deleting WORK.POOL (memtype=DATA).
-NOTE: Deleting WORK.YR2015 (memtype=DATA).
-NOTE: Deleting WORK.YR2016 (memtype=DATA).
-881!                                     quit;
+NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
+NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
+1985!                                     quit;
 
 NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-881!                                           /* delete  all files in the WORK library */
-882  LIBNAME CDATA 'C:\DATA';
-NOTE: Libref CDATA was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: C:\DATA
-883  PROC FORMAT;
-884      VALUE POVCAT
-885      1 = '1 POOR/NEGATIVE'
-886      2 = '2 NEAR POOR'
-887      3 = '3 LOW INCOME'
-888      4 = '4 MIDDLE INCOME'
-889      5 = '5 HIGH INCOME'
-890      ;
-NOTE: Format POVCAT has been output.
-891  
-892      VALUE INSF
-893      -1= '-1 INAPPLICABLE'
-894      1 = '1 ANY PRIVATE'
-895      2 = '2 PUBLIC ONLY'
-896      3 = '3 UNINSURED';
-NOTE: Format INSF has been output.
-897  
-898      VALUE AGE
-899        -1= '-1 INAPPLICABLE'
-900      26-30='26-30'
-901      0-25, 31-HIGH='0-25, 31+';
-NOTE: Format AGE has been output.
-902  
-903      VALUE  SUBPOP (max= 50)
-904      1 = 'AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME'
-905      2 ='OTHERS';
-NOTE: Format SUBPOP has been output.
-906  run;
-
-NOTE: PROCEDURE FORMAT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-907  
-908  /* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
-909  DATA WORK.POOL;
-910        SET CDATA.H164 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
-911             CDATA.H172 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
-912             CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL);
-913       POOLWT = LONGWT/3 ;
-914  
-915       IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
-916       ELSE SUBPOP=2;
-917    RUN;
-
-NOTE: There were 17923 observations read from the data set CDATA.H164.
-NOTE: There were 16714 observations read from the data set CDATA.H172.
-NOTE: There were 15898 observations read from the data set CDATA.H183.
-NOTE: The data set WORK.POOL has 50535 observations and 11 variables.
-NOTE: DATA statement used (Total process time):
-      real time           3.01 seconds
-      cpu time            0.73 seconds
-      
-
-918  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-919                    and the output will not be displayed in the Results Viewer.*/
-920  
-921  TITLE1 ' ';
-922  TITLE2 ' ';
-923  TITLE3 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)';
-924  TITLE4 'COMBINED MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 17, 18, and 19)';
-925  TITLE5 "CHECK MISSING VALUES ON THE COMBINED DATA";
-926  PROC MEANS DATA=POOL N NMISS;
-927  RUN;
-
-NOTE: There were 50535 observations read from the data set WORK.POOL.
-NOTE: PROCEDURE MEANS used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.00 seconds
-      
-
-928  
-929  TITLE5 'SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG';
-930  PROC FREQ DATA=POOL;
-931  TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
-932  FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF. SUBPOP SUBPOP.;
-933  RUN;
-
-NOTE: There were 50535 observations read from the data set WORK.POOL.
-NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.04 seconds
-      cpu time            0.04 seconds
-      
-
-934  ODS GRAPHICS OFF;
-935  ods listing; /* Open the listing destination*/
-936  TITLE5 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
-937  TITLE6 "AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS";
-938  PROC SURVEYMEANS DATA=POOL NOBS MEAN STDERR;
-939      STRATUM VARSTR ;
-940      CLUSTER VARPSU ;
-941      WEIGHT  POOLWT;
-942      VAR  INSCOVY2;
-943      CLASS INSCOVY2;
-944      FORMAT INSCOVY2 INSF. SUBPOP SUBPOP.;
-945      DOMAIN  SUBPOP("AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME");
-946      ODS OUTPUT DOMAIN=work.domain_results;
-947  RUN;
-
-NOTE: Only one cluster in a stratum for SUBPOP domains for variable(s) INSCOVY2. The estimate of variance for INSCOVY2 will omit 
-      this stratum.
-NOTE: The data set WORK.DOMAIN_RESULTS has 4 observations and 8 variables.
-NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.09 seconds
-      cpu time            0.09 seconds
-      
-
-948  
-949  TITLE6 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
-950  proc print data= work.domain_results noobs split='*';
-951   var   VARLEVEL N  mean StdErr  ;
-952   sum N mean;
-953   label SUBPOP='POPULATION WITH AGE 26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR'
-954         INSCOVY2="HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2"
-955         mean = 'Proportion'
-WARNING: Variable INSCOVY2 not found in data set WORK.DOMAIN_RESULTS.
-956         StdErr = 'SE of Proportion';
-957         format N Comma12. mean comma9.3 stderr 9.6;
-958  where  N ne 0 ;
-959  run;
-
-NOTE: There were 3 observations read from the data set WORK.DOMAIN_RESULTS.
-      WHERE N not = 0;
-NOTE: PROCEDURE PRINT used (Total process time):
       real time           0.01 seconds
       cpu time            0.01 seconds
       
 
-960  
-961  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
-962   only if used earlier */
-963  PROC PRINTTO;
-964  RUN;
+1985!                                           /* delete  all files in the WORK library */
+1986  LIBNAME CDATA 'C:\DATA';
+NOTE: Libref CDATA refers to the same physical library as MYFOLDER.
+NOTE: Libref CDATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\Data
+1987  OPTIONS NODATE;
+1988  TITLE1 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE4.SAS)';
+1989  TITLE2 'POOL MEPS DATA FILES FROM DIFFERENT PANELS (PANELS 18, 19, and 20)';
+1990  
+1991  PROC FORMAT;
+1992      VALUE POVCAT
+1993      1 = '1 POOR/NEGATIVE'
+1994      2 = '2 NEAR POOR'
+1995      3 = '3 LOW INCOME'
+1996      4 = '4 MIDDLE INCOME'
+1997      5 = '5 HIGH INCOME'
+1998      ;
+NOTE: Format POVCAT has been output.
+1999  
+2000      VALUE INSF
+2001      -1= '-1 INAPPLICABLE'
+2002      1 = '1 ANY PRIVATE'
+2003      2 = '2 PUBLIC ONLY'
+2004      3 = '3 UNINSURED';
+NOTE: Format INSF has been output.
+2005  
+2006      VALUE AGE
+2007        -1= '-1 INAPPLICABLE'
+2008      26-30='26-30'
+2009      0-25, 31-HIGH='0-25, 31+';
+NOTE: Format AGE has been output.
+2010  run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+2011  
+2012  /* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
+2013  DATA WORK.POOL;
+2014       LENGTH INSCOVY1 INSCOVY2 PANEL AGEY1X POVCATY1 VARSTR VARPSU 8;
+2015         SET CDATA.H172 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+2016             CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+2017             CDATA.H193 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL);
+2018       POOLWT = LONGWT/3 ;
+2019  
+2020       IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
+2021       ELSE SUBPOP=2;
+2022  
+2023       LABEL SUBPOP='POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR'
+2024             INSCOVY2="HEALTH INSURANCE COVERAGE INDICATOR IN YEAR 2";
+2025  RUN;
+
+NOTE: There were 16714 observations read from the data set CDATA.H172.
+NOTE: There were 15898 observations read from the data set CDATA.H183.
+NOTE: There were 17017 observations read from the data set CDATA.H193.
+NOTE: The data set WORK.POOL has 49629 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           2.79 seconds
+      cpu time            0.57 seconds
+      
+
+2026  
+2027  TITLE3 "CHECK MISSING VALUES ON THE COMBINED DATA";
+2028  PROC MEANS DATA=POOL N NMISS;
+2029  RUN;
+
+NOTE: There were 49629 observations read from the data set WORK.POOL.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+2030  
+2031  TITLE3 'SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG';
+2032  PROC FREQ DATA=POOL;
+2033  TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
+2034  FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF.;
+2035  RUN;
+
+NOTE: There were 49629 observations read from the data set WORK.POOL.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.06 seconds
+      
+
+2036  ODS GRAPHICS OFF;
+2037  ODS SELECT SUMMARY DOMAIN;
+2038  TITLE3 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
+2039  PROC SURVEYMEANS DATA=POOL NOBS MEAN STDERR;
+2040      STRATUM VARSTR ;
+2041      CLUSTER VARPSU ;
+2042      WEIGHT  POOLWT;
+2043      VAR  INSCOVY2;
+2044      CLASS INSCOVY2;
+2045      FORMAT INSCOVY2 INSF.;
+2046      DOMAIN  SUBPOP('1');
+2047      ODS OUTPUT DOMAIN=work.domain_results;
+2048  RUN;
+
+NOTE: Only one cluster in a stratum for POPULATION WITH AGE=26-30, UNINSURED, AND HIGH INCOME IN FIRST YEAR domains for variable(s) 
+      INSCOVY2. The estimate of variance for INSCOVY2 will omit this stratum.
+NOTE: The data set WORK.DOMAIN_RESULTS has 4 observations and 8 variables.
+NOTE: PROCEDURE SURVEYMEANS used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.06 seconds
+      
+
+2049  ODS LISTING;
+2050  TITLE3 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
+2051  proc print data= work.domain_results noobs split='*';
+2052   var   VARLEVEL N  mean StdErr  ;
+2053   label mean = 'Proportion'
+2054         StdErr = 'SE of Proportion';
+2055         format N Comma12. mean 7.3 stderr 7.5;
+2056  run;
+
+NOTE: There were 4 observations read from the data set WORK.DOMAIN_RESULTS.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+2057  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
+2058  PROC PRINTTO;
+2059  RUN;
 

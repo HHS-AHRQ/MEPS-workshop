@@ -1,5 +1,5 @@
 
-*Ex12_download_unzip_create_macro.sas;
+*Download_Data_from_MEPS_Site_rev.sas;
 /***********************************************************************
 This program automates the following:
 - downloading multiple SAS transport files from the MEPS website
@@ -73,13 +73,14 @@ to the revision/expansion of the original program.
 
 /* Form the MEPS website, download/unzip the follwong SAS transport files
    and then convert them into SAS data files in a pernament folder:
-   - 2006-2016 Full-Year Consolidated PUFs
-   - 2016 Full-Year Consolidated PUF
-  
+   a) 2016 and 2017 full-year consolidated files
+   b) data for Panels 18, 19, and 20
+   c) precription medicine file for 2017 (h197a)
+
 */
-%load_MEPS(h181)
+%load_MEPS(h201)
 %load_MEPS(h192)
-%load_MEPS(h164)
 %load_MEPS(h172)
 %load_MEPS(h183)
-%load_MEPS(h188a)
+%load_MEPS(h193)
+%load_MEPS(h197a)

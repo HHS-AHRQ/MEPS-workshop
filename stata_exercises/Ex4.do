@@ -65,3 +65,4 @@ svy, subpop(subpop): tabulate inscovy2, cell se obs
 
 *log close  
 exit, clear
+

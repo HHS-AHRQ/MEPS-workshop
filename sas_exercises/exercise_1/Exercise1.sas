@@ -1,21 +1,18 @@
 /**********************************************************************************
 PROGRAM:      EXERCISE1.SAS
 
-DESCRIPTION:  THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE EXPENSES, 2016:
+DESCRIPTION:  THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE EXPENSES, 2017:
 
 	           (1) OVERALL EXPENSES 
 	           (2) PERCENTAGE OF PERSONS WITH AN EXPENSE
 	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE
 
-
-INPUT FILE:   C:\DATA\H192.SAS7BDAT (2016 FULL-YEAR FILE)
-
+INPUT FILE:   C:\DATA\H201.SAS7BDAT (2017 FULL-YEAR FILE)
 *********************************************************************************/;
-/* IMPORTANT NOTE: Use the next 6 lines of code, only if you want to specify an 
-alternative destination for SAS log and SAS procedure output. 
-Otherwise comment  out those six statements */
+/* IMPORTANT NOTES: Use the next 6 lines of code, if you want to specify an alternative destination for SAS log and 
+SAS procedure output.*/
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2019\Spring2019\Exercise_1;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2019\Fall2019\SAS\Exercise_1;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise1_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise1_OUTPUT.TXT";
@@ -27,6 +24,11 @@ proc datasets lib=work nolist kill; quit; /* delete  all files in the WORK libra
 libname CDATA "C:\DATA"; 
 
 PROC FORMAT;
+  VALUE AGEF
+     .      = 'ALL AGES'
+     0-  64 = '0-64'
+     65-HIGH = '65+';
+
   VALUE AGECAT
        .     = 'ALL AGES'
 	   1 = '0-64'
@@ -41,15 +43,14 @@ PROC FORMAT;
       0         = 'No expense'
       1         = 'Any expense';
 RUN;
-TITLE1 ' ';
-TITLE2 ' ';
-TITLE3 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)';
-TITLE4 "NATIONAL HEALTH CARE EXPENSES, 2016";
 
-/* READ IN DATA FROM 2016 CONSOLIDATED DATA FILE (HC-192) */
-DATA WORK.PUF192;
-  SET CDATA.H192 (KEEP = TOTEXP16 AGELAST   VARSTR  VARPSU  PERWT16F
-                  RENAME = (TOTEXP16 = TOTAL));
+TITLE1 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)';
+TITLE2 "NATIONAL HEALTH CARE EXPENSES, 2017";
+
+/* READ IN DATA FROM 2017 CONSOLIDATED DATA FILE (HC-201) */
+DATA WORK.PUF201;
+  SET CDATA.h201 (KEEP = TOTEXP17 AGELAST   VARSTR  VARPSU  PERWT17F
+                  RENAME = (TOTEXP17 = TOTAL));
 
   /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */  
   X_ANYSVCE=0;
@@ -60,32 +61,28 @@ DATA WORK.PUF192;
   IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
   ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;
 RUN;
-ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-                  and the output will not be displayed in the Results Viewer.*/
-TITLE4 "Supporting crosstabs for the flag variables";
-PROC FREQ DATA=PUF192;
+
+TITLE3 "Supporting crosstabs for the flag variables";
+PROC FREQ DATA=PUF201;
    TABLES X_ANYSVCE*TOTAL
-          AGELAST*AGECAT
+          AGECAT*AGELAST
           /LIST MISSING;
    FORMAT TOTAL        	gtzero.      
-          AGECAT        agecat.
+          AGECAT        agef.
      ;
 RUN;
- 
-ods graphics off; /*Suppress the graphics */
-ods listing; /* Open the listing destination*/
-TITLE4 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
-TITLE5 "AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS";
-PROC SURVEYMEANS DATA=WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
+ods graphics off;
+TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
+PROC SURVEYMEANS DATA=WORK.PUF201 MEAN NOBS SUMWGT STDERR SUM STD;
 	STRATUM VARSTR;
 	CLUSTER VARPSU;
-	WEIGHT PERWT16F;
+	WEIGHT PERWT17F;
 	VAR  X_ANYSVCE TOTAL ;
 	ods output Statistics=work.Overall_results;
 RUN;
 
-TITLE4 'PERCENTAGE OF PERSONS WITH AN EXPENSE';
-TITLE5 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
+ods listing ; 
+TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE';
 proc print data=work.Overall_results (firstobs=1 obs=1) noobs split='*'; 
 var  N  SumWgt  mean StdErr  Sum stddev;
  label SumWgt = 'Population*Size'
@@ -94,11 +91,10 @@ var  N  SumWgt  mean StdErr  Sum stddev;
        Sum = 'Persons*with Any*Expense '
        Stddev = 'SE of*Number*Persons*with*Any Expense';
        format N SumWgt Comma12. mean 7.2 stderr 7.5
-              sum Stddev comma17.;
+              sum Stddev comma19.;
 run;
 
-TITLE4 'OVERALL EXPENSES AMONG PERSONS WITH AN EXPENSE';
-TITLE5 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
+TITLE3 'OVERALL EXPENSES';
 proc print data=work.Overall_results (firstobs=2) noobs split='*'; 
 var  N  SumWgt  mean StdErr  Sum stddev;
  label SumWgt = 'Population*Size'
@@ -106,23 +102,23 @@ var  N  SumWgt  mean StdErr  Sum stddev;
        StdErr = 'SE of Mean($)'
        Sum = 'Total*Expense ($)'
        Stddev = 'SE of*Total Expense($)';
-       format N SumWgt Comma12. mean comma9.2 stderr 9.5 
-              sum Stddev comma17.;
+       format N SumWgt Comma12. mean stderr comma9. 
+              sum Stddev comma19.;
 run;
 
+ods select summary domain; 
 TITLE3 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
-TITLE4 "AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS";
-PROC SURVEYMEANS DATA= WORK.PUF192 MEAN NOBS SUMWGT STDERR SUM STD;
+PROC SURVEYMEANS DATA= WORK.PUF201 MEAN NOBS SUMWGT STDERR SUM STD;
 	STRATUM VARSTR ;
 	CLUSTER VARPSU ;
-	WEIGHT  PERWT16F ;	
+	WEIGHT  PERWT17F ;	
 	VAR  TOTAL;
 	DOMAIN X_ANYSVCE('1')  X_ANYSVCE('1')*AGECAT ;
 	FORMAT  AGECAT agecat.;
 	ods output domain= work.domain_results;
 RUN;
 
-TITLE4 "CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS";
+
 proc print data= work.domain_results noobs split='*';
  var AGECAT  N  SumWgt  mean StdErr  Sum stddev;
  label AGECAT = 'Age Group'
@@ -131,10 +127,10 @@ proc print data= work.domain_results noobs split='*';
        StdErr = 'SE of Mean($)'
        Sum = 'Total*Expense ($)'
        Stddev = 'SE of*Total Expense($)';
-       format AGECAT AGECAT. N SumWgt Comma12. mean comma9.1 stderr 9.4 
-              sum Stddev comma17.;
+       format AGECAT AGECAT. N SumWgt Comma12. mean stderr comma9. 
+              sum Stddev comma19.;
 run;
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
- only if used earlier */
+
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
 PROC PRINTTO;
 RUN;

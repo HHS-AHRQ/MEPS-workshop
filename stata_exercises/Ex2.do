@@ -75,3 +75,4 @@ estimates table, b(%13.0f) se(%11.0f)
 
 *log close  
 exit, clear
+

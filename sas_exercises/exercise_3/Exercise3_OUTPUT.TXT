@@ -1,254 +1,164 @@
-                                                                                                                                   1
-                                                                  
-                                      SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
-
--------------------------------------------------------- year=2015 SUBPOP=1 --------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        1
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                                      UNWEIGHTED FREQUENCY FOR 2016 FY PERSONS WITH AGE 26-30
 
                                                          The FREQ Procedure
 
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  26-30      5 HIGH INCOME      3 UNINSURED            61      100.00            61       100.00  
-
-
                                                                                     Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
+                              POVCAT16         INSCOV16    Frequency     Percent     Frequency      Percent
                        -------------------------------------------------------------------------------------
-                       5 HIGH INCOME      3 UNINSURED            61      100.00            61       100.00  
-                                                                                                                                   2
-                                                                  
-                                      SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
-
--------------------------------------------------------- year=2015 SUBPOP=2 --------------------------------------------------------
+                       1 POOR/NEGATIVE    1 ANY PRIVATE          88        4.20            88         4.20  
+                       1 POOR/NEGATIVE    2 PUBLIC ONLY         208        9.93           296        14.13  
+                       1 POOR/NEGATIVE    3 UNINSURED           118        5.63           414        19.76  
+                       2 NEAR POOR        1 ANY PRIVATE          29        1.38           443        21.15  
+                       2 NEAR POOR        2 PUBLIC ONLY          44        2.10           487        23.25  
+                       2 NEAR POOR        3 UNINSURED            35        1.67           522        24.92  
+                       3 LOW INCOME       1 ANY PRIVATE         137        6.54           659        31.46  
+                       3 LOW INCOME       2 PUBLIC ONLY          84        4.01           743        35.47  
+                       3 LOW INCOME       3 UNINSURED            91        4.34           834        39.81  
+                       4 MIDDLE INCOME    1 ANY PRIVATE         500       23.87          1334        63.68  
+                       4 MIDDLE INCOME    2 PUBLIC ONLY          72        3.44          1406        67.11  
+                       4 MIDDLE INCOME    3 UNINSURED           115        5.49          1521        72.60  
+                       5 HIGH INCOME      1 ANY PRIVATE         490       23.39          2011        95.99  
+                       5 HIGH INCOME      2 PUBLIC ONLY          25        1.19          2036        97.18  
+                       5 HIGH INCOME      3 UNINSURED            59        2.82          2095       100.00  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        2
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                                      UNWEIGHTED FREQUENCY FOR 2017 FY PERSONS WITH AGE 26-30
 
                                                          The FREQ Procedure
 
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  0-25       1 POOR/NEGATIVE    1 ANY PRIVATE         458        1.30           458         1.30  
-                  0-25       1 POOR/NEGATIVE    2 PUBLIC ONLY        3452        9.76          3910        11.06  
-                  0-25       1 POOR/NEGATIVE    3 UNINSURED           333        0.94          4243        12.00  
-                  0-25       2 NEAR POOR        1 ANY PRIVATE         211        0.60          4454        12.59  
-                  0-25       2 NEAR POOR        2 PUBLIC ONLY         683        1.93          5137        14.53  
-                  0-25       2 NEAR POOR        3 UNINSURED           112        0.32          5249        14.84  
-                  0-25       3 LOW INCOME       1 ANY PRIVATE         792        2.24          6041        17.08  
-                  0-25       3 LOW INCOME       2 PUBLIC ONLY        1403        3.97          7444        21.05  
-                  0-25       3 LOW INCOME       3 UNINSURED           268        0.76          7712        21.81  
-                  0-25       4 MIDDLE INCOME    1 ANY PRIVATE        2349        6.64         10061        28.45  
-                  0-25       4 MIDDLE INCOME    2 PUBLIC ONLY         884        2.50         10945        30.95  
-                  0-25       4 MIDDLE INCOME    3 UNINSURED           308        0.87         11253        31.82  
-                  0-25       5 HIGH INCOME      1 ANY PRIVATE        1989        5.62         13242        37.44  
-                  0-25       5 HIGH INCOME      2 PUBLIC ONLY         133        0.38         13375        37.82  
-                  0-25       5 HIGH INCOME      3 UNINSURED           100        0.28         13475        38.10  
-                  26-30      1 POOR/NEGATIVE    1 ANY PRIVATE          86        0.24         13561        38.34  
-                  26-30      1 POOR/NEGATIVE    2 PUBLIC ONLY         251        0.71         13812        39.05  
-                  26-30      1 POOR/NEGATIVE    3 UNINSURED           154        0.44         13966        39.49  
-                  26-30      2 NEAR POOR        1 ANY PRIVATE          39        0.11         14005        39.60  
-                  26-30      2 NEAR POOR        2 PUBLIC ONLY          52        0.15         14057        39.75  
-                  26-30      2 NEAR POOR        3 UNINSURED            41        0.12         14098        39.86  
-                  26-30      3 LOW INCOME       1 ANY PRIVATE         202        0.57         14300        40.43  
-                  26-30      3 LOW INCOME       2 PUBLIC ONLY          83        0.23         14383        40.67  
-                  26-30      3 LOW INCOME       3 UNINSURED           107        0.30         14490        40.97  
-                  26-30      4 MIDDLE INCOME    1 ANY PRIVATE         532        1.50         15022        42.48  
-                  26-30      4 MIDDLE INCOME    2 PUBLIC ONLY          96        0.27         15118        42.75  
-                  26-30      4 MIDDLE INCOME    3 UNINSURED           165        0.47         15283        43.21  
-                  26-30      5 HIGH INCOME      1 ANY PRIVATE         585        1.65         15868        44.87  
-                  26-30      5 HIGH INCOME      2 PUBLIC ONLY          32        0.09         15900        44.96  
-                  31+        1 POOR/NEGATIVE    1 ANY PRIVATE         555        1.57         16455        46.53  
-                  31+        1 POOR/NEGATIVE    2 PUBLIC ONLY        1869        5.28         18324        51.81  
-                  31+        1 POOR/NEGATIVE    3 UNINSURED           766        2.17         19090        53.98  
-                  31+        2 NEAR POOR        1 ANY PRIVATE         326        0.92         19416        54.90  
-                  31+        2 NEAR POOR        2 PUBLIC ONLY         550        1.56         19966        56.46  
-                  31+        2 NEAR POOR        3 UNINSURED           246        0.70         20212        57.15  
-                  31+        3 LOW INCOME       1 ANY PRIVATE        1316        3.72         21528        60.87  
-                  31+        3 LOW INCOME       2 PUBLIC ONLY        1146        3.24         22674        64.11  
-                  31+        3 LOW INCOME       3 UNINSURED           604        1.71         23278        65.82  
-                  31+        4 MIDDLE INCOME    1 ANY PRIVATE        3918       11.08         27196        76.90  
-                  31+        4 MIDDLE INCOME    2 PUBLIC ONLY        1181        3.34         28377        80.24  
-                  31+        4 MIDDLE INCOME    3 UNINSURED           678        1.92         29055        82.16  
-                  31+        5 HIGH INCOME      1 ANY PRIVATE        5419       15.32         34474        97.48  
-                  31+        5 HIGH INCOME      2 PUBLIC ONLY         601        1.70         35075        99.18  
-                  31+        5 HIGH INCOME      3 UNINSURED           291        0.82         35366       100.00  
-
-
                                                                                     Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
+                              POVCAT17         INSCOV17    Frequency     Percent     Frequency      Percent
                        -------------------------------------------------------------------------------------
-                       1 POOR/NEGATIVE    1 ANY PRIVATE        1099        3.11          1099         3.11  
-                       1 POOR/NEGATIVE    2 PUBLIC ONLY        5572       15.76          6671        18.86  
-                       1 POOR/NEGATIVE    3 UNINSURED          1253        3.54          7924        22.41  
-                       2 NEAR POOR        1 ANY PRIVATE         576        1.63          8500        24.03  
-                       2 NEAR POOR        2 PUBLIC ONLY        1285        3.63          9785        27.67  
-                       2 NEAR POOR        3 UNINSURED           399        1.13         10184        28.80  
-                       3 LOW INCOME       1 ANY PRIVATE        2310        6.53         12494        35.33  
-                       3 LOW INCOME       2 PUBLIC ONLY        2632        7.44         15126        42.77  
-                       3 LOW INCOME       3 UNINSURED           979        2.77         16105        45.54  
-                       4 MIDDLE INCOME    1 ANY PRIVATE        6799       19.22         22904        64.76  
-                       4 MIDDLE INCOME    2 PUBLIC ONLY        2161        6.11         25065        70.87  
-                       4 MIDDLE INCOME    3 UNINSURED          1151        3.25         26216        74.13  
-                       5 HIGH INCOME      1 ANY PRIVATE        7993       22.60         34209        96.73  
-                       5 HIGH INCOME      2 PUBLIC ONLY         766        2.17         34975        98.89  
-                       5 HIGH INCOME      3 UNINSURED           391        1.11         35366       100.00  
-                                                                                                                                   3
-                                                                  
-                                      SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
-
--------------------------------------------------------- year=2016 SUBPOP=1 --------------------------------------------------------
-
-                                                         The FREQ Procedure
-
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  26-30      5 HIGH INCOME      3 UNINSURED            73      100.00            73       100.00  
-
-
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       5 HIGH INCOME      3 UNINSURED            73      100.00            73       100.00  
-                                                                                                                                   4
-                                                                  
-                                      SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
-
--------------------------------------------------------- year=2016 SUBPOP=2 --------------------------------------------------------
-
-                                                         The FREQ Procedure
-
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  0-25       1 POOR/NEGATIVE    1 ANY PRIVATE         421        1.22           421         1.22  
-                  0-25       1 POOR/NEGATIVE    2 PUBLIC ONLY        3208        9.28          3629        10.49  
-                  0-25       1 POOR/NEGATIVE    3 UNINSURED           280        0.81          3909        11.30  
-                  0-25       2 NEAR POOR        1 ANY PRIVATE         209        0.60          4118        11.91  
-                  0-25       2 NEAR POOR        2 PUBLIC ONLY         710        2.05          4828        13.96  
-                  0-25       2 NEAR POOR        3 UNINSURED            76        0.22          4904        14.18  
-                  0-25       3 LOW INCOME       1 ANY PRIVATE         733        2.12          5637        16.30  
-                  0-25       3 LOW INCOME       2 PUBLIC ONLY        1328        3.84          6965        20.14  
-                  0-25       3 LOW INCOME       3 UNINSURED           247        0.71          7212        20.85  
-                  0-25       4 MIDDLE INCOME    1 ANY PRIVATE        2101        6.08          9313        26.93  
-                  0-25       4 MIDDLE INCOME    2 PUBLIC ONLY         941        2.72         10254        29.65  
-                  0-25       4 MIDDLE INCOME    3 UNINSURED           285        0.82         10539        30.48  
-                  0-25       5 HIGH INCOME      1 ANY PRIVATE        2127        6.15         12666        36.63  
-                  0-25       5 HIGH INCOME      2 PUBLIC ONLY         140        0.40         12806        37.03  
-                  0-25       5 HIGH INCOME      3 UNINSURED           120        0.35         12926        37.38  
-                  26-30      1 POOR/NEGATIVE    1 ANY PRIVATE          94        0.27         13020        37.65  
-                  26-30      1 POOR/NEGATIVE    2 PUBLIC ONLY         215        0.62         13235        38.27  
-                  26-30      1 POOR/NEGATIVE    3 UNINSURED           131        0.38         13366        38.65  
-                  26-30      2 NEAR POOR        1 ANY PRIVATE          33        0.10         13399        38.75  
-                  26-30      2 NEAR POOR        2 PUBLIC ONLY          46        0.13         13445        38.88  
-                  26-30      2 NEAR POOR        3 UNINSURED            37        0.11         13482        38.99  
-                  26-30      3 LOW INCOME       1 ANY PRIVATE         144        0.42         13626        39.40  
-                  26-30      3 LOW INCOME       2 PUBLIC ONLY          89        0.26         13715        39.66  
-                  26-30      3 LOW INCOME       3 UNINSURED           104        0.30         13819        39.96  
-                  26-30      4 MIDDLE INCOME    1 ANY PRIVATE         529        1.53         14348        41.49  
-                  26-30      4 MIDDLE INCOME    2 PUBLIC ONLY          79        0.23         14427        41.72  
-                  26-30      4 MIDDLE INCOME    3 UNINSURED           131        0.38         14558        42.10  
-                  26-30      5 HIGH INCOME      1 ANY PRIVATE         530        1.53         15088        43.63  
-                  26-30      5 HIGH INCOME      2 PUBLIC ONLY          25        0.07         15113        43.70  
-                  31+        1 POOR/NEGATIVE    1 ANY PRIVATE         597        1.73         15710        45.43  
-                  31+        1 POOR/NEGATIVE    2 PUBLIC ONLY        1914        5.53         17624        50.96  
-                  31+        1 POOR/NEGATIVE    3 UNINSURED           676        1.95         18300        52.92  
-                  31+        2 NEAR POOR        1 ANY PRIVATE         309        0.89         18609        53.81  
-                  31+        2 NEAR POOR        2 PUBLIC ONLY         528        1.53         19137        55.34  
-                  31+        2 NEAR POOR        3 UNINSURED           202        0.58         19339        55.92  
-                  31+        3 LOW INCOME       1 ANY PRIVATE        1278        3.70         20617        59.62  
-                  31+        3 LOW INCOME       2 PUBLIC ONLY        1192        3.45         21809        63.06  
-                  31+        3 LOW INCOME       3 UNINSURED           554        1.60         22363        64.67  
-                  31+        4 MIDDLE INCOME    1 ANY PRIVATE        3767       10.89         26130        75.56  
-                  31+        4 MIDDLE INCOME    2 PUBLIC ONLY        1192        3.45         27322        79.01  
-                  31+        4 MIDDLE INCOME    3 UNINSURED           647        1.87         27969        80.88  
-                  31+        5 HIGH INCOME      1 ANY PRIVATE        5681       16.43         33650        97.30  
-                  31+        5 HIGH INCOME      2 PUBLIC ONLY         648        1.87         34298        99.18  
-                  31+        5 HIGH INCOME      3 UNINSURED           284        0.82         34582       100.00  
-
-
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       1 POOR/NEGATIVE    1 ANY PRIVATE        1112        3.22          1112         3.22  
-                       1 POOR/NEGATIVE    2 PUBLIC ONLY        5337       15.43          6449        18.65  
-                       1 POOR/NEGATIVE    3 UNINSURED          1087        3.14          7536        21.79  
-                       2 NEAR POOR        1 ANY PRIVATE         551        1.59          8087        23.38  
-                       2 NEAR POOR        2 PUBLIC ONLY        1284        3.71          9371        27.10  
-                       2 NEAR POOR        3 UNINSURED           315        0.91          9686        28.01  
-                       3 LOW INCOME       1 ANY PRIVATE        2155        6.23         11841        34.24  
-                       3 LOW INCOME       2 PUBLIC ONLY        2609        7.54         14450        41.78  
-                       3 LOW INCOME       3 UNINSURED           905        2.62         15355        44.40  
-                       4 MIDDLE INCOME    1 ANY PRIVATE        6397       18.50         21752        62.90  
-                       4 MIDDLE INCOME    2 PUBLIC ONLY        2212        6.40         23964        69.30  
-                       4 MIDDLE INCOME    3 UNINSURED          1063        3.07         25027        72.37  
-                       5 HIGH INCOME      1 ANY PRIVATE        8338       24.11         33365        96.48  
-                       5 HIGH INCOME      2 PUBLIC ONLY         813        2.35         34178        98.83  
-                       5 HIGH INCOME      3 UNINSURED           404        1.17         34582       100.00  
-                                                                                                                                   5
-                                                                  
+                       1 POOR/NEGATIVE    1 ANY PRIVATE          74        3.93            74         3.93  
+                       1 POOR/NEGATIVE    2 PUBLIC ONLY         201       10.67           275        14.60  
+                       1 POOR/NEGATIVE    3 UNINSURED            99        5.26           374        19.86  
+                       2 NEAR POOR        1 ANY PRIVATE          31        1.65           405        21.51  
+                       2 NEAR POOR        2 PUBLIC ONLY          42        2.23           447        23.74  
+                       2 NEAR POOR        3 UNINSURED            21        1.12           468        24.85  
+                       3 LOW INCOME       1 ANY PRIVATE         169        8.98           637        33.83  
+                       3 LOW INCOME       2 PUBLIC ONLY          72        3.82           709        37.65  
+                       3 LOW INCOME       3 UNINSURED            71        3.77           780        41.42  
+                       4 MIDDLE INCOME    1 ANY PRIVATE         427       22.68          1207        64.10  
+                       4 MIDDLE INCOME    2 PUBLIC ONLY          67        3.56          1274        67.66  
+                       4 MIDDLE INCOME    3 UNINSURED            98        5.20          1372        72.86  
+                       5 HIGH INCOME      1 ANY PRIVATE         455       24.16          1827        97.03  
+                       5 HIGH INCOME      2 PUBLIC ONLY          17        0.90          1844        97.93  
+                       5 HIGH INCOME      3 UNINSURED            39        2.07          1883       100.00  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        3
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
                                              CHECK MISSING VALUES ON THE COMBINED DATA
 
                                                         The MEANS Procedure
 
-                                                                                                    N
-                               Variable    Label                                           N     Miss
-                               ----------------------------------------------------------------------
-                               AGELAST     PERSON'S AGE LAST TIME ELIGIBLE             70082        0
-                               POVCAT      FAMILY INC AS % OF POVERTY LINE - CATEGO    70082        0
-                               INSCOV      HEALTH INSURANCE COVERAGE INDICATOR 2015    70082        0
-                               TOTSLF      TOTAL AMT PAID BY SELF/FAMILY 15            70082        0
-                               PERWT       FINAL PERSON WEIGHT, 2015                   70082        0
-                               VARSTR      VARIANCE ESTIMATION STRATUM - 2015          70082        0
-                               VARPSU      VARIANCE ESTIMATION PSU - 2015              70082        0
-                               POOLWT                                                  70082        0
-                               SUBPOP                                                  70082        0
-                               ----------------------------------------------------------------------
-                                                                                                                                   6
-                                                                  
-                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
+                                                                                                                N
+                   Variable    Label                                                                   N     Miss
+                   ----------------------------------------------------------------------------------------------
+                   INSCOV      HEALTH INSURANCE COVERAGE INDICATOR 2016                            63975        0
+                   AGELAST     PERSON'S AGE LAST TIME ELIGIBLE                                     63975        0
+                   POVCAT      FAMILY INC AS % OF POVERTY LINE - CATEGO                            63975        0
+                   VARSTR      VARIANCE ESTIMATION STRATUM - 2016                                  63975        0
+                   VARPSU      VARIANCE ESTIMATION PSU - 2016                                      63975        0
+                   TOTSLF      TOTAL AMT PAID BY SELF/FAMILY                                       63975        0
+                   PERWT       FINAL PERSON WEIGHT, 2016                                           63975        0
+                   POOLWT                                                                          63975        0
+                   SUBPOP      POPULATION WITH AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME    63975        0
+                   ----------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        4
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                                      SUPPORTING CROSSTAB FOR THE CREATION OF THE SUBPOP FLAG
+
+                                                         The FREQ Procedure
+
+                                  POPULATION WITH AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
+ 
+                                                                       Cumulative    Cumulative
+                                    SUBPOP    Frequency     Percent     Frequency      Percent
+                                    -----------------------------------------------------------
+                                         1          98        0.15            98         0.15  
+                                         2       63877       99.85         63975       100.00  
+
+
+                                                                                       Cumulative    Cumulative
+                     SUBPOP    AGELAST    POVCAT    INSCOV    Frequency     Percent     Frequency      Percent
+                     ------------------------------------------------------------------------------------------
+                          1    26-30           5         3          98        0.15            98         0.15  
+                          2    0-25            1         1         794        1.24           892         1.39  
+                          2    0-25            1         2        5568        8.70          6460        10.10  
+                          2    0-25            1         3         402        0.63          6862        10.73  
+                          2    0-25            2         1         334        0.52          7196        11.25  
+                          2    0-25            2         2        1214        1.90          8410        13.15  
+                          2    0-25            2         3         111        0.17          8521        13.32  
+                          2    0-25            3         1        1389        2.17          9910        15.49  
+                          2    0-25            3         2        2320        3.63         12230        19.12  
+                          2    0-25            3         3         357        0.56         12587        19.67  
+                          2    0-25            4         1        3936        6.15         16523        25.83  
+                          2    0-25            4         2        1643        2.57         18166        28.40  
+                          2    0-25            4         3         422        0.66         18588        29.06  
+                          2    0-25            5         1        4228        6.61         22816        35.66  
+                          2    0-25            5         2         255        0.40         23071        36.06  
+                          2    0-25            5         3         164        0.26         23235        36.32  
+                          2    26-30           1         1         162        0.25         23397        36.57  
+                          2    26-30           1         2         409        0.64         23806        37.21  
+                          2    26-30           1         3         217        0.34         24023        37.55  
+                          2    26-30           2         1          60        0.09         24083        37.64  
+                          2    26-30           2         2          86        0.13         24169        37.78  
+                          2    26-30           2         3          56        0.09         24225        37.87  
+                          2    26-30           3         1         306        0.48         24531        38.34  
+                          2    26-30           3         2         156        0.24         24687        38.59  
+                          2    26-30           3         3         162        0.25         24849        38.84  
+                          2    26-30           4         1         927        1.45         25776        40.29  
+                          2    26-30           4         2         139        0.22         25915        40.51  
+                          2    26-30           4         3         213        0.33         26128        40.84  
+                          2    26-30           5         1         945        1.48         27073        42.32  
+                          2    26-30           5         2          42        0.07         27115        42.38  
+                          2    31+             1         1        1085        1.70         28200        44.08  
+                          2    31+             1         2        3619        5.66         31819        49.74  
+                          2    31+             1         3        1115        1.74         32934        51.48  
+                          2    31+             2         1         543        0.85         33477        52.33  
+                          2    31+             2         2        1024        1.60         34501        53.93  
+                          2    31+             2         3         338        0.53         34839        54.46  
+                          2    31+             3         1        2356        3.68         37195        58.14  
+                          2    31+             3         2        2206        3.45         39401        61.59  
+                          2    31+             3         3         902        1.41         40303        63.00  
+                          2    31+             4         1        7205       11.26         47508        74.26  
+                          2    31+             4         2        2258        3.53         49766        77.79  
+                          2    31+             4         3        1074        1.68         50840        79.47  
+                          2    31+             5         1       11302       17.67         62142        97.13  
+                          2    31+             5         2        1362        2.13         63504        99.26  
+                          2    31+             5         3         471        0.74         63975       100.00  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        5
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
                                                      The SURVEYMEANS Procedure
 
                                                             Data Summary
 
-                                        Number of Strata                                 165
-                                        Number of Clusters                               371
-                                        Number of Observations                         70082
-                                        Number of Observations Used                    67152
-                                        Number of Obs with Nonpositive Weights          2930
-                                        Sum of Weights                             322282469
-
-
-                                                             Statistics
- 
-                                                                                                 Std Error
-                          Variable    Label                              N            Mean         of Mean
-                          --------------------------------------------------------------------------------
-                          TOTSLF      TOTAL AMT PAID BY              67152      614.919349       12.587591
-                                      SELF/FAMILY 15                                                      
-                          --------------------------------------------------------------------------------
-                                                                                                                                   7
-                                                                  
-                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
+                                                Number of Strata                 282
+                                                Number of Clusters               625
+                                                Number of Observations         63975
+                                                Sum of Weights             323960798
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        6
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
                                                      The SURVEYMEANS Procedure
 
                                                    Statistics for SUBPOP Domains
  
-                                                                                                                           Std Error
-SUBPOP                                              Variable    Label                              N            Mean         of Mean
-------------------------------------------------------------------------------------------------------------------------------------
-AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME    TOTSLF      TOTAL AMT PAID BY                106      241.544601       80.884060
-                                                                SELF/FAMILY 15                                                      
-------------------------------------------------------------------------------------------------------------------------------------
-                                                                                                                                   8
-                                                                  
-                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-                  CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS
+                                                                                               Std Error
+                             SUBPOP    Variable    Label                        N      Mean      of Mean
+                           -----------------------------------------------------------------------------
+                                  1    TOTSLF      TOTAL AMT PAID BY           98    300.04       93.384
+                                                   SELF/FAMILY                                          
+                           -----------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE3.SAS)                                        7
+                                     POOL MEPS DATA FILES FROM DIFFERENT YEARS (2016 and 2017)
+                  WEIGHTED ESTIMATE ON TOTSLF FOR COMBINED DATA W/AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
-                                                                                                  SE of
-                                      Variable Label                        N         Mean         Mean
+                                                                                                SE of
+                                     Variable Label                       N         Mean         Mean
 
-                             TOTAL AMT PAID BY SELF/FAMILY 15             106        241.5      80.8841
+                              TOTAL AMT PAID BY SELF/FAMILY              98          300           93

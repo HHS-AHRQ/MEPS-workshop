@@ -66,3 +66,4 @@ svy, subpop(subpop): mean totslf
 
 *log close  
 exit, clear
+

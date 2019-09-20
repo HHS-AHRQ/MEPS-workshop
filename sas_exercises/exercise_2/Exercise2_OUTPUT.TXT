@@ -1,217 +1,186 @@
-                                                                                                                                   1
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
-                     A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2016
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        1
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
+                        A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
 
-------------------------------------------------- PERSON ID (DUID + PID)=10002101 --------------------------------------------------
+------------------------------------------------- PERSON ID (DUID + PID)=10005102 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
 
-                                 1    100021010211001    100021010211      191       88.68        0   
-                                 2    100021010211002    100021010211      191       88.68        0   
-                                 3    100021010211003    100021010211      191       88.68        0   
-                                 4    100021010211004    100021010211      191       88.68        0   
-                                 5    100021010211005    100021010211      191       88.68        0   
-                                 6    100021010211006    100021010211      191       88.68        0   
+                                 1    100051020201001    100051020201      191        7.73       7.73 
 
 
-------------------------------------------------- PERSON ID (DUID + PID)=10005101 --------------------------------------------------
+------------------------------------------------- PERSON ID (DUID + PID)=10009102 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
 
-                                 7    100051010091001    100051010091       60         5         2.31 
-
-
-------------------------------------------------- PERSON ID (DUID + PID)=10008107 --------------------------------------------------
-
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
-
-                                 8    100081070091001    100081070091      191        6.17        0   
-
-
-------------------------------------------------- PERSON ID (DUID + PID)=10017101 --------------------------------------------------
-
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
-
-                                 9    100171010031001    100171010031      191       14.99      14.99 
+                                 2    100091020191001    100091020191      191        4.6        4.6  
 
 
 ------------------------------------------------- PERSON ID (DUID + PID)=10019102 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
 
-                                10    100191020171001    100191020171      191        7.59       7.59 
-
-
-------------------------------------------------- PERSON ID (DUID + PID)=10025102 --------------------------------------------------
-
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
-
-                                11    100251020071001    100251020071      191       36.49        20  
-                                12    100251020121001    100251020121      191       36.49        20  
+                                 3    100191029175001    100191029175       60       15.00        0   
+                                 4    100191029175002    100191029175       60       14.51        0   
 
 
-------------------------------------------------- PERSON ID (DUID + PID)=10028101 --------------------------------------------------
+------------------------------------------------- PERSON ID (DUID + PID)=10024104 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
 
-                                13    100281010031001    100281010031      191        5.97       5.97 
+                                 5    100241049055001    100241049055      191       11.75        3   
 
 
 ------------------------------------------------- PERSON ID (DUID + PID)=10029101 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
 
-                                14    100291010121001    100291010121      191         7.22      0.28 
-                                15    100291010161001    100291010161       60        16.84      0.28 
-                                16    100291010161002    100291010161       60         4.81      0.20 
-                                17    100291010401001    100291010401      191        20.20      1.12 
-                                18    100291010401002    100291010401      191        20.20      1.12 
-                                19    100291010401003    100291010401      191        20.20      1.12 
-                                20    100291010401004    100291010401      191        20.20      1.12 
-                                21    100291010401005    100291010401      191        69.90      1.12 
-                                22    100291010401006    100291010401      191        69.90      1.12 
-                                23    100291010511001    100291010511       60       203.99      1.20 
-                                24    100291010761001    100291010761      191        15.12      1.12 
-                                25    100291010761002    100291010761      191        15.12      1.12 
-                                26    100291010761003    100291010761      191        15.12      1.12 
-                                27    100291010761004    100291010761      191        15.12      1.12 
-                                                                                                                                   2
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
-                     A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2016
+                                 6    100291010761001    100291010761      191        5.72       0.16 
+                                 7    100291010761002    100291010761      191        5.72       0.16 
+                                 8    100291010761003    100291010761      191        5.72       0.16 
+                                 9    100291010991001    100291010991      191       27.00       1.20 
+                                10    100291010991002    100291010991      191       27.00       1.20 
+                                11    100291019025001    100291019025      191        5.72       0.16 
+                                12    100291019025002    100291019025      191        5.72       0.16 
 
-------------------------------------------------- PERSON ID (DUID + PID)=10031102 --------------------------------------------------
 
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP16X    RXSF16X
+------------------------------------------------- PERSON ID (DUID + PID)=10029102 --------------------------------------------------
 
-                                28    100311020221001    100311020221       60        1.34        0   
-                                29    100311020711001    100311020711       60        9.30        0   
-                                30    100311020711002    100311020711       60        7.08        0   
-                                                                                                                                   3
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
+
+                                13    100291029045001    100291029045       60       235.13       0   
+
+
+------------------------------------------------- PERSON ID (DUID + PID)=10034102 --------------------------------------------------
+
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
+
+                                14    100341020191001    100341020191      191       31.00      31.00 
+                                15    100341020191002    100341020191      191       25.56      25.56 
+                                16    100341020191003    100341020191      191       25.56      25.56 
+                                17    100341020201001    100341020201      191       24.96      15.00 
+                                18    100341020201002    100341020201      191       24.96       5.70 
+                                19    100341020201003    100341020201      191       24.96       5.70 
+
+
+------------------------------------------------- PERSON ID (DUID + PID)=10037101 --------------------------------------------------
+
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
+
+                                20    100371010511001    100371010511       60        10.99      0.5  
+                                21    100371010601001    100371010601       60        10.99      0.5  
+                                22    100371010601002    100371010601       60        10.99      0.5  
+                                23    100371010601003    100371010601       60        10.99      0.5  
+                                24    100371010601004    100371010601       60        10.99      0.5  
+                                25    100371010601005    100371010601       60        10.99      0.5  
+                                26    100371019045001    100371019045       60       127.99      3.0  
+                                27    100371019045002    100371019045       60       127.99      3.0  
+                                28    100371019045003    100371019045       60       127.99      3.0  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        2
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
+                        A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
+
+------------------------------------------------- PERSON ID (DUID + PID)=10037101 --------------------------------------------------
+
+                                                            (continued)
+
+                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
+
+                                29    100371019045004    100371019045       60       127.99       3   
+                                30    100371019045005    100371019045       60       127.99       3   
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        3
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
                   A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos
 
-                                            Obs    DUPERSID    _FREQ_      TOT        OOP
+                                           Obs    DUPERSID    _FREQ_        TOT       OOP
 
-                                              1    10002101       6      532.08      0.00
-                                              2    10005101       1        5.00      2.31
-                                              3    10008107       1        6.17      0.00
-                                              4    10017101       1       14.99     14.99
-                                              5    10019102       1        7.59      7.59
-                                              6    10025102       2       72.98     40.00
-                                              7    10028101       1        5.97      5.97
-                                              8    10029101      14      513.94     13.16
-                                              9    10031102       3       17.72      0.00
-                                             10    10034102       6      132.15    132.15
-                                             11    10037101      12      459.88      6.00
-                                             12    10044102       1       12.98      2.35
-                                             13    10049101       8      393.57     63.53
-                                             14    10049102      10      234.70      0.00
-                                             15    10053102       1        4.38      0.00
-                                             16    10054101       1        5.00      0.18
-                                             17    10054102       2       95.00      3.72
-                                             18    10067101      12       37.39      0.00
-                                             19    10067102      11       33.75      0.00
-                                             20    10079101       1      262.00    117.90
-                                             21    10080101       4      196.28     92.78
-                                             22    10103101       5       24.20     16.83
-                                             23    10103102       1       21.97     21.97
-                                             24    10105101       1       20.99      0.37
-                                             25    10116101       7      355.85     72.50
-                                             26    10117101       8       17.15      6.00
-                                             27    10118102       1      262.00     29.44
-                                             28    10136102       1       10.68      0.52
-                                             29    10139101       1       65.99      1.00
-                                             30    10144101       1        9.40      0.90
-                                                                                                                                   4
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
+                                             1    10005102       1         7.73      7.73
+                                             2    10009102       1         4.60      4.60
+                                             3    10019102       2        29.51      0.00
+                                             4    10024104       1        11.75      3.00
+                                             5    10029101       7        82.60      3.20
+                                             6    10029102       1       235.13      0.00
+                                             7    10034102       6       157.00    108.52
+                                             8    10037101      11       705.89     18.00
+                                             9    10044102       1        25.63      6.33
+                                            10    10049101       2       433.00     16.50
+                                            11    10049102      17       885.99      6.07
+                                            12    10056101       1         1.20      1.20
+                                            13    10067101      14        46.00      0.00
+                                            14    10067102       3        26.54     20.00
+                                            15    10068101       1         9.99      5.09
+                                            16    10083101       3        25.00     25.00
+                                            17    10096101       3       199.97      1.00
+                                            18    10115101       1         6.04      0.30
+                                            19    10115102       2        16.14      3.50
+                                            20    10116101       7       138.25     17.75
+                                            21    10117101       2       258.44      0.00
+                                            22    10135101       4        11.58      9.48
+                                            23    10139101       2         2.84      0.00
+                                            24    10146101       4       167.92      7.44
+                                            25    10151102       1         4.80      4.80
+                                            26    10152101       6       106.74      0.00
+                                            27    10153102       6      1602.26    144.08
+                                            28    10166101      10       136.12     29.72
+                                            29    10180101       3       182.19      0.00
+                                            30    10188101       1         4.49      0.00
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        4
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
                                                SUPPORTING CROSSTABS FOR NEW VARIABLES
 
                                                          The FREQ Procedure
 
-                                                                                                        Cumulative    Cumulative
-                          SUBPOP    N_PHRCHASE    TOT    OOP    THIRD_PAYER    Frequency     Percent     Frequency      Percent
-    ----------------------------------------------------------------------------------------------------------------------------
-    PERSONS WITH 1+ Narcotic etc    >0            >0     0      >0                  705        2.03           705         2.03  
-    PERSONS WITH 1+ Narcotic etc    >0            >0     >0     0                   957        2.76          1662         4.80  
-    PERSONS WITH 1+ Narcotic etc    >0            >0     >0     >0                 1592        4.59          3254         9.39  
-    OTHERS                          0             0      0      0                 31401       90.61         34655       100.00  
-                                                                                                                                   5
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
-                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
+                                                                                           Cumulative    Cumulative
+                SUB    N_PHRCHASE    TOT    OOP    THIRD_PAYER    Frequency     Percent     Frequency      Percent
+                ---------------------------------------------------------------------------------------------------
+                  1    >0            0      0      0                     1        0.00             1         0.00  
+                  1    >0            >0     0      >0                  514        1.61           515         1.62  
+                  1    >0            >0     >0     0                   805        2.53          1320         4.14  
+                  1    >0            >0     >0     >0                 1513        4.75          2833         8.89  
+                  2    0             0      0      0                 29047       91.11         31880       100.00  
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        5
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
 
                                                      The SURVEYMEANS Procedure
 
                                                             Data Summary
 
-                                        Number of Strata                                 165
-                                        Number of Clusters                               368
-                                        Number of Observations                         34655
-                                        Number of Observations Used                    33259
-                                        Number of Obs with Nonpositive Weights          1396
-                                        Sum of Weights                             323141687
-
-
-                                                            Statistics
- 
-                                                             Sum of                       Std Error                       Std Error
-Variable       Label                              N         Weights            Mean         of Mean             Sum          of Sum
------------------------------------------------------------------------------------------------------------------------------------
-TOT            TOTAL EXPENSE FOR              33259       323141687       25.163333        2.114099      8131321798       680339817
-               NACROTIC ETC                                                                                                        
-N_PHRCHASE     # OF PURCHASES PER             33259       323141687        0.376537        0.014236       121674856         4928822
-               PERSON                                                                                                              
-OOP            AMOUNT PAID, SELF OR           33259       323141687        4.403145        0.418861      1422839748       141147575
-               FAMILY (IMPUTED)                                                                                                    
-THIRD_PAYER    TOTAL-OOP EXPENSES             33259       323141687       20.760188        1.973566      6708482050       629279347
------------------------------------------------------------------------------------------------------------------------------------
-                                                                                                                                   6
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
-                                          AUTOMATIC OUTPUT GENERATED FROM PROC SURVEYMEANS
+                                        Number of Strata                                 282
+                                        Number of Clusters                               621
+                                        Number of Observations                         31880
+                                        Number of Observations Used                    30716
+                                        Number of Obs with Nonpositive Weights          1164
+                                        Sum of Weights                             324779909
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        6
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
 
                                                      The SURVEYMEANS Procedure
 
-                                                   Statistics for SUBPOP Domains
+                                                     Statistics for SUB Domains
  
-                                                                                    Sum of                   Std Error
-SUBPOP                        Variable     Label                           N       Weights          Mean       of Mean           Sum
-------------------------------------------------------------------------------------------------------------------------------------
-PERSONS WITH 1+ Narcotic etc  TOT          TOTAL EXPENSE FOR            3175      34060347    238.732792     19.287180    8131321798
-                                           NACROTIC ETC                                                                             
-                              N_PHRCHASE   # OF PURCHASES PER           3175      34060347      3.572332      0.095813     121674856
-                                           PERSON                                                                                   
-                              OOP          AMOUNT PAID, SELF            3175      34060347     41.774082      3.778515    1422839748
-                                           OR FAMILY (IMPUTED)                                                                      
-                              THIRD_PAYER  TOTAL-OOP EXPENSES           3175      34060347    196.958710     18.240899    6708482050
-------------------------------------------------------------------------------------------------------------------------------------
+                                                                     Sum of              Std Error                       Std Error
+       SUB    Variable       Label                        N         Weights      Mean      of Mean             Sum          of Sum
+  --------------------------------------------------------------------------------------------------------------------------------
+         1    TOT            SUM OF PAYMENTS          2,788      30,119,398    285.44       22.793      8597282393     719,064,190
+                             RXSF17X-RXOU17X                                                                                      
+                             (IMPUTED)                                                                                            
+              N_PHRCHASE     # OF PURCHASES PER       2,788      30,119,398     3.984       0.1428     120,006,317       5,181,696
+                             PERSON                                                                                               
+              OOP            AMOUNT PAID, SELF OR     2,788      30,119,398    44.480       3.8805      1339718302     125,302,954
+                             FAMILY (IMPUTED)                                                                                     
+              THIRD_PAYER    TOTAL-OOP                2,788      30,119,398    240.96       21.079      7257564091     656,256,904
+  --------------------------------------------------------------------------------------------------------------------------------
+                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        7
+                                       Narcotic analgesics or Narcotic analgesic combos, 2017
+             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
+                   SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
 
-                                                   Statistics for SUBPOP Domains
- 
-                                                                                    Std Error
-                                      SUBPOP                        Variable           of Sum
-                                      -------------------------------------------------------
-                                      PERSONS WITH 1+ Narcotic etc  TOT             680339817
-                                                                    N_PHRCHASE        4928822
-                                                                    OOP             141147575
-                                                                    THIRD_PAYER     629279347
-                                      -------------------------------------------------------
-                                                                                                                                   7
-                                                                  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2016
-                  CUSTOMIZED OUTPUT BASED ON ODS TABLE NAME (DOMAIN OUTPUT DATA SET) CREATED FROM PROC SURVEYMEANS
+                                                          Population                 SE of                                     SE of
+Variable Label                                       N          Size       Mean       Mean                Total                Total
 
-                                                         Population                   SE of                                   SE of
-Variable Label                                     N           Size        Mean        Mean               Total               Total
-
-TOTAL EXPENSE FOR NACROTIC ETC                 3,175     34,060,347       238.7     19.2872       8,131,321,798         680,339,817
-# OF PURCHASES PER PERSON                      3,175     34,060,347         3.6      0.0958         121,674,856           4,928,822
-AMOUNT PAID, SELF OR FAMILY (IMPUTED)          3,175     34,060,347        41.8      3.7785       1,422,839,748         141,147,575
-TOTAL-OOP EXPENSES                             3,175     34,060,347       197.0     18.2409       6,708,482,050         629,279,347
+SUM OF PAYMENTS RXSF17X-RXOU17X(IMPUTED)         2,788    30,119,398        285         23        8,597,282,393          719,064,190
+# OF PURCHASES PER PERSON                        2,788    30,119,398          4          0          120,006,317            5,181,696
+AMOUNT PAID, SELF OR FAMILY (IMPUTED)            2,788    30,119,398         44          4        1,339,718,302          125,302,954
+TOTAL-OOP                                        2,788    30,119,398        241         21        7,257,564,091          656,256,904

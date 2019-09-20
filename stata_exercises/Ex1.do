@@ -69,3 +69,4 @@ svy, subpop(x_total): mean total
 svy, subpop(x_total): mean total, over(agecat)
 
 exit, clear
+
