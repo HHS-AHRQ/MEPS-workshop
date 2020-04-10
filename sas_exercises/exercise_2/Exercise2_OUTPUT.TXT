@@ -1,6 +1,4 @@
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        1
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-                        A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
+                     A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2017                    1
 
 ------------------------------------------------- PERSON ID (DUID + PID)=10005102 --------------------------------------------------
 
@@ -76,21 +74,9 @@
                                 26    100371019045001    100371019045       60       127.99      3.0  
                                 27    100371019045002    100371019045       60       127.99      3.0  
                                 28    100371019045003    100371019045       60       127.99      3.0  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        2
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-                        A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos
-
-------------------------------------------------- PERSON ID (DUID + PID)=10037101 --------------------------------------------------
-
-                                                            (continued)
-
-                               Obs       RXRECIDX          LINKIDX       TC1S1_1    RXXP17X    RXSF17X
-
-                                29    100371019045004    100371019045       60       127.99       3   
-                                30    100371019045005    100371019045       60       127.99       3   
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        3
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-                  A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos
+                                29    100371019045004    100371019045       60       127.99      3.0  
+                                30    100371019045005    100371019045       60       127.99      3.0  
+                  A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos                 2
 
                                            Obs    DUPERSID    _FREQ_        TOT       OOP
 
@@ -124,23 +110,19 @@
                                             28    10166101      10       136.12     29.72
                                             29    10180101       3       182.19      0.00
                                             30    10188101       1         4.49      0.00
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        4
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-                                               SUPPORTING CROSSTABS FOR NEW VARIABLES
+                  A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos                 3
 
                                                          The FREQ Procedure
 
-                                                                                           Cumulative    Cumulative
-                SUB    N_PHRCHASE    TOT    OOP    THIRD_PAYER    Frequency     Percent     Frequency      Percent
-                ---------------------------------------------------------------------------------------------------
-                  1    >0            0      0      0                     1        0.00             1         0.00  
-                  1    >0            >0     0      >0                  514        1.61           515         1.62  
-                  1    >0            >0     >0     0                   805        2.53          1320         4.14  
-                  1    >0            >0     >0     >0                 1513        4.75          2833         8.89  
-                  2    0             0      0      0                 29047       91.11         31880       100.00  
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        5
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
+                                                                                                        Cumulative    Cumulative
+                          SUBPOP    N_PHRCHASE    TOT    OOP    THIRD_PAYER    Frequency     Percent     Frequency      Percent
+    ----------------------------------------------------------------------------------------------------------------------------
+    PERSONS WITH 1+ Narcotic etc    >0            0      0      0                     1        0.00             1         0.00  
+    PERSONS WITH 1+ Narcotic etc    >0            >0     0      >0                  514        1.61           515         1.62  
+    PERSONS WITH 1+ Narcotic etc    >0            >0     >0     0                   805        2.53          1320         4.14  
+    PERSONS WITH 1+ Narcotic etc    >0            >0     >0     >0                 1513        4.75          2833         8.89  
+    OTHERS                          0             0      0      0                 29047       91.11         31880       100.00  
+                  A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos                 4
 
                                                      The SURVEYMEANS Procedure
 
@@ -152,35 +134,22 @@
                                         Number of Observations Used                    30716
                                         Number of Obs with Nonpositive Weights          1164
                                         Sum of Weights                             324779909
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        6
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
+                  A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR Narcotic analgesics or Narcotic analgesic combos                 5
 
                                                      The SURVEYMEANS Procedure
 
-                                                     Statistics for SUB Domains
+                                                   Statistics for SUBPOP Domains
  
-                                                                     Sum of              Std Error                       Std Error
-       SUB    Variable       Label                        N         Weights      Mean      of Mean             Sum          of Sum
-  --------------------------------------------------------------------------------------------------------------------------------
-         1    TOT            SUM OF PAYMENTS          2,788      30,119,398    285.44       22.793      8597282393     719,064,190
-                             RXSF17X-RXOU17X                                                                                      
-                             (IMPUTED)                                                                                            
-              N_PHRCHASE     # OF PURCHASES PER       2,788      30,119,398     3.984       0.1428     120,006,317       5,181,696
-                             PERSON                                                                                               
-              OOP            AMOUNT PAID, SELF OR     2,788      30,119,398    44.480       3.8805      1339718302     125,302,954
-                             FAMILY (IMPUTED)                                                                                     
-              THIRD_PAYER    TOTAL-OOP                2,788      30,119,398    240.96       21.079      7257564091     656,256,904
-  --------------------------------------------------------------------------------------------------------------------------------
-                                         2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE2.SAS)                                        7
-                                       Narcotic analgesics or Narcotic analgesic combos, 2017
-             PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR Narcotic analgesics or Narcotic analgesic combos, 2017
-                   SUBSET THE ESTIMATES FOR PERSONS ONLY WITH 1+ Narcotic analgesics or Narcotic analgesic combos
-
-                                                          Population                 SE of                                     SE of
-Variable Label                                       N          Size       Mean       Mean                Total                Total
-
-SUM OF PAYMENTS RXSF17X-RXOU17X(IMPUTED)         2,788    30,119,398        285         23        8,597,282,393          719,064,190
-# OF PURCHASES PER PERSON                        2,788    30,119,398          4          0          120,006,317            5,181,696
-AMOUNT PAID, SELF OR FAMILY (IMPUTED)            2,788    30,119,398         44          4        1,339,718,302          125,302,954
-TOTAL-OOP                                        2,788    30,119,398        241         21        7,257,564,091          656,256,904
+                                                                               Sum of          Std Error                   Std Error
+SUBPOP                        Variable     Label                      N       Weights    Mean    of Mean           Sum        of Sum
+------------------------------------------------------------------------------------------------------------------------------------
+PERSONS WITH 1+ Narcotic etc  TOT          TOTAL EXPENSES FOR     2,788    30,119,398  285.44     22.793    8597282393   719,064,190
+                                           NACROTIC ETC                                                                             
+                              N_PHRCHASE   # OF PURCHASES PER     2,788    30,119,398   3.984     0.1428   120,006,317     5,181,696
+                                           PERSON                                                                                   
+                              OOP          OUT-OF-POCKET          2,788    30,119,398  44.480     3.8805    1339718302   125,302,954
+                                           EXPENSES                                                                                 
+                              THIRD_PAYER  TOTAL EXPENSES MINUS   2,788    30,119,398  240.96     21.079    7257564091   656,256,904
+                                           OUT-OF-POCKET                                                                            
+                                           EXPENSES                                                                                 
+------------------------------------------------------------------------------------------------------------------------------------

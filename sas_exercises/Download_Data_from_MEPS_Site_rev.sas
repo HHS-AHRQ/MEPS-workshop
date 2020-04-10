@@ -9,7 +9,7 @@ YOU MAY NEED TO CHANGE THE SPECIFICATION OF THE FOLDER NAME:
   -  IN THE FILENAME STATEMENT
   -  IN THE LIBNAME STATEMENT BELOW.
 Written by: Pradip Muhuri  
-Acknowledgements: Thanks to SAS(R) Institute for providing support 
+Acknowledgements: Thanks to SAS(R) Institute for providing technical support 
 to the revision/expansion of the original program.
 ************************************************************************/
 
@@ -73,14 +73,19 @@ to the revision/expansion of the original program.
 
 /* Form the MEPS website, download/unzip the follwong SAS transport files
    and then convert them into SAS data files in a pernament folder:
-   a) 2016 and 2017 full-year consolidated files
-   b) data for Panels 18, 19, and 20
-   c) precription medicine file for 2017 (h197a)
+   a) 2017 full-year consolidated file
+   c) 2016 full-year consolidated file
+   d) Data for Panel 21 (2016-17)
+   e) Data for Panel 19 (2015-16)
+   f) Data for Panel 18 (2014-15)
+   g) Precription medicine file for 2017 (h197a)
 
 */
 %load_MEPS(h201)
 %load_MEPS(h192)
-%load_MEPS(h172)
-%load_MEPS(h183)
+
+%load_MEPS(h202)
 %load_MEPS(h193)
+%load_MEPS(h183)
+
 %load_MEPS(h197a)

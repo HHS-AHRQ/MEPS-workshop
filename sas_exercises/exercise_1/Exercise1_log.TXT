@@ -1,206 +1,135 @@
 NOTE: PROCEDURE PRINTTO used (Total process time):
-      real time           0.04 seconds
-      cpu time            0.01 seconds
-      
-
-1235  
-1236  proc datasets lib=work nolist kill;
-NOTE: Deleting WORK.DOMAIN_RESULTS (memtype=DATA).
-NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
-NOTE: Deleting WORK.OVERALL_RESULTS (memtype=DATA).
-NOTE: Deleting WORK.PUF201 (memtype=DATA).
-NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
-NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
-1236!                                     quit;
-
-NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.00 seconds
-      
-
-1236!                                           /* delete  all files in the WORK library */
-1237  
-1238  libname CDATA "C:\DATA";
-NOTE: Libref CDATA refers to the same physical library as MYFOLDER.
-NOTE: Libref CDATA was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: C:\Data
-1239  
-1240  PROC FORMAT;
-1241    VALUE AGEF
-1242       .      = 'ALL AGES'
-1243       0-  64 = '0-64'
-1244       65-HIGH = '65+';
-NOTE: Format AGEF has been output.
-1245  
-1246    VALUE AGECAT
-1247         .     = 'ALL AGES'
-1248         1 = '0-64'
-1249         2 = '65+';
-NOTE: Format AGECAT has been output.
-1250  
-1251    VALUE GTZERO
-1252       0         = '0'
-1253       0 <- HIGH = '>0';
-NOTE: Format GTZERO has been output.
-1254  
-1255    VALUE FLAG
-1256        .         = 'No or any expense'
-1257        0         = 'No expense'
-1258        1         = 'Any expense';
-NOTE: Format FLAG has been output.
-1259  RUN;
-
-NOTE: PROCEDURE FORMAT used (Total process time):
       real time           0.07 seconds
       cpu time            0.00 seconds
       
 
-1260  
-1261  TITLE1 '2019 AHRQ MEPS DATA USERS WORKSHOP (EXERCISE1.SAS)';
-1262  TITLE2 "NATIONAL HEALTH CARE EXPENSES, 2017";
-1263  
-1264  /* READ IN DATA FROM 2017 CONSOLIDATED DATA FILE (HC-201) */
-1265  DATA WORK.PUF201;
-1266    SET CDATA.h201 (KEEP = TOTEXP17 AGELAST   VARSTR  VARPSU  PERWT17F
-1267                    RENAME = (TOTEXP17 = TOTAL));
-1268  
-1269    /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */
-1270    X_ANYSVCE=0;
-1271    IF TOTAL > 0 THEN X_ANYSVCE=1;
-1272  
-1273    /* CREATE A SUMMARY VARIABLE FROM END OF YEAR, 42, AND 31 VARIABLES*/
-1274  
-1275    IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
-1276    ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;
-1277  RUN;
+996  
+997  proc datasets lib=work nolist kill;
+NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
+NOTE: Deleting WORK.FY (memtype=DATA).
+NOTE: Deleting WORK.PERDRUG (memtype=DATA).
+997!                                     quit;
+
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+997!                                           /* delete  all files in the WORK library */
+998  
+999  libname CDATA "C:\DATA";
+NOTE: Libref CDATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\DATA
+1000  
+1001  PROC FORMAT;
+1002    VALUE AGECAT
+1003         .     = 'ALL AGES'
+1004         1 = '0-64'
+1005         2 = '65+';
+NOTE: Format AGECAT has been output.
+1006  
+1007    VALUE GTZERO
+1008       0         = '0'
+1009       0 <- HIGH = '>0';
+NOTE: Format GTZERO has been output.
+1010  
+1011    VALUE FLAG
+1012        .         = 'No or any expense'
+1013        0         = 'No expense'
+1014        1         = 'Any expense';
+NOTE: Format FLAG has been output.
+1015  RUN;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1016  TITLE "MEPS FULL-YEAR CONSOLIDATED FILE, 2017";
+1017  
+1018  /* READ IN DATA FROM 2017 CONSOLIDATED DATA FILE (HC-201) */
+1019  DATA WORK.PUF201;
+1020    SET CDATA.H201 (KEEP = TOTEXP17 AGELAST   VARSTR  VARPSU  PERWT17F
+1021                    RENAME = (TOTEXP17 = totexp));
+1022  
+1023    /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */
+1024    X_ANYSVCE=0;
+1025    IF totexp > 0 THEN X_ANYSVCE=1;
+1026  
+1027    /* CREATE A SUMMARY VARIABLE FROM END OF YEAR, 42, AND 31 VARIABLES*/
+1028  
+1029    IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
+1030    ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;
+1031  RUN;
 
 NOTE: There were 31880 observations read from the data set CDATA.H201.
 NOTE: The data set WORK.PUF201 has 31880 observations and 7 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.69 seconds
-      cpu time            0.11 seconds
+      real time           0.64 seconds
+      cpu time            0.03 seconds
       
 
-1278  
-1279  TITLE3 "Supporting crosstabs for the flag variables";
-1280  PROC FREQ DATA=PUF201;
-1281     TABLES X_ANYSVCE*TOTAL
-1282            AGECAT*AGELAST
-1283            /LIST MISSING;
-1284     FORMAT TOTAL         gtzero.
-1285            AGECAT        agef.
-1286       ;
-1287  RUN;
+1032  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
+1033                    and the output will not be displayed in the Results Viewer.*/
+1034  PROC FREQ DATA=PUF201;
+1035     TABLES X_ANYSVCE*totexp
+1036            AGELAST*AGECAT
+1037            /LIST MISSING;
+1038     FORMAT totexp            gtzero.
+1039            AGECAT        agecat.
+1040       ;
+1041  RUN;
 
 NOTE: There were 31880 observations read from the data set WORK.PUF201.
 NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.16 seconds
+      real time           0.03 seconds
       cpu time            0.03 seconds
       
 
-1288  ods graphics off;
-1289  TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
-1290  PROC SURVEYMEANS DATA=WORK.PUF201 MEAN NOBS SUMWGT STDERR SUM STD;
-1291      STRATUM VARSTR;
-1292      CLUSTER VARPSU;
-1293      WEIGHT PERWT17F;
-1294      VAR  X_ANYSVCE TOTAL ;
-1295      ods output Statistics=work.Overall_results;
-1296  RUN;
+1042  
+1043  ods graphics off; /*Suppress the graphics */
+1044  ods listing; /* Open the listing destination*/
+1045  TITLE2 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
+1046  PROC SURVEYMEANS DATA=WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
+1047      VAR  X_ANYSVCE totexp ;
+1048      STRATUM VARSTR;
+1049      CLUSTER VARPSU;
+1050      WEIGHT PERWT17F;
+1051  RUN;
 
 NOTE: Due to nonpositive weights, 1164 observation(s) were deleted.
-NOTE: The data set WORK.OVERALL_RESULTS has 2 observations and 8 variables.
+NOTE: PROCEDURE SURVEYMEANS used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.01 seconds
+      
+
+1052  
+1053  
+1054  TITLE2 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
+1055  ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
+1056  PROC SURVEYMEANS DATA= WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
+1057      VAR  totexp;
+1058      STRATUM VARSTR ;
+1059      CLUSTER VARPSU ;
+1060      WEIGHT  PERWT17F ;
+1061      DOMAIN X_ANYSVCE('1')  X_ANYSVCE('1')*AGECAT ;
+1062      FORMAT  AGECAT agecat.;
+1063  RUN;
+
+NOTE: Due to nonpositive weights, 1164 observation(s) were deleted.
+NOTE: Only one cluster in a stratum for X_ANYSVCE domains for variable(s) totexp. The estimate of variance for totexp will omit 
+      this stratum.
+NOTE: Only one cluster in a stratum for X_ANYSVCE*AGECAT domains for variable(s) totexp. The estimate of variance for totexp will 
+      omit this stratum.
 NOTE: PROCEDURE SURVEYMEANS used (Total process time):
       real time           0.07 seconds
-      cpu time            0.03 seconds
+      cpu time            0.07 seconds
       
 
-1297  
-1298  ods listing ;
-1299  TITLE3 'PERCENTAGE OF PERSONS WITH AN EXPENSE';
-1300  proc print data=work.Overall_results (firstobs=1 obs=1) noobs split='*';
-1301  var  N  SumWgt  mean StdErr  Sum stddev;
-1302   label SumWgt = 'Population*Size'
-1303         mean = 'Proportion'
-1304         StdErr = 'SE of Proportion'
-1305         Sum = 'Persons*with Any*Expense '
-1306         Stddev = 'SE of*Number*Persons*with*Any Expense';
-1307         format N SumWgt Comma12. mean 7.2 stderr 7.5
-1308                sum Stddev comma19.;
-1309  run;
-
-NOTE: There were 1 observations read from the data set WORK.OVERALL_RESULTS.
-NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-1310  
-1311  TITLE3 'OVERALL EXPENSES';
-1312  proc print data=work.Overall_results (firstobs=2) noobs split='*';
-1313  var  N  SumWgt  mean StdErr  Sum stddev;
-1314   label SumWgt = 'Population*Size'
-1315         mean = 'Mean($)'
-1316         StdErr = 'SE of Mean($)'
-1317         Sum = 'Total*Expense ($)'
-1318         Stddev = 'SE of*Total Expense($)';
-1319         format N SumWgt Comma12. mean stderr comma9.
-1320                sum Stddev comma19.;
-1321  run;
-
-NOTE: There were 1 observations read from the data set WORK.OVERALL_RESULTS.
-NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-1322  
-1323  ods select summary domain;
-1324  TITLE3 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
-1325  PROC SURVEYMEANS DATA= WORK.PUF201 MEAN NOBS SUMWGT STDERR SUM STD;
-1326      STRATUM VARSTR ;
-1327      CLUSTER VARPSU ;
-1328      WEIGHT  PERWT17F ;
-1329      VAR  TOTAL;
-1330      DOMAIN X_ANYSVCE('1')  X_ANYSVCE('1')*AGECAT ;
-1331      FORMAT  AGECAT agecat.;
-1332      ods output domain= work.domain_results;
-1333  RUN;
-
-NOTE: Due to nonpositive weights, 1164 observation(s) were deleted.
-NOTE: Only one cluster in a stratum for X_ANYSVCE domains for variable(s) TOTAL. The estimate of variance for TOTAL will omit this 
-      stratum.
-NOTE: Only one cluster in a stratum for X_ANYSVCE*AGECAT domains for variable(s) TOTAL. The estimate of variance for TOTAL will 
-      omit this stratum.
-NOTE: The data set WORK.DOMAIN_RESULTS has 3 observations and 11 variables.
-NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.16 seconds
-      cpu time            0.10 seconds
-      
-
-1334  
-1335  
-1336  proc print data= work.domain_results noobs split='*';
-1337   var AGECAT  N  SumWgt  mean StdErr  Sum stddev;
-1338   label AGECAT = 'Age Group'
-1339         SumWgt = 'Population*Size'
-1340         mean = 'Mean($)'
-1341         StdErr = 'SE of Mean($)'
-1342         Sum = 'Total*Expense ($)'
-1343         Stddev = 'SE of*Total Expense($)';
-1344         format AGECAT AGECAT. N SumWgt Comma12. mean stderr comma9.
-1345                sum Stddev comma19.;
-1346  run;
-
-NOTE: There were 3 observations read from the data set WORK.DOMAIN_RESULTS.
-NOTE: PROCEDURE PRINT used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.00 seconds
-      
-
-1347  
-1348  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO */
-1349  PROC PRINTTO;
-1350  RUN;
+1064  
+1065  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
+1066   only if used earlier */
+1067  PROC PRINTTO;
+1068  RUN;
 
