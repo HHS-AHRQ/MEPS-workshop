@@ -7,6 +7,14 @@ MEPS workshops are designed for health services researchers who have a backgroun
 
 More information about the Medical Expenditure Panel Survey (MEPS) and additional coding information and exercises can be found in the [MEPS repository](https://github.com/HHS-AHRQ/MEPS).
 
+
+## Helper programs
+
+To facilitate the programming exercises, the following programs can be used to automate the downloading, unzipping, and conversion of the SAS transport files into SAS or Stata:
+* [sas_exercises/Download_Data_from_MEPS_Site_rev.sas](sas_exercises/Download_Data_from_MEPS_Site_rev.sas)
+* [stata_exercises/download_PUF.do](stata_exercises/download_PUF.do)
+
+
 ## Programming exercises
 
 The SAS and Stata programming exercises are available in the [sas_exercises](sas_exercises) and [stata_exercises](stata_exercises) folders:
@@ -48,4 +56,14 @@ Longitudinal data files needed:
 [Panel 20 (h193)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-193),
 [Panel 19 (h183)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-183), and
 [Panel 18 (h172)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-172)
+
+#### BRR example (Stata only)
+This program compares standard error estimates calculated by:
+1. Balanced Repeated Replicates (BRR) - using explicit loop
+2. Balanced Repeated Replicates (BRR) - using Stata's internal commands
+3. Taylor Series Linearization (Stata default)
+
+Data files needed:
+[FYC 2017 (h201)](https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-201)
+
 
