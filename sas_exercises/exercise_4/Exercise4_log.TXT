@@ -1,84 +1,86 @@
 NOTE: PROCEDURE PRINTTO used (Total process time):
-      real time           0.09 seconds
-      cpu time            0.00 seconds
+      real time           0.12 seconds
+      cpu time            0.01 seconds
       
 
-117  
-118  proc datasets lib=work nolist kill;
+286  
+287  proc datasets lib=work nolist kill;
 NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
 NOTE: Deleting WORK.POOL (memtype=DATA).
-118!                                     quit;
+NOTE: Deleting WORK.YR2016 (memtype=DATA).
+NOTE: Deleting WORK.YR2017 (memtype=DATA).
+287!                                     quit;
 
 NOTE: PROCEDURE DATASETS used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-118!                                           /* delete  all files in the WORK library */
-119  LIBNAME CDATA 'C:\DATA';
+287!                                           /* delete  all files in the WORK library */
+288  LIBNAME CDATA 'C:\DATA';
 NOTE: Libref CDATA was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: C:\DATA
-120  PROC FORMAT;
-121      VALUE POVCAT
-122      1 = '1 POOR/NEGATIVE'
-123      2 = '2 NEAR POOR'
-124      3 = '3 LOW INCOME'
-125      4 = '4 MIDDLE INCOME'
-126      5 = '5 HIGH INCOME'
-127      ;
+289  PROC FORMAT;
+290      VALUE POVCAT
+291      1 = '1 POOR/NEGATIVE'
+292      2 = '2 NEAR POOR'
+293      3 = '3 LOW INCOME'
+294      4 = '4 MIDDLE INCOME'
+295      5 = '5 HIGH INCOME'
+296      ;
 NOTE: Format POVCAT has been output.
-128  
-129      VALUE INSF
-130      -1= '-1 INAPPLICABLE'
-131      1 = '1 ANY PRIVATE'
-132      2 = '2 PUBLIC ONLY'
-133      3 = '3 UNINSURED';
+297  
+298      VALUE INSF
+299      -1= '-1 INAPPLICABLE'
+300      1 = '1 ANY PRIVATE'
+301      2 = '2 PUBLIC ONLY'
+302      3 = '3 UNINSURED';
 NOTE: Format INSF has been output.
-134  
-135      VALUE AGE
-136        -1= '-1 INAPPLICABLE'
-137      26-30='26-30'
-138      0-25, 31-HIGH='0-25, 31+';
+303  
+304      VALUE AGE
+305        -1= '-1 INAPPLICABLE'
+306      26-30='26-30'
+307      0-25, 31-HIGH='0-25, 31+';
 NOTE: Format AGE has been output.
-139  
-140      VALUE  SUBPOP (max= 50)
-141      1 = 'AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME'
-142      2 ='OTHERS';
+308  
+309      VALUE  SUBPOP (max= 50)
+310      1 = 'AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME'
+311      2 ='OTHERS';
 NOTE: Format SUBPOP has been output.
-143  run;
+312  run;
 
 NOTE: PROCEDURE FORMAT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-144  
-145  /* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
-146  DATA WORK.POOL;
-147        SET CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
-148             CDATA.H193 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
-149             CDATA.H202 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL);
-150       POOLWT = LONGWT/3 ;
-151  
-152       IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
-153       ELSE SUBPOP=2;
-154    RUN;
+313  
+314  /* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
+315  DATA WORK.POOL;
+316        SET CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+317             CDATA.H193 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL)
+318             CDATA.H202 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL);
+319       POOLWT = LONGWT/3 ;
+320  
+321       IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
+322       ELSE SUBPOP=2;
+323    RUN;
 
 NOTE: There were 15898 observations read from the data set CDATA.H183.
 NOTE: There were 17017 observations read from the data set CDATA.H193.
 NOTE: There were 15617 observations read from the data set CDATA.H202.
 NOTE: The data set WORK.POOL has 48532 observations and 11 variables.
 NOTE: DATA statement used (Total process time):
-      real time           2.57 seconds
-      cpu time            0.51 seconds
+      real time           2.66 seconds
+      cpu time            0.59 seconds
       
 
-155  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-156                    and the output will not be displayed in the Results Viewer.*/
-157  TITLE "COMBINED MEPS DATA FROM PANELS 19, 20, and 21";
-158  PROC MEANS DATA=POOL N NMISS;
-159  RUN;
+324  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
+325                    and the output will not be displayed in the Results Viewer.*/
+326  TITLE "COMBINED MEPS DATA FROM PANELS 19, 20, and 21";
+327  PROC MEANS DATA=POOL N NMISS;
+328  RUN;
 
 NOTE: There were 48532 observations read from the data set WORK.POOL.
 NOTE: PROCEDURE MEANS used (Total process time):
@@ -86,47 +88,47 @@ NOTE: PROCEDURE MEANS used (Total process time):
       cpu time            0.01 seconds
       
 
-160  
-161  PROC FREQ DATA=POOL;
-162  TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
-163  FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF. SUBPOP SUBPOP.;
-164  RUN;
+329  
+330  PROC FREQ DATA=POOL;
+331  TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
+332  FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF. SUBPOP SUBPOP.;
+333  RUN;
 
 NOTE: There were 48532 observations read from the data set WORK.POOL.
 NOTE: PROCEDURE FREQ used (Total process time):
       real time           0.03 seconds
-      cpu time            0.01 seconds
+      cpu time            0.03 seconds
       
 
-165  ODS GRAPHICS OFF;
-166  ods listing; /* Open the listing destination*/
-167  ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
-168  TITLE2 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
-169  /* PROC SURVEYMEANS computes the NOBS, MEANS, STDERR, and CLM statistics by default */
-170  PROC SURVEYMEANS DATA=POOL;
-171      VAR  INSCOVY2;
-172      STRATUM VARSTR ;
-173      CLUSTER VARPSU ;
-174      WEIGHT  POOLWT;
-175      CLASS INSCOVY2;
-176      DOMAIN  SUBPOP("AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME");
-177      FORMAT INSCOVY2 INSF. SUBPOP SUBPOP.;
-178  RUN;
+334  ODS GRAPHICS OFF;
+335  ods listing; /* Open the listing destination*/
+336  ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
+337  TITLE2 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
+338  /* PROC SURVEYMEANS computes the NOBS, MEANS, STDERR, and CLM statistics by default */
+339  PROC SURVEYMEANS DATA=POOL;
+340      VAR  INSCOVY2;
+341      STRATUM VARSTR ;
+342      CLUSTER VARPSU ;
+343      WEIGHT  POOLWT;
+344      CLASS INSCOVY2;
+345      DOMAIN  SUBPOP("AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME");
+346      FORMAT INSCOVY2 INSF. SUBPOP SUBPOP.;
+347  RUN;
 
 NOTE: Only one cluster in a stratum for SUBPOP domains for variable(s) INSCOVY2. The estimate of variance for INSCOVY2 will omit 
       this stratum.
 NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.15 seconds
-      cpu time            0.12 seconds
+      real time           0.10 seconds
+      cpu time            0.09 seconds
       
 
-179  
-180  /*PROC SURVEYMEANS always analyzes character variables as categorical.
-181  If you want categorical analysis for a numeric variable,
-182  you must include that variable in the CLASS statement as well as the VAR statement.*/
-183  
-184  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
-185   only if used earlier */
-186  PROC PRINTTO;
-187  RUN;
+348  
+349  /*PROC SURVEYMEANS always analyzes character variables as categorical.
+350  If you want categorical analysis for a numeric variable,
+351  you must include that variable in the CLASS statement as well as the VAR statement.*/
+352  
+353  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
+354   only if used earlier */
+355  PROC PRINTTO;
+356  RUN;
 

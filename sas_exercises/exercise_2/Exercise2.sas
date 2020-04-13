@@ -21,7 +21,7 @@ INPUT FILES:  (1) C:\DATA\H201.SAS7BDAT (2017 FULL-YEAR CONSOLIDATED PUF)
 /*  IMPORTANT NOTE:  Use the next 6 lines of code, only if you want SAS to create 
     separate files for SAS log and output.  Otherwise comment  out those 6 lines */
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\Spring2020\sas_exercises\Exercise_2;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\April2020\sas_exercises\Exercise_2;
 %put &=MyFolder;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise2_log.TXT";

@@ -14,7 +14,7 @@ INPUT FILE:   C:\DATA\H201.SAS7BDAT (2017 FULL-YEAR FILE)
 /*  IMPORTANT NOTE:  Use the next 6 lines of code, only if you want SAS to create 
     separate files for SAS log and output.  Otherwise comment  out those 6 lines */
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\Spring2020\SAS_Exercises\Exercise_1;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\April2020\SAS_Exercises\Exercise_1;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise1_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise1_OUTPUT.TXT";
@@ -51,7 +51,7 @@ DATA WORK.PUF201;
   X_ANYSVCE=0;
   IF totexp > 0 THEN X_ANYSVCE=1;
 
-  /* CREATE A SUMMARY VARIABLE FROM END OF YEAR, 42, AND 31 VARIABLES*/
+  /* CREATE A CATEGORICAL AGE VARIABLE */
 
   IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
   ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;

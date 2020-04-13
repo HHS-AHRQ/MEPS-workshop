@@ -21,7 +21,7 @@ INPUT FILE:     (1) C:\DATA\H192.SAS7BDAT (2016 FULL-YEAR FILE)
 /*  IMPORTANT NOTE:  Use the next 6 lines of code, only if you want SAS to create 
     separate files for SAS log and output.  Otherwise comment  out those 6 lines */
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\Spring2020\sas_exercises\Exercise_3;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\April2020\sas_exercises\Exercise_3;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise3_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise3_OUTPUT.TXT";

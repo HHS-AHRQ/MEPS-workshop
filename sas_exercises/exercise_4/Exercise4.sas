@@ -15,7 +15,7 @@ INPUT FILE:     (1) C:\MEPS\SAS\DATA\H183.SAS7BDAT (PANEL 19 LONGITUDINAL FILE)
 /*  IMPORTANT NOTE:  Use the next 6 lines of code, only if you want SAS to create 
     separate files for SAS log and output.  Otherwise comment  out those 6 lines */
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\Spring2020\sas_exercises\Exercise_4;
+%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\April2020\sas_exercises\Exercise_4;
 OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 FILENAME MYLOG "&MyFolder\Exercise4_log.TXT";
 FILENAME MYPRINT "&MyFolder\Exercise4_OUTPUT.TXT";
