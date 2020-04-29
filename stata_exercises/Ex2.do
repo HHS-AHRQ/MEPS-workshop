@@ -26,8 +26,9 @@ log using C:\work\MEPS_workshop\Ex2.log, replace
 cd C:\work\MEPS_workshop
 
 // 1) identify Narcotic analgesics or Narcotic analgesic combos using therapeutic classification (tc) codes
-import sasxport5 h197a.ssp
-keep dupersid rxrecidx linkidx tc1s1_1 rxxp17x rxsf17x 
+*import sasxport5 h197a.ssp
+*keep dupersid rxrecidx linkidx tc1s1_1 rxxp17x rxsf17x
+use dupersid rxrecidx linkidx tc1s1_1 rxxp17x rxsf17x using h197a, clear
 keep if (tc1s1_1==60 | tc1s1_1==191)
 
 list dupersid rxrecidx linkidx rxxp17x rxsf17x in 1/30, table
@@ -45,8 +46,9 @@ list dupersid n_purchase tot oop third_payer in 1/20
 tempfile perdrug
 save "`perdrug'"
 
-import sasxport5 h201.ssp
-keep dupersid varstr varpsu perwt17f racethx
+use dupersid varstr varpsu perwt17f racethx using h201, clear
+*import sasxport5 h201.ssp
+*keep dupersid varstr varpsu perwt17f racethx
 sort dupersid
 
 merge 1:m dupersid using "`perdrug'", keep(master matches) gen(merge1)

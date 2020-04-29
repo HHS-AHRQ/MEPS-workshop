@@ -26,8 +26,9 @@ log using C:\work\MEPS_workshop\Ex3.log, replace
 cd C:\work\MEPS_workshop\
 
 // rename year specific variables prior to combining files
-import sasxport5 h192.ssp
-keep dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16
+use dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16 using h192, clear
+*import sasxport5 h192.ssp
+*keep dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16
 rename inscov16 inscov
 rename perwt16f perwt 
 rename povcat16 povcat 
@@ -35,8 +36,9 @@ rename totslf16 totslf
 tempfile yr1
 save "`yr1'"
 
-import sasxport5 h201.ssp
-keep dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17
+use dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17 using h201, clear
+*import sasxport5 h201.ssp
+*keep dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17
 
 rename inscov17 inscov
 rename perwt17f perwt 

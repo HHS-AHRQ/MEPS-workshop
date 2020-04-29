@@ -1,4 +1,4 @@
-********************************************************************************
+**********************************************************************************
 *
 *PROGRAM:     C:\work\MEPS_workshop\Ex1.do
 *
@@ -9,21 +9,22 @@
 *	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE OVERALL AND BY AGE
 *
 *
-*INPUT FILE:  C:\work\MEPS_workshop\H201.dta (2017 FULL-YEAR FILE)
+*INPUT FILE:  C:\work\MEPS_workshop\H201.dta (20176 FULL-YEAR FILE)
 *
-********************************************************************************
+*********************************************************************************
 
 clear
 set more off
 capture log close
 log using C:\work\MEPS_workshop\Ex1.log, replace
+
 cd C:\work\MEPS_workshop
 
 /* read in data from 2017 consolidated data file (hc-201) */
-*import sasxport8 h201.ssp
 import sasxport5 h201.ssp
-
-keep totexp17 age17x age42x age31x varstr varpsu perwt17f
+*import sasxport h201.ssp
+*use dupersid totexp17 age17x age42x age31x varstr varpsu perwt17f using h201, clear
+keep dupersid totexp17 age17x age42x age31x varstr varpsu perwt17f
     
 /* define expenditure variables  */
 gen total=totexp17
@@ -63,5 +64,3 @@ svy, subpop(any_expenditure): mean total
 // mean expense per person with an expense, by age category
 svy, subpop(any_expenditure): mean total, over(agecat)
 
-// mean expense per person with an expense, by age category using BRR for variance estimates
-svy, subpop(any_expenditure): mean total, over(agecat)

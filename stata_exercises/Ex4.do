@@ -40,57 +40,9 @@ keep dupersid inscovy1 inscovy2 longwt varstr varpsu povcaty1 agey1x panel
 append using "`panel19'" "`panel20'"
 */
 
-#delimit ;
-infix
-  str    dupersid 9-16
-  byte   panel 17-18
-  byte   inscovy1 4167-4168
-  byte   inscovy2 4169-4170
-  byte   varpsu 10109-10109
-  int    varstr 10110-10113
-  double longwt 10114-10126
-  byte   povcaty1 2645-2646
-  byte   povcaty2 2647-2648
-  byte   agey1x 334-335
-  byte   agey2x 336-337
-using h183.dat;
-save p19, replace;
-clear;
-
-infix
-  str    dupersid 9-16
-  byte   panel 17-18
-  byte   inscovy1 4368-4369
-  byte   inscovy2 4370-4371
-  byte   varpsu 10288-10288
-  int    varstr 10289-10292
-  double longwt 10293-10305
-  byte   povcaty1 2843-2844
-  byte   povcaty2 2845-2846
-  byte   agey1x 334-335
-  byte   agey2x 336-337
-using h193.dat;
-save p20, replace;
-clear;
-
-infix
-  str    dupersid 9-16
-  byte   panel 17-18
-  byte   inscovy1 4416-4417
-  byte   inscovy2 4418-4419
-  byte   varpsu 9165-9165
-  int    varstr 9166-9169
-  double longwt 9170-9182
-  byte   povcaty1 2916-2917
-  byte   povcaty2 2918-2919
-  byte   agey1x 334-335
-  byte   agey2x 336-337
-using h202.dat;
-save p21, replace;
-
-#delimit cr
-
-append using p20 p19 
+use dupersid panel longwt varpsu varstr inscovy1 inscovy2 povcaty1 povcaty2 agey1x agey2x using h202, clear
+append using h193 h183
+ 
 tab panel 
 
 gen poolwt=longwt/3
