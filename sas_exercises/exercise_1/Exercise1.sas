@@ -1,95 +1,88 @@
 /**********************************************************************************
 PROGRAM:      EXERCISE1.SAS
 
-DESCRIPTION:  THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE EXPENSES, 2017:
+DESCRIPTION:  THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE EXPENSES, 2018:
 
 	           (1) OVERALL EXPENSES 
 	           (2) PERCENTAGE OF PERSONS WITH AN EXPENSE
 	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE
 
 
-INPUT FILE:   C:\DATA\H201.SAS7BDAT (2017 FULL-YEAR FILE)
+INPUT FILE:   C:\DATA\MySDS\H209.SAS7BDAT (2018 FULL-YEAR FILE)
+*/
 
-*********************************************************************************/;
-/*  IMPORTANT NOTE:  Use the next 6 lines of code, only if you want SAS to create 
-    separate files for SAS log and output.  Otherwise comment  out those 6 lines */
 
-%LET MyFolder= S:\CFACT\Shared\WORKSHOPS\2020\April2020\SAS_Exercises\Exercise_1;
-OPTIONS LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
-FILENAME MYLOG "&MyFolder\Exercise1_log.TXT";
-FILENAME MYPRINT "&MyFolder\Exercise1_OUTPUT.TXT";
+proc datasets lib=work nolist kill; quit; /* Delete  all files in the WORK library */
+OPTIONS nocenter LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
+
+%LET DataFolder = C:\DATA\MySDS;  /* Adjust the folder name, if needed */
+
+/*********************************************************************************
+ IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
+    separate files for SAS log and output.  Otherwise comment  out these lines.
+***********************************************************************************/
+
+%LET RootFolder= C:\Fall2020\sas_exercises\Exercise_1;
+FILENAME MYLOG "&RootFolder\Exercise1_log.TXT";
+FILENAME MYPRINT "&RootFolder\Exercise1_OUTPUT.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
 
-proc datasets lib=work nolist kill; quit; /* delete  all files in the WORK library */
-
-libname CDATA "C:\DATA"; 
-
 PROC FORMAT;
   VALUE AGECAT
-       .     = 'ALL AGES'
-	   1 = '0-64'
-	   2 = '65+';
+       low-64 = '0-64'
+	   65-high = '65+';
 
-  VALUE GTZERO
-     0         = '0'
-     0 <- HIGH = '>0';
-
-  VALUE FLAG
-      .         = 'No or any expense'
-      0         = 'No expense'
-      1         = 'Any expense';
+   VALUE totexp18_cate
+      0         = 'No Expense'
+      Other     = 'Any Expense';
 RUN;
-TITLE "MEPS FULL-YEAR CONSOLIDATED FILE, 2017";
+TITLE "MEPS FULL-YEAR CONSOLIDATED FILE, 2018";
 
-/* READ IN DATA FROM 2017 CONSOLIDATED DATA FILE (HC-201) */
-DATA WORK.PUF201;
-  SET CDATA.H201 (KEEP = TOTEXP17 AGELAST   VARSTR  VARPSU  PERWT17F
-                  RENAME = (TOTEXP17 = totexp));
 
-  /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */  
-  X_ANYSVCE=0;
-  IF totexp > 0 THEN X_ANYSVCE=1;
-
-  /* CREATE A CATEGORICAL AGE VARIABLE */
-
-  IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
-  ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;
-RUN;
+libname CDATA "&DataFolder"; 
+/* READ IN DATA FROM 2018 CONSOLIDATED DATA FILE (HC-201) */
+DATA WORK.PUF209;
+  SET CDATA.H209 (KEEP = TOTEXP18 AGELAST   VARSTR  VARPSU  PERWT18F panel);
+     TOTEXP18_X = TOTEXP18;
+	 AGELAST_X = AGELAST;
+  RUN;
 ODS HTML CLOSE; /* This will make the default HTML output no longer active,
                   and the output will not be displayed in the Results Viewer.*/
-PROC FREQ DATA=PUF201;
-   TABLES X_ANYSVCE*totexp
-          AGELAST*AGECAT
+
+/* For QC purposes */
+/*
+PROC FREQ DATA=PUF209;
+   TABLES TOTEXP18_X AGELAST PANEL
           /LIST MISSING;
-   FORMAT totexp        	gtzero.      
-          AGECAT        agecat.
-     ;
+   FORMAT TOTEXP18_X totexp18_cate.      
+          AGELAST  AGECAT. ;
 RUN;
- 
+*/
 ods graphics off; /*Suppress the graphics */
 ods listing; /* Open the listing destination*/
-TITLE2 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
-PROC SURVEYMEANS DATA=WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
-    VAR  X_ANYSVCE totexp ;
+TITLE2 'PERCENTAGE OF PERSONS WITH AN EXPENSE and OVERALL HEALTH CARE EXPENSES, 2018';
+PROC SURVEYMEANS DATA=WORK.PUF209  ;
+    VAR  TOTEXP18_X TOTEXP18 ;
 	STRATUM VARSTR;
 	CLUSTER VARPSU;
-	WEIGHT PERWT17F;
+	WEIGHT PERWT18F;
+	class TOTEXP18_X;
+	FORMAT TOTEXP18_X TOTEXP18_CATE. ;
 RUN;
 
-
-TITLE2 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
-ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
-PROC SURVEYMEANS DATA= WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
-    VAR  totexp;
+TITLE2 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2018';
+ODS SELECT DOMAIN ; /* Generate output for the DOMAIN only*/
+PROC SURVEYMEANS DATA= WORK.PUF209 NOBS SUMWGT MEAN STDERR SUM ;
+    VAR  totexp18;
 	STRATUM VARSTR ;
 	CLUSTER VARPSU ;
-	WEIGHT  PERWT17F ;	
-	DOMAIN X_ANYSVCE('1')  X_ANYSVCE('1')*AGECAT ;
-	FORMAT  AGECAT agecat.;
+	WEIGHT  PERWT18F ;	
+	DOMAIN TOTEXP18_X('Any Expense')  TOTEXP18_X('Any Expense')*AGELAST;
+	FORMAT TOTEXP18_X TOTEXP18_CATE. AGELAST agecat.;
 RUN;
 
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
- only if used earlier */
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO,  only if used earlier.
+   Otherswise. please comment out the next two lines */
 PROC PRINTTO;
 RUN;

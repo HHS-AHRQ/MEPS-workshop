@@ -1,172 +1,60 @@
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              1
+MEPS FULL-YEAR CONSOLIDATED FILE, 2018                                                                                             1
+PERCENTAGE OF PERSONS WITH AN EXPENSE and OVERALL HEALTH CARE EXPENSES, 2018
 
-                                                         The FREQ Procedure
+The SURVEYMEANS Procedure
 
-                                                                              Cumulative    Cumulative
-                              X_ANYSVCE    totexp    Frequency     Percent     Frequency      Percent
-                              ------------------------------------------------------------------------
-                                      0    0             5824       18.27          5824        18.27  
-                                      1    >0           26056       81.73         31880       100.00  
+                    Data Summary
 
-
-                                                                              Cumulative    Cumulative
-                              AGELAST      AGECAT    Frequency     Percent     Frequency      Percent
-                              ------------------------------------------------------------------------
-                                    0    0-64             341        1.07           341         1.07  
-                                    1    0-64             380        1.19           721         2.26  
-                                    2    0-64             412        1.29          1133         3.55  
-                                    3    0-64             436        1.37          1569         4.92  
-                                    4    0-64             434        1.36          2003         6.28  
-                                    5    0-64             457        1.43          2460         7.72  
-                                    6    0-64             493        1.55          2953         9.26  
-                                    7    0-64             436        1.37          3389        10.63  
-                                    8    0-64             474        1.49          3863        12.12  
-                                    9    0-64             488        1.53          4351        13.65  
-                                   10    0-64             499        1.57          4850        15.21  
-                                   11    0-64             486        1.52          5336        16.74  
-                                   12    0-64             460        1.44          5796        18.18  
-                                   13    0-64             457        1.43          6253        19.61  
-                                   14    0-64             467        1.46          6720        21.08  
-                                   15    0-64             492        1.54          7212        22.62  
-                                   16    0-64             447        1.40          7659        24.02  
-                                   17    0-64             499        1.57          8158        25.59  
-                                   18    0-64             444        1.39          8602        26.98  
-                                   19    0-64             418        1.31          9020        28.29  
-                                   20    0-64             415        1.30          9435        29.60  
-                                   21    0-64             367        1.15          9802        30.75  
-                                   22    0-64             367        1.15         10169        31.90  
-                                   23    0-64             378        1.19         10547        33.08  
-                                   24    0-64             373        1.17         10920        34.25  
-                                   25    0-64             418        1.31         11338        35.56  
-                                   26    0-64             401        1.26         11739        36.82  
-                                   27    0-64             421        1.32         12160        38.14  
-                                   28    0-64             392        1.23         12552        39.37  
-                                   29    0-64             379        1.19         12931        40.56  
-                                   30    0-64             420        1.32         13351        41.88  
-                                   31    0-64             393        1.23         13744        43.11  
-                                   32    0-64             406        1.27         14150        44.39  
-                                   33    0-64             398        1.25         14548        45.63  
-                                   34    0-64             403        1.26         14951        46.90  
-                                   35    0-64             421        1.32         15372        48.22  
-                                   36    0-64             431        1.35         15803        49.57  
-                                   37    0-64             426        1.34         16229        50.91  
-                                   38    0-64             387        1.21         16616        52.12  
-                                   39    0-64             415        1.30         17031        53.42  
-                                   40    0-64             448        1.41         17479        54.83  
-                                   41    0-64             399        1.25         17878        56.08  
-                                   42    0-64             370        1.16         18248        57.24  
-                                   43    0-64             370        1.16         18618        58.40  
-                                   44    0-64             368        1.15         18986        59.55  
-                                   45    0-64             351        1.10         19337        60.66  
-                                   46    0-64             407        1.28         19744        61.93  
-                                   47    0-64             407        1.28         20151        63.21  
-                                   48    0-64             416        1.30         20567        64.51  
-                                   49    0-64             402        1.26         20969        65.77  
-                                   50    0-64             397        1.25         21366        67.02  
-                                   51    0-64             382        1.20         21748        68.22  
-                                   52    0-64             448        1.41         22196        69.62  
-                                   53    0-64             406        1.27         22602        70.90  
-                                   54    0-64             421        1.32         23023        72.22  
-                                   55    0-64             421        1.32         23444        73.54  
-                                   56    0-64             398        1.25         23842        74.79  
-                                   57    0-64             388        1.22         24230        76.00  
-                                   58    0-64             414        1.30         24644        77.30  
-                                   59    0-64             434        1.36         25078        78.66  
-                                   60    0-64             392        1.23         25470        79.89  
-                                   61    0-64             376        1.18         25846        81.07  
-                                   62    0-64             341        1.07         26187        82.14  
-                                   63    0-64             362        1.14         26549        83.28  
-                                   64    0-64             363        1.14         26912        84.42  
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              2
-
-                                                         The FREQ Procedure
-
-                                                                              Cumulative    Cumulative
-                              AGELAST      AGECAT    Frequency     Percent     Frequency      Percent
-                              ------------------------------------------------------------------------
-                                   65    65+              323        1.01         27235        85.43  
-                                   66    65+              332        1.04         27567        86.47  
-                                   67    65+              342        1.07         27909        87.54  
-                                   68    65+              304        0.95         28213        88.50  
-                                   69    65+              332        1.04         28545        89.54  
-                                   70    65+              301        0.94         28846        90.48  
-                                   71    65+              317        0.99         29163        91.48  
-                                   72    65+              228        0.72         29391        92.19  
-                                   73    65+              220        0.69         29611        92.88  
-                                   74    65+              223        0.70         29834        93.58  
-                                   75    65+              188        0.59         30022        94.17  
-                                   76    65+              173        0.54         30195        94.71  
-                                   77    65+              198        0.62         30393        95.34  
-                                   78    65+              152        0.48         30545        95.81  
-                                   79    65+              165        0.52         30710        96.33  
-                                   80    65+              130        0.41         30840        96.74  
-                                   81    65+              109        0.34         30949        97.08  
-                                   82    65+              135        0.42         31084        97.50  
-                                   83    65+              109        0.34         31193        97.85  
-                                   84    65+              110        0.35         31303        98.19  
-                                   85    65+              577        1.81         31880       100.00  
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              3
-                                      PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES
-
-                                                     The SURVEYMEANS Procedure
-
-                                                            Data Summary
-
-                                        Number of Strata                                 282
-                                        Number of Clusters                               621
-                                        Number of Observations                         31880
-                                        Number of Observations Used                    30716
-                                        Number of Obs with Nonpositive Weights          1164
-                                        Sum of Weights                             324779909
+Number of Strata                                 117
+Number of Clusters                               257
+Number of Observations                         30461
+Number of Observations Used                    29415
+Number of Obs with Nonpositive Weights          1046
+Sum of Weights                             326327888
 
 
-                                                             Statistics
+             Class Level Information
  
-                                                              Sum of              Std Error                       Std Error
-         Variable     Label                        N         Weights      Mean      of Mean             Sum          of Sum
-         ------------------------------------------------------------------------------------------------------------------
-         X_ANYSVCE                            30,716     324,779,909     0.852       0.0034     276,844,299       4,659,983
-         totexp       TOTAL HEALTH CARE       30,716     324,779,909    5305.6       125.93      1.72314E12     46588497185
-                      EXP 17                                                                                               
-         ------------------------------------------------------------------------------------------------------------------
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              4
-                            MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+Variable        Levels    Values
 
-                                                     The SURVEYMEANS Procedure
+TOTEXP18_X           2    No Expense Any Expense  
 
-                                                            Data Summary
 
-                                        Number of Strata                                 282
-                                        Number of Clusters                               621
-                                        Number of Observations                         31880
-                                        Number of Observations Used                    30716
-                                        Number of Obs with Nonpositive Weights          1164
-                                        Sum of Weights                             324779909
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              5
-                            MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
-
-                                                     The SURVEYMEANS Procedure
-
-                                                  Statistics for X_ANYSVCE Domains
+                                                Statistics
  
-                                                                    Sum of              Std Error                       Std Error
-   X_ANYSVCE    Variable    Label                        N         Weights      Mean      of Mean             Sum          of Sum
-   ------------------------------------------------------------------------------------------------------------------------------
-           1    totexp      TOTAL HEALTH CARE       25,356     276,844,299    6224.2       147.05      1.72314E12     46588497185
-                            EXP 17                                                                                               
-   ------------------------------------------------------------------------------------------------------------------------------
-                                               MEPS FULL-YEAR CONSOLIDATED FILE, 2017                                              6
-                            MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+
+                                                                         Std Error
+Variable      Level          Label                        N      Mean      of Mean       95% CL for Mean
+-----------------------------------------------------------------------------------------------------------
+TOTEXP18                     TOTAL HEALTH CARE       29,415    6063.1       128.01    5810.04979 6316.21912
+                             EXP 18                                                                        
+TOTEXP18_X    No Expense                              4,215     0.133       0.0036       0.12617    0.14042
+              Any Expense                            25,200     0.867       0.0036       0.85958    0.87383
+-----------------------------------------------------------------------------------------------------------
+MEPS FULL-YEAR CONSOLIDATED FILE, 2018                                                                                             2
+MEAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2018
 
-                                                     The SURVEYMEANS Procedure
+The SURVEYMEANS Procedure
 
-                                              Statistics for X_ANYSVCE*AGECAT Domains
+                                               Statistics for TOTEXP18_X Domains
+ 
+                                                                   Sum of              Std Error                       Std Error
+TOTEXP18_X     Variable    Label                        N         Weights      Mean      of Mean             Sum          of Sum
+--------------------------------------------------------------------------------------------------------------------------------
+Any Expense    TOTEXP18    TOTAL HEALTH CARE       25,200     282,829,352    6995.6       138.90    1.9785699E12     62127195159
+                           EXP 18                                                                                               
+--------------------------------------------------------------------------------------------------------------------------------
+MEPS FULL-YEAR CONSOLIDATED FILE, 2018                                                                                             3
+MEAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2018
+
+The SURVEYMEANS Procedure
+
+                                            Statistics for TOTEXP18_X*AGELAST Domains
  
                                                                          Sum of            Std Error                     Std Error
- X_ANYSVCE   AGECAT     Variable   Label                       N        Weights     Mean     of Mean            Sum         of Sum
- ---------------------------------------------------------------------------------------------------------------------------------
-         1   0-64       totexp     TOTAL HEALTH CARE      20,661    226,077,223   4939.1      142.57   1.1166275E12    36159659869
-                                   EXP 17                                                                                         
-             65+        totexp     TOTAL HEALTH CARE       4,695     50,767,076    11947      371.28   606512548182    24232442940
-                                   EXP 17                                                                                         
- ---------------------------------------------------------------------------------------------------------------------------------
+TOTEXP18_X    AGELAST   Variable   Label                       N        Weights     Mean     of Mean            Sum         of Sum
+----------------------------------------------------------------------------------------------------------------------------------
+Any Expense   0-64      TOTEXP18   TOTAL HEALTH CARE      19,924    230,099,490   5650.5      133.16   1.3001662E12    47728524403
+                                   EXP 18                                                                                         
+              65+       TOTEXP18   TOTAL HEALTH CARE       5,276     52,729,863    12866      328.98   678403612336    24616181502
+                                   EXP 18                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------

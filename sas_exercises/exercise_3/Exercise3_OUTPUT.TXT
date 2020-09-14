@@ -1,221 +1,26 @@
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     1
+COMBINED MEPS DATA FROM 2017 and 2018 Consolidated Files                                                                           1
+WEIGHTED ESTIMATE FOR OUT-OF-POCKET EXPENSES FOR PERSONS AGES 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
--------------------------------------------------------- year=2016 SUBPOP=1 --------------------------------------------------------
+The SURVEYMEANS Procedure
 
-                                                         The FREQ Procedure
+                    Data Summary
 
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  26-30      5 HIGH INCOME      3 UNINSURED            73      100.00            73       100.00  
+Number of Strata                                 282
+Number of Clusters                               621
+Number of Observations                         62341
+Number of Observations Used                    60131
+Number of Obs with Nonpositive Weights          2210
+Sum of Weights                             325553898
+COMBINED MEPS DATA FROM 2017 and 2018 Consolidated Files                                                                           2
+WEIGHTED ESTIMATE FOR OUT-OF-POCKET EXPENSES FOR PERSONS AGES 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
 
+The SURVEYMEANS Procedure
 
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       5 HIGH INCOME      3 UNINSURED            73      100.00            73       100.00  
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     2
-
--------------------------------------------------------- year=2016 SUBPOP=2 --------------------------------------------------------
-
-                                                         The FREQ Procedure
-
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  0-25       1 POOR/NEGATIVE    1 ANY PRIVATE         421        1.22           421         1.22  
-                  0-25       1 POOR/NEGATIVE    2 PUBLIC ONLY        3208        9.28          3629        10.49  
-                  0-25       1 POOR/NEGATIVE    3 UNINSURED           280        0.81          3909        11.30  
-                  0-25       2 NEAR POOR        1 ANY PRIVATE         209        0.60          4118        11.91  
-                  0-25       2 NEAR POOR        2 PUBLIC ONLY         710        2.05          4828        13.96  
-                  0-25       2 NEAR POOR        3 UNINSURED            76        0.22          4904        14.18  
-                  0-25       3 LOW INCOME       1 ANY PRIVATE         733        2.12          5637        16.30  
-                  0-25       3 LOW INCOME       2 PUBLIC ONLY        1328        3.84          6965        20.14  
-                  0-25       3 LOW INCOME       3 UNINSURED           247        0.71          7212        20.85  
-                  0-25       4 MIDDLE INCOME    1 ANY PRIVATE        2101        6.08          9313        26.93  
-                  0-25       4 MIDDLE INCOME    2 PUBLIC ONLY         941        2.72         10254        29.65  
-                  0-25       4 MIDDLE INCOME    3 UNINSURED           285        0.82         10539        30.48  
-                  0-25       5 HIGH INCOME      1 ANY PRIVATE        2127        6.15         12666        36.63  
-                  0-25       5 HIGH INCOME      2 PUBLIC ONLY         140        0.40         12806        37.03  
-                  0-25       5 HIGH INCOME      3 UNINSURED           120        0.35         12926        37.38  
-                  26-30      1 POOR/NEGATIVE    1 ANY PRIVATE          94        0.27         13020        37.65  
-                  26-30      1 POOR/NEGATIVE    2 PUBLIC ONLY         215        0.62         13235        38.27  
-                  26-30      1 POOR/NEGATIVE    3 UNINSURED           131        0.38         13366        38.65  
-                  26-30      2 NEAR POOR        1 ANY PRIVATE          33        0.10         13399        38.75  
-                  26-30      2 NEAR POOR        2 PUBLIC ONLY          46        0.13         13445        38.88  
-                  26-30      2 NEAR POOR        3 UNINSURED            37        0.11         13482        38.99  
-                  26-30      3 LOW INCOME       1 ANY PRIVATE         144        0.42         13626        39.40  
-                  26-30      3 LOW INCOME       2 PUBLIC ONLY          89        0.26         13715        39.66  
-                  26-30      3 LOW INCOME       3 UNINSURED           104        0.30         13819        39.96  
-                  26-30      4 MIDDLE INCOME    1 ANY PRIVATE         529        1.53         14348        41.49  
-                  26-30      4 MIDDLE INCOME    2 PUBLIC ONLY          79        0.23         14427        41.72  
-                  26-30      4 MIDDLE INCOME    3 UNINSURED           131        0.38         14558        42.10  
-                  26-30      5 HIGH INCOME      1 ANY PRIVATE         530        1.53         15088        43.63  
-                  26-30      5 HIGH INCOME      2 PUBLIC ONLY          25        0.07         15113        43.70  
-                  31+        1 POOR/NEGATIVE    1 ANY PRIVATE         597        1.73         15710        45.43  
-                  31+        1 POOR/NEGATIVE    2 PUBLIC ONLY        1914        5.53         17624        50.96  
-                  31+        1 POOR/NEGATIVE    3 UNINSURED           676        1.95         18300        52.92  
-                  31+        2 NEAR POOR        1 ANY PRIVATE         309        0.89         18609        53.81  
-                  31+        2 NEAR POOR        2 PUBLIC ONLY         528        1.53         19137        55.34  
-                  31+        2 NEAR POOR        3 UNINSURED           202        0.58         19339        55.92  
-                  31+        3 LOW INCOME       1 ANY PRIVATE        1278        3.70         20617        59.62  
-                  31+        3 LOW INCOME       2 PUBLIC ONLY        1192        3.45         21809        63.06  
-                  31+        3 LOW INCOME       3 UNINSURED           554        1.60         22363        64.67  
-                  31+        4 MIDDLE INCOME    1 ANY PRIVATE        3767       10.89         26130        75.56  
-                  31+        4 MIDDLE INCOME    2 PUBLIC ONLY        1192        3.45         27322        79.01  
-                  31+        4 MIDDLE INCOME    3 UNINSURED           647        1.87         27969        80.88  
-                  31+        5 HIGH INCOME      1 ANY PRIVATE        5681       16.43         33650        97.30  
-                  31+        5 HIGH INCOME      2 PUBLIC ONLY         648        1.87         34298        99.18  
-                  31+        5 HIGH INCOME      3 UNINSURED           284        0.82         34582       100.00  
-
-
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       1 POOR/NEGATIVE    1 ANY PRIVATE        1112        3.22          1112         3.22  
-                       1 POOR/NEGATIVE    2 PUBLIC ONLY        5337       15.43          6449        18.65  
-                       1 POOR/NEGATIVE    3 UNINSURED          1087        3.14          7536        21.79  
-                       2 NEAR POOR        1 ANY PRIVATE         551        1.59          8087        23.38  
-                       2 NEAR POOR        2 PUBLIC ONLY        1284        3.71          9371        27.10  
-                       2 NEAR POOR        3 UNINSURED           315        0.91          9686        28.01  
-                       3 LOW INCOME       1 ANY PRIVATE        2155        6.23         11841        34.24  
-                       3 LOW INCOME       2 PUBLIC ONLY        2609        7.54         14450        41.78  
-                       3 LOW INCOME       3 UNINSURED           905        2.62         15355        44.40  
-                       4 MIDDLE INCOME    1 ANY PRIVATE        6397       18.50         21752        62.90  
-                       4 MIDDLE INCOME    2 PUBLIC ONLY        2212        6.40         23964        69.30  
-                       4 MIDDLE INCOME    3 UNINSURED          1063        3.07         25027        72.37  
-                       5 HIGH INCOME      1 ANY PRIVATE        8338       24.11         33365        96.48  
-                       5 HIGH INCOME      2 PUBLIC ONLY         813        2.35         34178        98.83  
-                       5 HIGH INCOME      3 UNINSURED           404        1.17         34582       100.00  
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     3
-
--------------------------------------------------------- year=2017 SUBPOP=1 --------------------------------------------------------
-
-                                                         The FREQ Procedure
-
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  26-30      5 HIGH INCOME      3 UNINSURED            47      100.00            47       100.00  
-
-
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       5 HIGH INCOME      3 UNINSURED            47      100.00            47       100.00  
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     4
-
--------------------------------------------------------- year=2017 SUBPOP=2 --------------------------------------------------------
-
-                                                         The FREQ Procedure
-
-                                                                                          Cumulative    Cumulative
-                  AGELAST             POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                  ------------------------------------------------------------------------------------------------
-                  0-25       1 POOR/NEGATIVE    1 ANY PRIVATE         406        1.28           406         1.28  
-                  0-25       1 POOR/NEGATIVE    2 PUBLIC ONLY        2611        8.20          3017         9.48  
-                  0-25       1 POOR/NEGATIVE    3 UNINSURED           181        0.57          3198        10.05  
-                  0-25       2 NEAR POOR        1 ANY PRIVATE         148        0.46          3346        10.51  
-                  0-25       2 NEAR POOR        2 PUBLIC ONLY         566        1.78          3912        12.29  
-                  0-25       2 NEAR POOR        3 UNINSURED            57        0.18          3969        12.47  
-                  0-25       3 LOW INCOME       1 ANY PRIVATE         711        2.23          4680        14.70  
-                  0-25       3 LOW INCOME       2 PUBLIC ONLY        1110        3.49          5790        18.19  
-                  0-25       3 LOW INCOME       3 UNINSURED           148        0.46          5938        18.65  
-                  0-25       4 MIDDLE INCOME    1 ANY PRIVATE        1992        6.26          7930        24.91  
-                  0-25       4 MIDDLE INCOME    2 PUBLIC ONLY         809        2.54          8739        27.45  
-                  0-25       4 MIDDLE INCOME    3 UNINSURED           194        0.61          8933        28.06  
-                  0-25       5 HIGH INCOME      1 ANY PRIVATE        2204        6.92         11137        34.99  
-                  0-25       5 HIGH INCOME      2 PUBLIC ONLY         137        0.43         11274        35.42  
-                  0-25       5 HIGH INCOME      3 UNINSURED            64        0.20         11338        35.62  
-                  26-30      1 POOR/NEGATIVE    1 ANY PRIVATE          77        0.24         11415        35.86  
-                  26-30      1 POOR/NEGATIVE    2 PUBLIC ONLY         210        0.66         11625        36.52  
-                  26-30      1 POOR/NEGATIVE    3 UNINSURED           105        0.33         11730        36.85  
-                  26-30      2 NEAR POOR        1 ANY PRIVATE          32        0.10         11762        36.95  
-                  26-30      2 NEAR POOR        2 PUBLIC ONLY          45        0.14         11807        37.09  
-                  26-30      2 NEAR POOR        3 UNINSURED            24        0.08         11831        37.17  
-                  26-30      3 LOW INCOME       1 ANY PRIVATE         177        0.56         12008        37.72  
-                  26-30      3 LOW INCOME       2 PUBLIC ONLY          76        0.24         12084        37.96  
-                  26-30      3 LOW INCOME       3 UNINSURED            79        0.25         12163        38.21  
-                  26-30      4 MIDDLE INCOME    1 ANY PRIVATE         448        1.41         12611        39.62  
-                  26-30      4 MIDDLE INCOME    2 PUBLIC ONLY          70        0.22         12681        39.84  
-                  26-30      4 MIDDLE INCOME    3 UNINSURED           109        0.34         12790        40.18  
-                  26-30      5 HIGH INCOME      1 ANY PRIVATE         494        1.55         13284        41.73  
-                  26-30      5 HIGH INCOME      2 PUBLIC ONLY          20        0.06         13304        41.79  
-                  31+        1 POOR/NEGATIVE    1 ANY PRIVATE         519        1.63         13823        43.42  
-                  31+        1 POOR/NEGATIVE    2 PUBLIC ONLY        1798        5.65         15621        49.07  
-                  31+        1 POOR/NEGATIVE    3 UNINSURED           505        1.59         16126        50.66  
-                  31+        2 NEAR POOR        1 ANY PRIVATE         251        0.79         16377        51.45  
-                  31+        2 NEAR POOR        2 PUBLIC ONLY         534        1.68         16911        53.12  
-                  31+        2 NEAR POOR        3 UNINSURED           149        0.47         17060        53.59  
-                  31+        3 LOW INCOME       1 ANY PRIVATE        1136        3.57         18196        57.16  
-                  31+        3 LOW INCOME       2 PUBLIC ONLY        1080        3.39         19276        60.55  
-                  31+        3 LOW INCOME       3 UNINSURED           416        1.31         19692        61.86  
-                  31+        4 MIDDLE INCOME    1 ANY PRIVATE        3609       11.34         23301        73.20  
-                  31+        4 MIDDLE INCOME    2 PUBLIC ONLY        1141        3.58         24442        76.78  
-                  31+        4 MIDDLE INCOME    3 UNINSURED           520        1.63         24962        78.42  
-                  31+        5 HIGH INCOME      1 ANY PRIVATE        5864       18.42         30826        96.84  
-                  31+        5 HIGH INCOME      2 PUBLIC ONLY         754        2.37         31580        99.21  
-                  31+        5 HIGH INCOME      3 UNINSURED           253        0.79         31833       100.00  
-
-
-                                                                                    Cumulative    Cumulative
-                                POVCAT           INSCOV    Frequency     Percent     Frequency      Percent
-                       -------------------------------------------------------------------------------------
-                       1 POOR/NEGATIVE    1 ANY PRIVATE        1002        3.15          1002         3.15  
-                       1 POOR/NEGATIVE    2 PUBLIC ONLY        4619       14.51          5621        17.66  
-                       1 POOR/NEGATIVE    3 UNINSURED           791        2.48          6412        20.14  
-                       2 NEAR POOR        1 ANY PRIVATE         431        1.35          6843        21.50  
-                       2 NEAR POOR        2 PUBLIC ONLY        1145        3.60          7988        25.09  
-                       2 NEAR POOR        3 UNINSURED           230        0.72          8218        25.82  
-                       3 LOW INCOME       1 ANY PRIVATE        2024        6.36         10242        32.17  
-                       3 LOW INCOME       2 PUBLIC ONLY        2266        7.12         12508        39.29  
-                       3 LOW INCOME       3 UNINSURED           643        2.02         13151        41.31  
-                       4 MIDDLE INCOME    1 ANY PRIVATE        6049       19.00         19200        60.31  
-                       4 MIDDLE INCOME    2 PUBLIC ONLY        2020        6.35         21220        66.66  
-                       4 MIDDLE INCOME    3 UNINSURED           823        2.59         22043        69.25  
-                       5 HIGH INCOME      1 ANY PRIVATE        8562       26.90         30605        96.14  
-                       5 HIGH INCOME      2 PUBLIC ONLY         911        2.86         31516        99.00  
-                       5 HIGH INCOME      3 UNINSURED           317        1.00         31833       100.00  
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     5
-
-                                                        The MEANS Procedure
-
-                                                                                                    N
-                               Variable    Label                                           N     Miss
-                               ----------------------------------------------------------------------
-                               AGELAST     PERSON'S AGE LAST TIME ELIGIBLE             66535        0
-                               POVCAT      FAMILY INC AS % OF POVERTY LINE - CATEGO    66535        0
-                               INSCOV      HEALTH INSURANCE COVERAGE INDICATOR 2016    66535        0
-                               TOTSLF      TOTAL AMT PAID BY SELF/FAMILY 16            66535        0
-                               PERWT       FINAL PERSON WEIGHT, 2016                   66535        0
-                               VARSTR      VARIANCE ESTIMATION STRATUM - 2016          66535        0
-                               VARPSU      VARIANCE ESTIMATION PSU - 2016              66535        0
-                               POOLWT                                                  66535        0
-                               SUBPOP                                                  66535        0
-                               ----------------------------------------------------------------------
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     6
-             WEIGHTED ESTIMATE FOR OUT-OF-POCKET EXPENSES FOR PERSONS AGES 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-
-                                                     The SURVEYMEANS Procedure
-
-                                                            Data Summary
-
-                                        Number of Strata                                 282
-                                        Number of Clusters                               625
-                                        Number of Observations                         66535
-                                        Number of Observations Used                    63975
-                                        Number of Obs with Nonpositive Weights          2560
-                                        Sum of Weights                             323960798
-                                      COMBINED MEPS DATA FROM 2016 and 2017 Consolidated Files                                     7
-             WEIGHTED ESTIMATE FOR OUT-OF-POCKET EXPENSES FOR PERSONS AGES 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME
-
-                                                     The SURVEYMEANS Procedure
-
-                                                   Statistics for SUBPOP Domains
+                                            Statistics for SUBPOP Domains
  
-                                                                                                   Std Error
- SUBPOP                                            Variable  Label                      N    Mean    of Mean     95% CL for Mean
- ----------------------------------------------------------------------------------------------------------------------------------
- AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME  TOTSLF    TOTAL AMT PAID BY         98  300.04     93.384  116.360484 483.716042
-                                                             SELF/FAMILY 16                                                        
- ----------------------------------------------------------------------------------------------------------------------------------
+                                                                                   Std Error
+SUBPOP                     Variable    Label                        N      Mean      of Mean       95% CL for Mean
+---------------------------------------------------------------------------------------------------------------------
+AGE 26-30, UNINS_HI_INC    TOTSLF      TOTAL AMT PAID BY           79    242.14       72.815    98.9150882 385.368940
+                                       SELF/FAMILY 17                                                                
+---------------------------------------------------------------------------------------------------------------------

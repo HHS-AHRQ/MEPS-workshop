@@ -1,203 +1,62 @@
-                                           COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                           1
+COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                                                                      1
 
-                                                        The MEANS Procedure
+The MEANS Procedure
 
-                                                                                                    N
-                               Variable    Label                                           N     Miss
-                               ----------------------------------------------------------------------
-                               PANEL       PANEL NUMBER                                48532        0
-                               AGEY1X      AGE AS OF 12/31/14 (EDITED/IMPUTED)         48532        0
-                               POVCATY1    FAM INC AS % OF POVERTY LINE - CATEGO 14    48532        0
-                               INSCOVY1    HEALTH INSURANCE COVERAGE INDICATOR 14      48532        0
-                               INSCOVY2    HEALTH INSURANCE COVERAGE INDICATOR 15      48532        0
-                               VARPSU      VARIANCE ESTIMATION PSU                     48532        0
-                               VARSTR      VARIANCE ESTIMATION STRATUM                 48532        0
-                               LONGWT      LONGITUDINAL WEIGHT - PANEL 19              48532        0
-                               POOLWT                                                  48532        0
-                               SUBPOP                                                  48532        0
-                               ----------------------------------------------------------------------
-                                           COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                           2
+                                                                     N
+Variable    Label                                           N     Miss
+----------------------------------------------------------------------
+PANEL       PANEL NUMBER                                48532        0
+YEARIND     YEAR INDICATOR                              48532        0
+AGEY1X      AGE AS OF 12/31/14 (EDITED/IMPUTED)         48532        0
+POVCATY1    FAM INC AS % OF POVERTY LINE - CATEGO 14    48532        0
+INSCOVY1    HEALTH INSURANCE COVERAGE INDICATOR 14      48532        0
+INSCOVY2    HEALTH INSURANCE COVERAGE INDICATOR 15      48532        0
+VARPSU      VARIANCE ESTIMATION PSU                     48532        0
+VARSTR      VARIANCE ESTIMATION STRATUM                 48532        0
+LONGWT      LONGITUDINAL WEIGHT - PANEL 19              48532        0
+POOLWT                                                  48532        0
+SUBPOP                                                  48532        0
+----------------------------------------------------------------------
+COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                                                                      2
+INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
 
-                                                         The FREQ Procedure
+The SURVEYMEANS Procedure
 
-                                                                                            Cumulative    Cumulative
-                                                         SUBPOP    Frequency     Percent     Frequency      Percent
-               -----------------------------------------------------------------------------------------------------
-               AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME          68        0.14            68         0.14  
-               OTHERS                                                 48464       99.86         48532       100.00  
+            Data Summary
 
-
-                                                                                                 Cumulative    Cumulative
-                                                     SUBPOP    PANEL    Frequency     Percent     Frequency      Percent
-           --------------------------------------------------------------------------------------------------------------
-           AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME       19          15        0.03            15         0.03  
-           AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME       20          26        0.05            41         0.08  
-           AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME       21          27        0.06            68         0.14  
-           OTHERS                                                 19       15883       32.73         15951        32.87  
-           OTHERS                                                 20       16991       35.01         32942        67.88  
-           OTHERS                                                 21       15590       32.12         48532       100.00  
+Number of Strata                 165
+Number of Clusters               371
+Number of Observations         48532
+Sum of Weights             326752883
 
 
+                                         Class Level Information
  
-                                                       SUBPOP           INSCOVY1             AGEY1X           POVCATY1
-             ---------------------------------------------------------------------------------------------------------
-             AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME    3 UNINSURED        26-30              5 HIGH INCOME  
-             OTHERS                                              -1 INAPPLICABLE    -1 INAPPLICABLE                 -1
-             OTHERS                                              1 ANY PRIVATE      -1 INAPPLICABLE    1 POOR/NEGATIVE
-             OTHERS                                              1 ANY PRIVATE      -1 INAPPLICABLE    2 NEAR POOR    
-             OTHERS                                              1 ANY PRIVATE      -1 INAPPLICABLE    3 LOW INCOME   
-             OTHERS                                              1 ANY PRIVATE      -1 INAPPLICABLE    4 MIDDLE INCOME
-             OTHERS                                              1 ANY PRIVATE      -1 INAPPLICABLE    5 HIGH INCOME  
-             OTHERS                                              1 ANY PRIVATE      0-25, 31+          1 POOR/NEGATIVE
-             OTHERS                                              1 ANY PRIVATE      0-25, 31+          2 NEAR POOR    
-             OTHERS                                              1 ANY PRIVATE      0-25, 31+          3 LOW INCOME   
-             OTHERS                                              1 ANY PRIVATE      0-25, 31+          4 MIDDLE INCOME
-             OTHERS                                              1 ANY PRIVATE      0-25, 31+          5 HIGH INCOME  
-             OTHERS                                              1 ANY PRIVATE      26-30              1 POOR/NEGATIVE
-             OTHERS                                              1 ANY PRIVATE      26-30              2 NEAR POOR    
-             OTHERS                                              1 ANY PRIVATE      26-30              3 LOW INCOME   
-             OTHERS                                              1 ANY PRIVATE      26-30              4 MIDDLE INCOME
-             OTHERS                                              1 ANY PRIVATE      26-30              5 HIGH INCOME  
-             OTHERS                                              2 PUBLIC ONLY      -1 INAPPLICABLE    1 POOR/NEGATIVE
-             OTHERS                                              2 PUBLIC ONLY      -1 INAPPLICABLE    2 NEAR POOR    
-             OTHERS                                              2 PUBLIC ONLY      -1 INAPPLICABLE    3 LOW INCOME   
-             OTHERS                                              2 PUBLIC ONLY      -1 INAPPLICABLE    4 MIDDLE INCOME
-             OTHERS                                              2 PUBLIC ONLY      -1 INAPPLICABLE    5 HIGH INCOME  
-             OTHERS                                              2 PUBLIC ONLY      0-25, 31+          1 POOR/NEGATIVE
-             OTHERS                                              2 PUBLIC ONLY      0-25, 31+          2 NEAR POOR    
+Variable    Label                     Levels    Values
 
-                                                                  Cumulative    Cumulative
-                                         Frequency     Percent     Frequency      Percent
-                                         -------------------------------------------------
-                                               68        0.14            68         0.14  
-                                              592        1.22           660         1.36  
-                                               23        0.05           683         1.41  
-                                                7        0.01           690         1.42  
-                                               33        0.07           723         1.49  
-                                               36        0.07           759         1.56  
-                                               26        0.05           785         1.62  
-                                             1377        2.84          2162         4.45  
-                                              674        1.39          2836         5.84  
-                                             2826        5.82          5662        11.67  
-                                             8480       17.47         14142        29.14  
-                                            10178       20.97         24320        50.11  
-                                              114        0.23         24434        50.35  
-                                               46        0.09         24480        50.44  
-                                              239        0.49         24719        50.93  
-                                              698        1.44         25417        52.37  
-                                              693        1.43         26110        53.80  
-                                               57        0.12         26167        53.92  
-                                               17        0.04         26184        53.95  
-                                               44        0.09         26228        54.04  
-                                               52        0.11         26280        54.15  
-                                               18        0.04         26298        54.19  
-                                             7213       14.86         33511        69.05  
-                                             1662        3.42         35173        72.47  
-                                           COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                           3
+INSCOVY2    HEALTH INSURANCE               4    -1 INAPPLICABLE 1 ANY PRIVATE 2 PUBLIC ONLY 3 UNINSURED  
+            COVERAGE INDICATOR                                                                           
+            15                                                                                           
+COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                                                                      3
+INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
 
-                                                         The FREQ Procedure
+The SURVEYMEANS Procedure
 
+                                                  Statistics for SUBPOP Domains
  
-                                                       SUBPOP           INSCOVY1             AGEY1X           POVCATY1
-             ---------------------------------------------------------------------------------------------------------
-             OTHERS                                              2 PUBLIC ONLY      0-25, 31+          3 LOW INCOME   
-             OTHERS                                              2 PUBLIC ONLY      0-25, 31+          4 MIDDLE INCOME
-             OTHERS                                              2 PUBLIC ONLY      0-25, 31+          5 HIGH INCOME  
-             OTHERS                                              2 PUBLIC ONLY      26-30              1 POOR/NEGATIVE
-             OTHERS                                              2 PUBLIC ONLY      26-30              2 NEAR POOR    
-             OTHERS                                              2 PUBLIC ONLY      26-30              3 LOW INCOME   
-             OTHERS                                              2 PUBLIC ONLY      26-30              4 MIDDLE INCOME
-             OTHERS                                              2 PUBLIC ONLY      26-30              5 HIGH INCOME  
-             OTHERS                                              3 UNINSURED        -1 INAPPLICABLE    1 POOR/NEGATIVE
-             OTHERS                                              3 UNINSURED        -1 INAPPLICABLE    2 NEAR POOR    
-             OTHERS                                              3 UNINSURED        -1 INAPPLICABLE    3 LOW INCOME   
-             OTHERS                                              3 UNINSURED        -1 INAPPLICABLE    4 MIDDLE INCOME
-             OTHERS                                              3 UNINSURED        -1 INAPPLICABLE    5 HIGH INCOME  
-             OTHERS                                              3 UNINSURED        0-25, 31+          1 POOR/NEGATIVE
-             OTHERS                                              3 UNINSURED        0-25, 31+          2 NEAR POOR    
-             OTHERS                                              3 UNINSURED        0-25, 31+          3 LOW INCOME   
-             OTHERS                                              3 UNINSURED        0-25, 31+          4 MIDDLE INCOME
-             OTHERS                                              3 UNINSURED        0-25, 31+          5 HIGH INCOME  
-             OTHERS                                              3 UNINSURED        26-30              1 POOR/NEGATIVE
-             OTHERS                                              3 UNINSURED        26-30              2 NEAR POOR    
-             OTHERS                                              3 UNINSURED        26-30              3 LOW INCOME   
-             OTHERS                                              3 UNINSURED        26-30              4 MIDDLE INCOME
-
-                                                                  Cumulative    Cumulative
-                                         Frequency     Percent     Frequency      Percent
-                                         -------------------------------------------------
-                                             3382        6.97         38555        79.44  
-                                             2761        5.69         41316        85.13  
-                                             1040        2.14         42356        87.27  
-                                              326        0.67         42682        87.95  
-                                               65        0.13         42747        88.08  
-                                              133        0.27         42880        88.35  
-                                              118        0.24         42998        88.60  
-                                               35        0.07         43033        88.67  
-                                               34        0.07         43067        88.74  
-                                                6        0.01         43073        88.75  
-                                               20        0.04         43093        88.79  
-                                               26        0.05         43119        88.85  
-                                               12        0.02         43131        88.87  
-                                             1349        2.78         44480        91.65  
-                                              478        0.98         44958        92.64  
-                                             1213        2.50         46171        95.14  
-                                             1307        2.69         47478        97.83  
-                                              432        0.89         47910        98.72  
-                                              210        0.43         48120        99.15  
-                                               76        0.16         48196        99.31  
-                                              139        0.29         48335        99.59  
-                                              197        0.41         48532       100.00  
-                                           COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                           4
-        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
-
-                                                     The SURVEYMEANS Procedure
-
-                                                            Data Summary
-
-                                                Number of Strata                 165
-                                                Number of Clusters               371
-                                                Number of Observations         48532
-                                                Sum of Weights             326752883
-
-
-                                                      Class Level Information
- 
-             Variable    Label                     Levels    Values
-
-             INSCOVY2    HEALTH INSURANCE               4    -1 INAPPLICABLE 1 ANY PRIVATE 2 PUBLIC ONLY 3 UNINSURED  
-                         COVERAGE INDICATOR                                                                           
-                         15                                                                                           
-                                           COMBINED MEPS DATA FROM PANELS 19, 20, and 21                                           5
-        INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR
-
-                                                     The SURVEYMEANS Procedure
-
-                                                   Statistics for SUBPOP Domains
- 
-                                                                                                                          Std Error
- SUBPOP                                             Variable   Level             Label                       N     Mean     of Mean
- ----------------------------------------------------------------------------------------------------------------------------------
- AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME   INSCOVY2   -1 INAPPLICABLE   HEALTH INSURANCE            1    0.006      0.0059
-                                                                                 COVERAGE INDICATOR                                
-                                                                                 15                                                
-                                                               1 ANY PRIVATE     HEALTH INSURANCE           21    0.328      0.0726
-                                                                                 COVERAGE INDICATOR                                
-                                                                                 15                                                
-                                                               2 PUBLIC ONLY     HEALTH INSURANCE            3    0.038      0.0262
-                                                                                 COVERAGE INDICATOR                                
-                                                                                 15                                                
-                                                               3 UNINSURED       HEALTH INSURANCE           43    0.628      0.0751
-                                                                                 COVERAGE INDICATOR                                
-                                                                                 15                                                
- ----------------------------------------------------------------------------------------------------------------------------------
-
-                                                   Statistics for SUBPOP Domains
- 
-               SUBPOP                                             Variable   Level                95% CL for Mean
-               -----------------------------------------------------------------------------------------------------
-               AGE 26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME   INSCOVY2   -1 INAPPLICABLE   0.00000000 0.01744199
-                                                                             1 ANY PRIVATE     0.18510075 0.47118619
-                                                                             2 PUBLIC ONLY     0.00000000 0.08960166
-                                                                             3 UNINSURED       0.47999594 0.77602608
-               -----------------------------------------------------------------------------------------------------
+                                                                                                Std Error
+SUBPOP                    Variable   Level             Label                       N     Mean     of Mean      95% CL for Mean
+---------------------------------------------------------------------------------------------------------------------------------
+AGE 26-30, UNINS_HI_INC   INSCOVY2   -1 INAPPLICABLE   HEALTH INSURANCE            1    0.006      0.0059   0.00000000 0.01744199
+                                                       COVERAGE INDICATOR                                                        
+                                                       15                                                                        
+                                     1 ANY PRIVATE     HEALTH INSURANCE           21    0.328      0.0726   0.18510075 0.47118619
+                                                       COVERAGE INDICATOR                                                        
+                                                       15                                                                        
+                                     2 PUBLIC ONLY     HEALTH INSURANCE            3    0.038      0.0262   0.00000000 0.08960166
+                                                       COVERAGE INDICATOR                                                        
+                                                       15                                                                        
+                                     3 UNINSURED       HEALTH INSURANCE           43    0.628      0.0751   0.47999594 0.77602608
+                                                       COVERAGE INDICATOR                                                        
+                                                       15                                                                        
+---------------------------------------------------------------------------------------------------------------------------------

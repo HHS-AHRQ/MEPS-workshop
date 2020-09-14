@@ -1,134 +1,101 @@
 NOTE: PROCEDURE PRINTTO used (Total process time):
-      real time           0.17 seconds
-      cpu time            0.03 seconds
+      real time           0.00 seconds
+      cpu time            0.00 seconds
       
 
-118  
-119  proc datasets lib=work nolist kill;
-NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
-NOTE: Deleting WORK.PUF201 (memtype=DATA).
-119!                                     quit;
-
-NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-      
-
-119!                                           /* delete  all files in the WORK library */
-120  
-121  libname CDATA "C:\DATA";
-NOTE: Libref CDATA was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: C:\DATA
-122  
-123  PROC FORMAT;
-124    VALUE AGECAT
-125         .     = 'ALL AGES'
-126         1 = '0-64'
-127         2 = '65+';
+996  
+997  PROC FORMAT;
+998    VALUE AGECAT
+999         low-64 = '0-64'
+1000         65-high = '65+';
 NOTE: Format AGECAT has been output.
-128  
-129    VALUE GTZERO
-130       0         = '0'
-131       0 <- HIGH = '>0';
-NOTE: Format GTZERO has been output.
-132  
-133    VALUE FLAG
-134        .         = 'No or any expense'
-135        0         = 'No expense'
-136        1         = 'Any expense';
-NOTE: Format FLAG has been output.
-137  RUN;
+1001  
+1002     VALUE totexp18_cate
+1003        0         = 'No Expense'
+1004        Other     = 'Any Expense';
+NOTE: Format TOTEXP18_CATE has been output.
+1005  RUN;
 
 NOTE: PROCEDURE FORMAT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-138  TITLE "MEPS FULL-YEAR CONSOLIDATED FILE, 2017";
-139  
-140  /* READ IN DATA FROM 2017 CONSOLIDATED DATA FILE (HC-201) */
-141  DATA WORK.PUF201;
-142    SET CDATA.H201 (KEEP = TOTEXP17 AGELAST   VARSTR  VARPSU  PERWT17F
-143                    RENAME = (TOTEXP17 = totexp));
-144  
-145    /* CREATE FLAG (1/0) VARIABLES FOR PERSONS WITH AN EXPENSE */
-146    X_ANYSVCE=0;
-147    IF totexp > 0 THEN X_ANYSVCE=1;
-148  
-149    /* CREATE A CATEGORICAL AGE VARIABLE */
-150  
-151    IF 0 LE AGELAST   LE 64 THEN AGECAT=1 ;
-152    ELSE IF   AGELAST  > 64 THEN AGECAT=2 ;
-153  RUN;
+1006  TITLE "MEPS FULL-YEAR CONSOLIDATED FILE, 2018";
+1007  
+1008  
+1009  libname CDATA "&DataFolder";
+NOTE: Libref CDATA refers to the same physical library as SDS.
+NOTE: Libref CDATA was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\Data\MySDS
+1010  /* READ IN DATA FROM 2018 CONSOLIDATED DATA FILE (HC-201) */
+1011  DATA WORK.PUF209;
+1012    SET CDATA.H209 (KEEP = TOTEXP18 AGELAST   VARSTR  VARPSU  PERWT18F panel);
+1013       TOTEXP18_X = TOTEXP18;
+1014       AGELAST_X = AGELAST;
+1015    RUN;
 
-NOTE: There were 31880 observations read from the data set CDATA.H201.
-NOTE: The data set WORK.PUF201 has 31880 observations and 7 variables.
+NOTE: There were 30461 observations read from the data set CDATA.H209.
+NOTE: The data set WORK.PUF209 has 30461 observations and 8 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.60 seconds
-      cpu time            0.11 seconds
+      real time           0.96 seconds
+      cpu time            0.07 seconds
       
 
-154  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-155                    and the output will not be displayed in the Results Viewer.*/
-156  PROC FREQ DATA=PUF201;
-157     TABLES X_ANYSVCE*totexp
-158            AGELAST*AGECAT
-159            /LIST MISSING;
-160     FORMAT totexp            gtzero.
-161            AGECAT        agecat.
-162       ;
-163  RUN;
+1016  ODS HTML CLOSE; /* This will make the default HTML output no longer active,
+1017                    and the output will not be displayed in the Results Viewer.*/
+1018  
+1019  /* For QC purposes */
+1020  /*
+1021  PROC FREQ DATA=PUF209;
+1022     TABLES TOTEXP18_X AGELAST PANEL
+1023            /LIST MISSING;
+1024     FORMAT TOTEXP18_X totexp18_cate.
+1025            AGELAST  AGECAT. ;
+1026  RUN;
+1027  */
+1028  ods graphics off; /*Suppress the graphics */
+1029  ods listing; /* Open the listing destination*/
+1030  TITLE2 'PERCENTAGE OF PERSONS WITH AN EXPENSE and OVERALL HEALTH CARE EXPENSES, 2018';
+1031  PROC SURVEYMEANS DATA=WORK.PUF209  ;
+1032      VAR  TOTEXP18_X TOTEXP18 ;
+1033      STRATUM VARSTR;
+1034      CLUSTER VARPSU;
+1035      WEIGHT PERWT18F;
+1036      class TOTEXP18_X;
+1037      FORMAT TOTEXP18_X TOTEXP18_CATE. ;
+1038  RUN;
 
-NOTE: There were 31880 observations read from the data set WORK.PUF201.
-NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.03 seconds
-      
-
-164  
-165  ods graphics off; /*Suppress the graphics */
-166  ods listing; /* Open the listing destination*/
-167  TITLE2 'PERCENTAGE OF PERSONS WITH AN EXPENSE & OVERALL EXPENSES';
-168  PROC SURVEYMEANS DATA=WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
-169      VAR  X_ANYSVCE totexp ;
-170      STRATUM VARSTR;
-171      CLUSTER VARPSU;
-172      WEIGHT PERWT17F;
-173  RUN;
-
-NOTE: Due to nonpositive weights, 1164 observation(s) were deleted.
+NOTE: Due to nonpositive weights, 1046 observation(s) were deleted.
 NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.03 seconds
-      cpu time            0.03 seconds
+      real time           0.05 seconds
+      cpu time            0.04 seconds
       
 
-174  
-175  
-176  TITLE2 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, FOR OVERALL, AGE 0-64, AND AGE 65+';
-177  ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
-178  PROC SURVEYMEANS DATA= WORK.PUF201 NOBS SUMWGT MEAN STDERR SUM ;
-179      VAR  totexp;
-180      STRATUM VARSTR ;
-181      CLUSTER VARPSU ;
-182      WEIGHT  PERWT17F ;
-183      DOMAIN X_ANYSVCE('1')  X_ANYSVCE('1')*AGECAT ;
-184      FORMAT  AGECAT agecat.;
-185  RUN;
+1039  
+1040  TITLE2 'MEAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2018';
+1041  ODS SELECT DOMAIN ; /* Generate output for the DOMAIN only*/
+1042  PROC SURVEYMEANS DATA= WORK.PUF209 NOBS SUMWGT MEAN STDERR SUM ;
+1043      VAR  totexp18;
+1044      STRATUM VARSTR ;
+1045      CLUSTER VARPSU ;
+1046      WEIGHT  PERWT18F ;
+1047      DOMAIN TOTEXP18_X('Any Expense')  TOTEXP18_X('Any Expense')*AGELAST;
+1048      FORMAT TOTEXP18_X TOTEXP18_CATE. AGELAST agecat.;
+1049  RUN;
 
-NOTE: Due to nonpositive weights, 1164 observation(s) were deleted.
-NOTE: Only one cluster in a stratum for X_ANYSVCE domains for variable(s) totexp. The estimate of variance for totexp will omit 
-      this stratum.
-NOTE: Only one cluster in a stratum for X_ANYSVCE*AGECAT domains for variable(s) totexp. The estimate of variance for totexp will 
-      omit this stratum.
+NOTE: Due to nonpositive weights, 1046 observation(s) were deleted.
+NOTE: Only one cluster in a stratum for TOTEXP18_X*PERSON'S AGE LAST TIME ELIGIBLE domains for variable(s) TOTEXP18. The estimate 
+      of variance for TOTEXP18 will omit this stratum.
 NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.09 seconds
-      cpu time            0.09 seconds
+      real time           0.07 seconds
+      cpu time            0.06 seconds
       
 
-186  
-187  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
-188   only if used earlier */
-189  PROC PRINTTO;
-190  RUN;
+1050  
+1051  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,  only if used earlier.
+1052     Otherswise. please comment out the next two lines */
+1053  PROC PRINTTO;
+1054  RUN;
 
