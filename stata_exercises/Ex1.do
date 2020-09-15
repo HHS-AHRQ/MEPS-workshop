@@ -2,38 +2,37 @@
 *
 *PROGRAM:     C:\work\MEPS_workshop\Ex1.do
 *
-*DESCRIPTION: THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE, 2017: 
+*DESCRIPTION: THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE, 2018: 
 *
 *	           (1) OVERALL EXPENSES 
 *	           (2) PERCENTAGE OF PERSONS WITH AN EXPENSE
 *	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE OVERALL AND BY AGE
 *
 *
-*INPUT FILE:  C:\work\MEPS_workshop\H201.dta (20176 FULL-YEAR FILE)
+*INPUT FILE:  C:\work\MEPS_workshop\H209.dta (2018 FULL-YEAR FILE)
 *
 *********************************************************************************
 
 clear
 set more off
 capture log close
-log using C:\work\MEPS_workshop\Ex1.log, replace
+log using C:\MEPS\statapgms\Ex1.log, replace
 
-cd C:\work\MEPS_workshop
+cd C:\MEPS\DATA
 
-/* read in data from 2017 consolidated data file (hc-201) */
-import sasxport5 h201.ssp
-*import sasxport h201.ssp
-*use dupersid totexp17 age17x age42x age31x varstr varpsu perwt17f using h201, clear
-keep dupersid totexp17 age17x age42x age31x varstr varpsu perwt17f
+/* read in data from 2018 consolidated data file (hc-209) */
+use DUPERSID TOTEXP18 AGE18X AGE53X AGE42X AGE31X VARSTR VARPSU PERWT18F RACETHX using h209, clear
+rename *, lower
     
 /* define expenditure variables  */
-gen total=totexp17
+gen total=totexp18
 
 /* create flag (1/0) variables for persons with an expense  */
 gen any_expenditure=(total>0)
 
 /* create a summary variable from end of year, 42, and 31 variables*/
-gen age=age17x if age17x>=0
+gen age=age18x if age18x>=0
+replace age=age53x if age53x>=0 & missing(age)
 replace age=age42x if age42x>=0 & missing(age)
 replace age=age31x if age31x>=0 & missing(age)
 
@@ -41,7 +40,7 @@ gen agecat=1 if age>=0 & age<=64
 replace agecat=2 if age>64
 
 /* qc check on new variables*/
-list total any_expenditure age agecat age17x age42x age31x in 1/20, table
+list total any_expenditure age agecat age18x age42x age31x in 1/20, table
 
 tab1 any_expenditure agecat, m
  
@@ -49,8 +48,7 @@ summarize total, d
 summarize total if any_expenditure==1, d
 
 /* identify the survey design characteristics */
-svyset [pweight= perwt17f], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
-
+svyset varpsu [pw = perwt18f], strata(varstr) vce(linearized) singleunit(missing)
 // overall expenses
 svy: mean total
 svy: total total
@@ -63,4 +61,7 @@ svy, subpop(any_expenditure): mean total
 
 // mean expense per person with an expense, by age category
 svy, subpop(any_expenditure): mean total, over(agecat)
+svy: mean total if any_expenditure==1, over(agecat)
+
+svy, subpop(any_expenditure): mean total, over(racethx)
 

@@ -12,8 +12,7 @@ More information about the Medical Expenditure Panel Survey (MEPS) and additiona
 
 To facilitate the programming exercises, the following programs can be used to automate the downloading, unzipping, and conversion of the MEPS data files into SAS or Stata:
 * [sas_exercises/Automate_Load_Fall2020.sas](sas_exercises/Automate_Load_Fall2020.sas)
-* [stata_exercises/download_PUF.do](stata_exercises/download_PUF.do)
-* [stata_exercises/download_PUF_ascii.do](stata_exercises/download_PUF_ascii.do)
+* [stata_exercises/data.do](stata_exercises/data.do)
 
 
 ## Programming exercises

@@ -5,16 +5,16 @@
 *DESCRIPTION:  THIS PROGRAM ILLUSTRATES HOW TO POOL MEPS DATA FILES FROM DIFFERENT YEARS TO FORM A LARGE CROSS SECTION
 *              THE EXAMPLE USED IS POPULATION AGE 26-30 WHO ARE UNINSURED BUT HAVE HIGH INCOME
 *
-*	         		 DATA FROM 2016 AND 2017 ARE POOLED.
+*	         		 DATA FROM 2017 AND 2018 ARE POOLED.
 *
 *              VARIABLES WITH YEAR-SPECIFIC NAMES MUST BE RENAMED BEFORE COMBINING FILES.  
-*              IN THIS PROGRAM THE INSURANCE COVERAGE VARIABLES 'INSCOV16' AND 'INSCOV17' ARE RENAMED TO 'INSCOV'.
+*              IN THIS PROGRAM THE INSURANCE COVERAGE VARIABLES 'INSCOV17' AND 'INSCOV18' ARE RENAMED TO 'INSCOV'.
 *
 *	         	SEE HC-036 (1996-2015 POOLED ESTIMATION FILE) FOR
 *              	INSTRUCTIONS ON POOOLING AND CONSIDERATIONS FOR VARIANCE
 *	         	ESTIMATION FOR PRE-2002 DATA.
 *
-*INPUT FILE:   (1) C:\MEPS\STATA\DATA\H192.dta (2016 FULL-YEAR FILE)
+*INPUT FILE:   (1) C:\MEPS\STATA\DATA\H209.dta (2018 FULL-YEAR FILE)
 *	           (2) C:\MEPS\STATA\DATA\H201.dta (2017 FULL-YEAR FILE)
 *
 *********************************************************************************
@@ -22,30 +22,28 @@
 clear
 set more off
 capture log close
-log using C:\work\MEPS_workshop\Ex3.log, replace
-cd C:\work\MEPS_workshop\
+log using C:\MEPS\statapgms\Ex3.log, replace
+cd C:\MEPS\DATA
 
 // rename year specific variables prior to combining files
-use dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16 using h192, clear
-*import sasxport5 h192.ssp
-*keep dupersid inscov16 perwt16f varstr varpsu povcat16 agelast totslf16
-rename inscov16 inscov
-rename perwt16f perwt 
-rename povcat16 povcat 
-rename totslf16 totslf
-tempfile yr1
-save "`yr1'"
-
-use dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17 using h201, clear
-*import sasxport5 h201.ssp
-*keep dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17
-
+use h201, clear
+rename *, lower
+keep dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17
 rename inscov17 inscov
 rename perwt17f perwt 
 rename povcat17 povcat 
 rename totslf17 totslf
+save h201_temp, replace
 
-append using "`yr1'", generate(yearnum)
+use h209, clear
+rename *, lower
+keep dupersid inscov18 perwt18f varstr varpsu povcat18 agelast totslf18
+rename inscov18 inscov
+rename perwt18f perwt 
+rename povcat18 povcat 
+rename totslf18 totslf
+
+append using h201_temp, generate(yearnum)
 
 gen poolwt=perwt/2
 gen wealthy_unins=(agelast>=26 & agelast<=30 & inscov==3 & povcat==5)
