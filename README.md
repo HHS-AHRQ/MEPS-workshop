@@ -11,8 +11,8 @@ More information about the Medical Expenditure Panel Survey (MEPS) and additiona
 ## Helper programs
 
 To facilitate the programming exercises, the following programs can be used to automate the downloading, unzipping, and conversion of the MEPS data files into SAS or Stata:
-* [sas_exercises/Automate_Load_Fall2020.sas](sas_exercises/Automate_Load_Fall2020.sas)
-* [stata_exercises/data.do](stata_exercises/data.do)
+* [sas_exercises/Automate_Load_Oct_06_2020.sas](sas_exercises/Automate_Load_Oct_06_2020.sas)
+* [stata_exercises/get_data.do](stata_exercises/get_data.do)
 
 
 ## Programming exercises
@@ -22,21 +22,27 @@ The SAS, Stata, and R programming exercises are available in the [sas_exercises]
 #### Exercise 1
 
 **National healthcare expenses**, including:
-1. Overall expenses
+1. Overall expenses (National totals)
 2. Percentage of persons with an expense
-3. Mean expense per person with an expense
+3. Mean expense per person
+4. Mean/median expense per person with an expense, by age group
 
 
 #### Exercise 2
 
 Purchases and expenses for **narcotic analgesics or narcotic analgesic combos** including:
-1. Expenditures
-2. Number of fills
-4. Out of pocket and third party payments
+1. Number of purchases (fills)
+2. Total expenditures
+3. Out-of-pocket payments
+4. Third-party payments
 
 #### Exercise 3
-This program illustrates how to **pool MEPS data files** from different years. The example calculates out-of-pocket payments for the MEPS population ages 26-30 who are uninsured but have high income.
+This program illustrates how to **pool MEPS data files** from different years. The example calculates:
+1. Percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
+2. Average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
 
 
 #### Exercise 4
-This program illustrates how to **pool MEPS longitudinal data files** from different panels. The example shows insurance coverage in the second year in MEPS, among the population ages 26-30 who are uninsured but have high income in the first year.
+This program includes a **regression example** for persons receiving a flu shot in the last 12 months, including:
+1. Percentage of people with a flu shot
+2. Logistic regression: to identify demographic factors associated with receiving a flu shot
