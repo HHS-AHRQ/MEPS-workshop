@@ -1,29 +1,29 @@
-**********************************************************************************
+*****************************************************************************************************************************************
+* Exercise 1: 
+* This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2018:
+*  - Overall expenses (National totals)
+*  - Percentage of persons with an expense
+*  - Mean expense per person
+*  - Mean/median expense per person with an expense:
+*    - Mean expense per person with an expense
+*    - Mean expense per person with an expense, by age group
+*    - Median expense per person with an expense, by age group
 *
-*PROGRAM:     C:\work\MEPS_workshop\Ex1.do
+* Input file:
+*  - C:/MEPS/h209.dat (2018 Full-year file)
 *
-*DESCRIPTION: THIS PROGRAM GENERATES THE FOLLOWING ESTIMATES ON NATIONAL HEALTH CARE, 2018: 
-*
-*	           (1) OVERALL EXPENSES 
-*	           (2) PERCENTAGE OF PERSONS WITH AN EXPENSE
-*	           (3) MEAN EXPENSE PER PERSON WITH AN EXPENSE OVERALL AND BY AGE
-*
-*
-*INPUT FILE:  C:\work\MEPS_workshop\H209.dta (2018 FULL-YEAR FILE)
-*
-*********************************************************************************
+* This program is available at:
+* https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
+*****************************************************************************************************************************************
+
 
 clear
 set more off
 capture log close
-log using C:\MEPS\statapgms\Ex1.log, replace
+cd C:\MEPS
+log using Ex1.log, replace 
 
-cd C:\MEPS\DATA
-
-/* read in data from 2018 consolidated data file (hc-209) */
-use DUPERSID TOTEXP18 AGE18X AGE53X AGE42X AGE31X VARSTR VARPSU PERWT18F RACETHX using h209, clear
-rename *, lower
-    
+use C:\MEPS\DATA\h209, clear
 /* define expenditure variables  */
 gen total=totexp18
 
@@ -38,6 +38,8 @@ replace age=age31x if age31x>=0 & missing(age)
 
 gen agecat=1 if age>=0 & age<=64
 replace agecat=2 if age>64
+label define agecat 1 "<65" 2 "65+"
+label values agecat agecat
 
 /* qc check on new variables*/
 list total any_expenditure age agecat age18x age42x age31x in 1/20, table
@@ -52,16 +54,17 @@ svyset varpsu [pw = perwt18f], strata(varstr) vce(linearized) singleunit(missing
 // overall expenses
 svy: mean total
 svy: total total
-           
+
+di %15.0f r(table)[1,1]
+          
 // percentage of persons with an expense
 svy: mean any_expenditure		   
 		   
 // mean expense per person with an expense
-svy, subpop(any_expenditure): mean total
+svy, subpop(if any_expenditure==1): mean total
 
 // mean expense per person with an expense, by age category
-svy, subpop(any_expenditure): mean total, over(agecat)
-svy: mean total if any_expenditure==1, over(agecat)
+svy, subpop(if any_expenditure==1): mean total, over(agecat)
+svy, subpop(if any_expenditure==1): mean total, over(racethx)
 
-svy, subpop(any_expenditure): mean total, over(racethx)
 

@@ -1,60 +1,64 @@
-**********************************************************************************
-*
-*PROGRAM:      C:\work\MEPS_workshop\programs\Ex3.do
-*
-*DESCRIPTION:  THIS PROGRAM ILLUSTRATES HOW TO POOL MEPS DATA FILES FROM DIFFERENT YEARS TO FORM A LARGE CROSS SECTION
-*              THE EXAMPLE USED IS POPULATION AGE 26-30 WHO ARE UNINSURED BUT HAVE HIGH INCOME
-*
-*	         		 DATA FROM 2017 AND 2018 ARE POOLED.
-*
-*              VARIABLES WITH YEAR-SPECIFIC NAMES MUST BE RENAMED BEFORE COMBINING FILES.  
-*              IN THIS PROGRAM THE INSURANCE COVERAGE VARIABLES 'INSCOV17' AND 'INSCOV18' ARE RENAMED TO 'INSCOV'.
-*
-*	         	SEE HC-036 (1996-2015 POOLED ESTIMATION FILE) FOR
-*              	INSTRUCTIONS ON POOOLING AND CONSIDERATIONS FOR VARIANCE
-*	         	ESTIMATION FOR PRE-2002 DATA.
-*
-*INPUT FILE:   (1) C:\MEPS\STATA\DATA\H209.dta (2018 FULL-YEAR FILE)
-*	           (2) C:\MEPS\STATA\DATA\H201.dta (2017 FULL-YEAR FILE)
-*
-*********************************************************************************
-
+**********************************************************************************************
+* Exercise 3
+*  This program illustrates how to pool MEPS data files from different years. It
+*  highlights one example of a discontinuity that may be encountered when 
+*  working with data from before and after the 2018 CAPI re-design.
+*  
+*  The program pools 2017 and 2018 data and calculates:
+*   - Percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
+*   - Average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
+* 
+*  Notes:
+*   - Variables with year-specific names must be renamed before combining files
+*     (e.g. 'TOTEXP17' and 'TOTEXP18' renamed to 'totexp')
+* 
+*   - For pre-2002 data, see HC-036 (1996-2017 pooled estimation file) for 
+*     instructions on pooling and considerations for variance estimation.
+* 
+*  Input files: 
+*   - C:/MEPS/h209.dat (2018 Full-year file)
+*   - C:/MEPS/h201.dat (2017 Full-year file)
+* 
+*  This program is available at:
+*  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
+**********************************************************************************************
 clear
 set more off
 capture log close
-log using C:\MEPS\statapgms\Ex3.log, replace
-cd C:\MEPS\DATA
+cd C:\MEPS
+log using Ex3.log, replace
 
-// rename year specific variables prior to combining files
-use h201, clear
-rename *, lower
-keep dupersid inscov17 perwt17f varstr varpsu povcat17 agelast totslf17
-rename inscov17 inscov
-rename perwt17f perwt 
-rename povcat17 povcat 
-rename totslf17 totslf
+/* rename 2017 variables, create joint pain indicator */
+use C:\MEPS\DATA\h201, clear
+keep dupersid varpsu varstr perwt17f inscov17 povcat17 totexp17 totslf17 jtpain31 arthdx agelast
+rename (perwt17f inscov17 povcat17 totexp17 totslf17) (perwtf inscov povcat totexp totslf) 
+gen year=2017
+gen any_jtpain=(jtpain31==1 | arthdx==1)
+replace any_jtpain=. if jtpain31<0 & arthdx<0 
 save h201_temp, replace
 
-use h209, clear
-rename *, lower
-keep dupersid inscov18 perwt18f varstr varpsu povcat18 agelast totslf18
-rename inscov18 inscov
-rename perwt18f perwt 
-rename povcat18 povcat 
-rename totslf18 totslf
+/* rename 2018 variables, create joint pain indicator */
+use C:\MEPS\DATA\h209, clear
+keep dupersid varpsu varstr perwt18f inscov18 povcat18 totexp18 totslf18 jtpain31 arthdx agelast
+rename (perwt18f inscov18 povcat18 totexp18 totslf18) (perwtf inscov povcat totexp totslf) 
+gen year=2018
+gen any_jtpain=(jtpain31_m18==1 | arthdx==1)
+replace any_jtpain=. if jtpain31_m18<0 & arthdx<0 
 
-append using h201_temp, generate(yearnum)
+/* append 2018 to 2017, erase temp file */
+append using h201_temp
+erase h201_temp.dta
 
+/* create pooled person-level weight and subpop */
 gen poolwt=perwt/2
-gen wealthy_unins=(agelast>=26 & agelast<=30 & inscov==3 & povcat==5)
+gen sub1=(agelast>=18 & ~missing(any_jtpain))
 
-tab1 agelast inscov povcat if wealthy_unins==1, m
-tab wealthy_unins yearnum, m
-summarize
+/* set up survey parameters */
+svyset varpsu [pw=poolwt], str(varstr) vce(linearized) singleunit(centered) 
 
-svyset [pweight=poolwt], strata(varstr) psu(varpsu) vce(linearized) singleunit(missing)
+/* estimate percent with any joint pain (any_jtpain) */
+svy, sub(sub1): mean any_jtpain
 
-// weighted estimate on totslf for combined data w/age=26-30, uninsured whole year, and high income
-svy, subpop(wealthy_unins): mean totslf
-
-
+/* estimate mean expenditures per person by whether they have joint pain*/
+svy, sub(sub1): mean totexp, over(any_jtpain)
+svy, sub(sub1): mean totslf, over(any_jtpain)

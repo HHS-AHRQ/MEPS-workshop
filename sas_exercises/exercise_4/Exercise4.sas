@@ -1,104 +1,111 @@
-/**********************************************************************************
+/*******************************************************************
 PROGRAM:      EXERCISE4.SAS
+This program includes a regression example for persons receiving a flu shot
+in the last 12 months for the civilian noninstitutionized population, including:
+- Percentage of people with a flu shot (civilian noninstitutionized population), 2018:
+- Logistic regression: to identify demographic factors associated with receiving a flu shot
 
-DESCRIPTION:  THIS PROGRAM ILLUSTRATES HOW TO POOL MEPS LONGITUDINAL DATA FILES FROM DIFFERENT PANELS
-              THE EXAMPLE USED IS PANELS 17-19 POPULATION AGE 26-30 WHO ARE UNINSURED BUT HAVE HIGH INCOME IN THE FIRST YEAR
+ Input file: 
+  - C:/MEPS/h209.dat (2018 Full-year file)
 
-	            DATA FROM PANELS 19, 20, AND 21 ARE POOLED.
-
-INPUT FILE:     (1) C:\MEPS\SAS\DATA\H183.SAS7BDAT (PANEL 19 LONGITUDINAL FILE)
-	            (2) C:\MEPS\SAS\DATA\H193.SAS7BDAT (PANEL 20 LONGITUDINAL FILE)
-	            (3) C:\MEPS\SAS\DATA\H202.SAS7BDAT (PANEL 21 LONGITUDINAL FILE)
-***************************************************************************************/
-
-proc datasets lib=work nolist kill; quit; /* Delete  all files in the WORK library */
-OPTIONS LS=132 PS=79 NODATE VARLENCHK=NOWARN FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1 ;
-%LET DataFolder = C:\DATA\MySDS;   /* Adjust the folder name, if needed */
+ This program is available at:
+ https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/sas_exercises
+********************************************************************/
 
 /*********************************************************************************
-* IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
-*   separate files for SAS log and output.  Otherwise comment  out those 5 lines 
-************************************************************************************/
-
-%LET RootFolder= C:\Fall2020\sas_exercises\Exercise_4;
+ IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
+    separate files for SAS log and output.  Otherwise comment  out these lines.
+***********************************************************************************/
+%LET RootFolder= C:\Mar2021\sas_exercises\Exercise_4;
 FILENAME MYLOG "&RootFolder\Exercise4_log.TXT";
 FILENAME MYPRINT "&RootFolder\Exercise4_OUTPUT.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
 
+/* Clear log, output, and ODSRESULTS from the previous run automatically */
+DM "Log; clear; output; clear; odsresults; clear";
+proc datasets lib=work nolist kill; quit; /* Delete  all files in the WORK library */
+
+OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
+
+/* Create use-defined formats and store them in a catalog called FORMATS 
+   in the work folder. They will be deleted at the end of the SAS session.
+*/
+
 PROC FORMAT;
-	VALUE POVCAT 
-    1 = '1 POOR/NEGATIVE'
-    2 = '2 NEAR POOR'
-    3 = '3 LOW INCOME'
-    4 = '4 MIDDLE INCOME'
-    5 = '5 HIGH INCOME'
-    ;
 
-	VALUE INSF
-	-1= '-1 INAPPLICABLE'
-	1 = '1 ANY PRIVATE'
-	2 = '2 PUBLIC ONLY'
-	3 = '3 UNINSURED';
+value age18p_f 
+    18-high = '18+'
+    other = '0-17';
 
-    VALUE AGE
-	  -1= '-1 INAPPLICABLE'    
-    26-30='26-30'
-    0-25, 31-HIGH='0-25, 31+';
 
-	VALUE  SUBPOP (max= 30)
-	1 = 'AGE 26-30, UNINS_HI_INC'
-	2 ='OTHERS';
+value age_f 
+    18-34 = '18-34'
+    35-64 = '35-64'
+	65-High ='65+';
+
+value ADFLST42_fmt
+    -15 = "Cann't be computed"
+	-1 = 'Inapplicable'
+    1  = 'Yes'
+	0,2  ='No';
+
+
+value sex_fmt   1 = 'Male'
+                2 = 'Female'; 
+			
+
+VALUE Racethx_fmt
+  1 = 'Hispanic'
+  2 = 'NH White only'
+  3 = 'NH Black only'
+  4 = 'NH Asian only'
+  5 = 'NH Other etc';
+
+ value INSCOV18_fmt
+   1 = 'Any Private'
+   2 = 'Public Only'
+   3 = 'Uninsured';
 run;
 
+%LET DataFolder = C:\DATA\MySDS;  /* Adjust the folder name, if needed */
 libname CDATA "&DataFolder"; 
-/* RENAME YEAR SPECIFIC VARIABLES PRIOR TO COMBINING FILES */
-DATA WORK.POOL;
-      SET CDATA.H183 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL YEARIND)
-	       CDATA.H193 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL YEARIND)
-	       CDATA.H202 (KEEP=DUPERSID INSCOVY1 INSCOVY2 LONGWT VARSTR VARPSU POVCATY1 AGEY1X PANEL YEARIND);
-     POOLWT = LONGWT/3 ;
-   
-     IF INSCOVY1=3 AND 26 LE AGEY1X LE 30 AND POVCATY1=5 THEN SUBPOP=1;
-     ELSE SUBPOP=2;
-  RUN;
-ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-                  and the output will not be displayed in the Results Viewer.*/
-TITLE "COMBINED MEPS DATA FROM PANELS 19, 20, and 21";
-PROC MEANS DATA=POOL N NMISS;
+%let kept_vars_2018 =  VARSTR VARPSU perwt18f saqwt18f ADFLST42  AGELAST RACETHX POVCAT18 INSCOV18 SEX;
+data meps_2018;
+ set CDATA.h209 (keep= &kept_vars_2018);
+ 
+if ADFLST42 = 1 then flushot =1;
+else if ADFLST42 = 2 then flushot =0;
+else flushot =.;
+run;
+
+title " 2018 MEPS";
+
+ods graphics off;
+ods select domain;
+PROC SURVEYMEANS DATA=meps_2018 nobs mean stderr ;
+    VAR flushot;
+    STRATUM VARSTR;
+    CLUSTER VARPSU;
+    WEIGHT saqwt18f;
+    DOMAIN  agelast('18+');
+	format agelast age18p_f.;
 RUN;
-/*QC purposes*/
-/*
-PROC FREQ DATA=POOL;
-TABLES SUBPOP SUBPOP*PANEL SUBPOP*INSCOVY1*AGEY1X*POVCATY1/LIST MISSING;
-FORMAT AGEY1X AGE. POVCATY1 POVCAT. INSCOVY1 INSF. SUBPOP SUBPOP.;
-RUN;
-*/
-ODS GRAPHICS OFF;
-ods listing; /* Open the listing destination*/
-ODS EXCLUDE STATISTICS; /* Not to generate output for the overall population */
-TITLE2 'INSURANCE STATUS IN THE SECOND YEAR FOR THOSE W/ AGE=26-30, UNINSURED WHOLE YEAR, AND HIGH INCOME IN THE FIRST YEAR';
-/* PROC SURVEYMEANS computes the NOBS, MEANS, STDERR, and CLM statistics by default */
-PROC SURVEYMEANS DATA=POOL; 
-    VAR  INSCOVY2;
-    STRATUM VARSTR ;
-	CLUSTER VARPSU ;
-	WEIGHT  POOLWT;
-	CLASS INSCOVY2;
-    DOMAIN  SUBPOP("AGE 26-30, UNINS_HI_INC");
-	FORMAT INSCOVY2 INSF. SUBPOP SUBPOP.;
-RUN;
+title 'PROC SURVEYLOGISTIC With param=ref option on the CLASS statement';
+	PROC SURVEYLOGISTIC DATA=meps_2018 ;
+    STRATUM VARSTR;
+    CLUSTER VARPSU;
+    WEIGHT saqwt18f;
+    CLASS sex (ref='Male') RACETHX (ref='Hispanic') INSCOV18 (ref='Any Private')/param=ref;
+         model flushot(ref= '0')= agelast sex RACETHX  INSCOV18;
+      format agelast age18p_f. 
+      sex sex_fmt. 
+      RACETHX racethx_fmt. 
+      INSCOV18 INSCOV18_fmt.;
+    RUN;
+title;
 
-/*Explanation for the above code: PROC SURVEYMEANS always analyzes character variables as categorical. 
-If you want categorical analysis for a numeric variable, 
-you must include that variable in the CLASS statement as well as the VAR statement.*/  
-
-
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO,  only if used earlier.
-   Otherswise. please comment out the next two lines */
-
-
-PROC PRINTTO;
-RUN;
-
-
+/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
+ only if used earlier., Otherswise. please comment out the next two lines  */
+proc printto;
+run;

@@ -1,45 +1,47 @@
-**********************************************************************************
-*
-*program:      c:\work\meps_workshop\programs\ex4.do
-*
-*description:  description:  this program illustrates how to pool meps longitudinal data files from different panels
-*              the example used is panels 19-21 population age 27-64 who are uninsured but have high income in the first year
-*
-*	         	data from panels 19, 20, and 21 are pooled.
-*
-*input file:   (1) c:\meps\sas\data\h183.ssp (panel 19 longitudinal file)
-*	            (2) c:\meps\sas\data\h193.ssp (panel 20 longitudinal file)
-*	            (3) c:\meps\sas\data\h202.ssp (panel 21 longitudinal file)
-*********************************************************************************
-
+*****************************************************************************************************
+* Exercise 4
+*  This program includes a regression example for persons receiving a flu shot
+*  in the last 12 months for the U.S. civilian non-institutionalized population, including:
+*   - Percentage of people with a flu shot
+*   - Logistic regression: to identify demographic factors associated with
+*     receiving a flu shot
+* 
+*  Input file: 
+*   - C:/MEPS/h209.dat (2018 Full-year file)
+* 
+*  This program is available at:
+*  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
+*****************************************************************************************************
 clear
 set more off
 capture log close
-log using c:\MEPS\statapgms\ex4.log, replace
-cd c:\MEPS\DATA
+cd c:\MEPS
 
-// pool three panels of data to get sufficient sample size
+log using Ex4.log, replace
 
-use h202, clear
-append using h193 h183
- 
-tab panel 
+// Data was already downloaded and saved in Stata format in previous programs; just reading it here
+use C:\MEPS\DATA\h209, clear
 
-gen poolwt=longwt/3
-gen subpop=(agey1x>26 & agey1x<65 & inscovy1==3 & povcaty1==5)
-label define insf -1 "na" 1 "1 any private" 2 "2 public only" 3 "3 uninsured"
-label define povcat 1 "1 poor/negative" 2 "2 near poor" 3 "3 low income" 4 "4 midlle income" 5 "5 high income"
-label value inscovy1 inscovy2 insf
-label value povcaty1 povcat
+// create variable identifying individuals who received flu shot in last year
+gen flushot=(adflst42==1)
+replace flushot=. if adflst42<0
+tab adflst42 flushot, m
 
-tab1 agey1x inscovy1 inscovy2 povcaty1 panel if subpop==1
-tab subpop
-summarize  if subpop==1
+// create variable to identify subpopulation
+gen sub1=~missing(flushot, povcat18, inscov18, sex, racethx)
 
-svyset [pweight=poolwt], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
 
-// weighted estimate on totslf for combined data w/age=26-30, uninsured whole year, and high income
-// in the first year
-svy, subpop(subpop): tabulate inscovy2, cell se obs
+// set survey variables 
+svyset varpsu [pw = saqwt18f], strata(varstr) vce(linearized) singleunit(missing)
+
+// bivariate descriptive statistics: proportion with flushot by other variables  
+svy, sub(sub1): mean flushot, over(povcat18)
+svy, sub(sub1): mean flushot, over(inscov18)
+svy, sub(sub1): mean flushot, over(racethx)
+svy, sub(sub1): mean flushot, over(sex)
+
+// regression analysis
+svy, sub(sub1): reg flushot agelast i.sex i.racethx i.inscov18
+svy, sub(sub1): logit flushot agelast i.sex i.racethx i.inscov18 
 
 

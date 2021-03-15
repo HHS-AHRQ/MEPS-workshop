@@ -1,17 +1,15 @@
 # -----------------------------------------------------------------------------
-# PURPOSE: THIS PROGRAM GENERATES SELECTED ESTIMATES FOR A 2018 VERSION OF
-#          Purchases and Expenses for Narcotic analgesics or Narcotic analgesic combos
+# This program generates National Totals and Per-person Averages for Narcotic
+# analgesics and Narcotic analgesic combos for the U.S. civilian 
+# non-institutionalized population, including:
+#  - Number of purchases (fills)  
+#  - Total expenditures          
+#  - Out-of-pocket payments       
+#  - Third-party payments        
 #
-#  - TOTAL EXPENSE FOR Narcotic analgesics or Narcotic analgesic combos
-#
-#  - TOTAL NUMBER OF PURCHASES OF Narcotic analgesics or Narcotic analgesic combos
-#
-#  - AVERAGE TOTAL, OUT OF POCKET, AND THIRD PARTY PAYER EXPENSE FOR Narcotic
-#        analgesics or Narcotic analgesic combos PER PERSON WITH A
-#        Narcotic analgesics or Narcotic analgesic combos MEDICINE PURCHASE
-#
-#   INPUT FILES:  (1) C:/MEPS/H209.ssp  (2018 FULL-YEAR CONSOLIDATED PUF)
-#                 (2) C:/MEPS/H206A.ssp (2018 PRESCRIBED MEDICINES PUF)
+# Input files:
+#  - C:/MEPS/h209.dat  (2018 Full-year file)
+#  - C:/MEPS/h206a.dat (2018 Prescribed medicines file)
 #
 # This program is available at:
 # https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/r_exercises
@@ -19,33 +17,39 @@
 # -----------------------------------------------------------------------------
 
 # Install and load packages ---------------------------------------------------
-
-  # Can skip this part if already installed
-  install.packages("survey")
-  install.packages("foreign")
-  install.packages("dplyr")
-  install.packages("devtools")
-  
-  # Run this part each time you re-start R
-  library(survey)
-  library(foreign)
-  library(dplyr)
-  library(devtools)
-  
-  # This package facilitates file import
-  install_github("e-mitchell/meps_r_pkg/MEPS") 
-  library(MEPS)
+# 
+#   # Can skip this part if already installed
+#   install.packages("survey")
+#   install.packages("foreign")
+#   install.packages("dplyr")
+#   install.packages("devtools")
+#   
+#   # Run this part each time you re-start R
+#   library(survey)
+#   library(foreign)
+#   library(dplyr)
+#   library(devtools)
+#   
+#   # This package facilitates file import
+#   install_github("e-mitchell/meps_r_pkg/MEPS") 
+#   library(MEPS)
 
 # Set options to deal with lonely psu
-options(survey.lonely.psu='adjust');
+  options(survey.lonely.psu='adjust');
 
 
 # Read in data from FYC file --------------------------------------------------
 #  !! IMPORTANT -- must use ASCII (.dat) file for 2018 data !!
+  
+  fyc18 = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
+  rx18  = read_MEPS(year = 2018, type = "RX")  # 2018 RX
+  
 
-h209  = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
-h206a = read_MEPS(year = 2018, type = "RX")  # 2018 RX
-
+# Keep only needed variables --------------------------------------------------
+  
+  fyc18_sub = fyc18 %>%
+    select(DUPERSID, VARSTR, VARPSU, PERWT18F) # needed for survey design
+    
 
 # Identify Narcotic analgesics or Narcotic analgesic combos -------------------
 #  Use therapeutic classification codes (TC1S1_1)
@@ -58,57 +62,68 @@ h206a = read_MEPS(year = 2018, type = "RX")  # 2018 RX
 # RXXP18X:  SUM OF PAYMENTS RXSF18X-RXOU18X(IMPUTED)
 # RXSF18X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
 
-narc = h206a %>%
-  filter(TC1S1_1 %in% c(60, 191)) %>%
-  select(DUPERSID, RXRECIDX, LINKIDX, TC1S1_1, RXXP18X, RXSF18X)
 
-head(narc)
-table(narc$TC1S1_1)
-
+  narc = rx18 %>%
+    filter(TC1S1_1 %in% c(60, 191)) %>%
+    select(DUPERSID, RXRECIDX, LINKIDX, TC1S1_1, RXXP18X, RXSF18X)
+  
+  head(narc)
+  narc %>% count(TC1S1_1)
 
 # Sum data to person-level ----------------------------------------------------
 
-narc_pers = narc %>%
-  group_by(DUPERSID) %>%
-  summarise(
-    tot = sum(RXXP18X),
-    oop = sum(RXSF18X),
-    n_purchase = n()) %>%
-  mutate(
-    third_payer = tot - oop,
-    any_narc = 1)
-
-head(narc_pers)
+  narc_pers = narc %>%
+    group_by(DUPERSID) %>%
+    summarise(
+      tot = sum(RXXP18X),
+      oop = sum(RXSF18X),
+      n_purchase = n()) %>%
+    mutate(
+      third_payer = tot - oop,
+      any_narc = 1) 
+  
+  head(narc_pers)
 
 
 # Merge the person-level expenditures to the FY PUF to get complete PSUs, Strata
+  
+  narc_fyc = full_join(narc_pers, fyc18_sub, by = "DUPERSID")
+  
+  head(narc_fyc)
+  
+  nrow(narc)
+  nrow(fyc)
+  nrow(narc_fyc)
+  
+  narc_fyc %>% count(any_narc)
+  narc_fyc %>% filter(is.na(any_narc))
 
-fyc = h209 %>% select(DUPERSID, VARSTR, VARPSU, PERWT18F)
-
-narc_fyc = full_join(narc_pers, fyc, by = "DUPERSID")
-
-head(narc_fyc)
 
 
 # Define the survey design ----------------------------------------------------
+  
+  mepsdsgn = svydesign(
+    id = ~VARPSU,
+    strata = ~VARSTR,
+    weights = ~PERWT18F,
+    data = narc_fyc,
+    nest = TRUE)
 
-mepsdsgn = svydesign(
-  id = ~VARPSU,
-  strata = ~VARSTR,
-  weights = ~PERWT18F,
-  data = narc_fyc,
-  nest = TRUE)
-
-# Calculate estimates on expenditures and use ---------------------------------
-# n_purchase  = Number of fills per person, 
-# tot         = Expenditures per person
-# oop         = Out-of-pocket payments per person
-# third_payer = Third-payer payments per person
-
+# Calculate estimates ---------------------------------------------------------
+#  National totals and Per-person Averages for:
+#   - Number of purchases (fills)  -- n_purchase
+#   - Total expenditures           -- tot
+#   - Out-of-pocket payments       -- oop
+#   - Third-party payments         -- third_payer
+  
+# National totals 
+  svytotal(~n_purchase + tot + oop + third_payer, 
+           design = subset(mepsdsgn, any_narc == 1))
+  
+  
 # Average per person
-svymean(~n_purchase + tot + oop + third_payer,
-        design = subset(mepsdsgn, any_narc == 1))
+  svymean(~n_purchase + tot + oop + third_payer,
+          design = subset(mepsdsgn, any_narc == 1))
 
-# Totals for 2018
-svytotal(~n_purchase + tot + oop + third_payer,
-        design = subset(mepsdsgn, any_narc == 1))
+
+  
