@@ -11,7 +11,7 @@ for the civilian noninstitutionized population, 2018:
     - Mean expense per person with an expense, by age group
     - Median expense per person with an expense, by age group
  Input file:
- - C:/MEPS/h209.dat (2018 Full-year file)
+ - 2018 Full-year consolidated file
 
 This program is available at:
  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/sas_exercises
@@ -22,7 +22,7 @@ This program is available at:
     separate files for SAS log and output.  Otherwise comment  out these lines.
 ***********************************************************************************/
 
-%LET RootFolder= C:\Mar2021\sas_exercises\Exercise_1;
+%LET RootFolder= C:\Sep2021\sas_exercises\Exercise_1;
 FILENAME MYLOG "&RootFolder\Exercise1_log.TXT";
 FILENAME MYPRINT "&RootFolder\Exercise1_OUTPUT.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
@@ -50,14 +50,14 @@ RUN;
 
 
 
-%LET DataFolder = C:\DATA\MySDS;  /* Create a macro variable. Adjust the folder name, if needed */
+%LET DataFolder = C:\MEPS_Data;  /* Create a macro variable. Adjust the folder name, if needed */
 %put &DataFolder;  /* Display the name and value of the specific macro variable */
 %put _user_;      /* Display the names and values of all user-defined macro variables */
 
 libname CDATA "&DataFolder";  /* Assign a libref () to a SAS library.
 /* READ IN DATA FROM 2018 CONSOLIDATED DATA FILE (HC-209) */
 DATA WORK.PUF209;
-  SET CDATA.H209 (KEEP = TOTEXP18 AGELAST   VARSTR  VARPSU  PERWT18F panel);
+  SET CDATA.H209V9 (KEEP = TOTEXP18 AGELAST   VARSTR  VARPSU  PERWT18F panel);
      WITH_AN_EXPENSE= TOTEXP18; /* Create another version of the TOTEXP18 variable */
 
 	 /* Create a character variable based on a numeric variable using a table lookup */
@@ -123,5 +123,7 @@ RUN;
 title;
 /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,  only if used earlier.
    Otherswise. please comment out the next two lines */
+
+
 PROC PRINTTO;
 RUN;
