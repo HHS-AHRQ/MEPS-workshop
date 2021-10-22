@@ -67,8 +67,6 @@ DATA WORK.PUF209;
 TITLE;
 %put %sysfunc(pathname(work));
 
-proc datasets;
-quit;
 proc catalog catalog=work.formats;
 contents stat;
 run;
