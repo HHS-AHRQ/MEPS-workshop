@@ -6,8 +6,8 @@
                                                                                        Page   Block   Num of   Block   Block
 #   Name            Type             Create Date         Modified Date   Description   Size    Size   Blocks   Bytes    Size   Pages
 ------------------------------------------------------------------------------------------------------------------------------------
-1   AGECAT          FORMAT   10/14/2021 22:55:53   10/14/2021 22:55:53                 4096    4096        1     263     510       1
-2   TOTEXP18_CATE   FORMAT   10/14/2021 22:55:53   10/14/2021 22:55:53                 4096    4096        1     255     510       1
+1   AGECAT          FORMAT   10/25/2021 11:38:54   10/25/2021 11:38:54                 4096    4096        1     263     510       1
+2   TOTEXP18_CATE   FORMAT   10/25/2021 11:38:54   10/25/2021 11:38:54                 4096    4096        1     255     510       1
                                                                                                                                    2
 
 The CONTENTS Procedure
