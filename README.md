@@ -8,12 +8,6 @@ MEPS workshops are designed for health services researchers who have a backgroun
 More information about the Medical Expenditure Panel Survey (MEPS) and additional coding information and exercises can be found in the [MEPS repository](https://github.com/HHS-AHRQ/MEPS).
 
 
-## Helper programs
-
-To facilitate the programming exercises, the following programs can be used to automate the downloading, unzipping, and conversion of the MEPS data files into SAS:
-* [sas_exercises/Automate_Load_SAS_Files.sas](sas_exercises/Automate_Load_SAS_Files.sas)
-* [sas_exercises/Automate_Load_Transport_Files.sas](sas_exercises/Automate_Load_Transport_Files.sas)
-
 
 ## Programming exercises
 

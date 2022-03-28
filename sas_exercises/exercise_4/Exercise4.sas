@@ -11,24 +11,22 @@ in the last 12 months for the civilian noninstitutionized population, including:
  This program is available at:
  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/sas_exercises
 ********************************************************************/
+/* Clear log, output, and ODSRESULTS from the previous run automatically */
+DM "Log; clear; output; clear; odsresults; clear";
+proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK library */
 
+OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 /*********************************************************************************
  IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
     separate files for SAS log and output.  Otherwise comment  out these lines.
 ***********************************************************************************/
 
-
-%LET RootFolder= C:\Sep2021\sas_exercises\Exercise_4;
+%LET RootFolder= C:\Mar2022\sas_exercises\Exercise_4;
 FILENAME MYLOG "&RootFolder\Exercise4_log.TXT";
 FILENAME MYPRINT "&RootFolder\Exercise4_OUTPUT.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
 
-/* Clear log, output, and ODSRESULTS from the previous run automatically */
-DM "Log; clear; output; clear; odsresults; clear";
-proc datasets lib=work nolist kill; quit; /* Delete  all files in the WORK library */
-
-OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 
 /* Create use-defined formats and store them in a catalog called FORMATS 
    in the work folder. They will be deleted at the end of the SAS session.
@@ -87,20 +85,20 @@ ods graphics off;
 ods select domain;
 PROC SURVEYMEANS DATA=meps_2018 nobs mean stderr ;
     VAR flushot;
-    CLUSTER VARPSU;
     STRATUM VARSTR;
+	CLUSTER VARPSU;
     WEIGHT saqwt18f;
     DOMAIN  agelast('18+');
-	format agelast age18p_f.;
+	format agelast  age18p_f.;
 RUN;
 title 'PROC SURVEYLOGISTIC With param=ref option on the CLASS statement';
 	PROC SURVEYLOGISTIC DATA=meps_2018 ;
+	STRATUM VARSTR;
     CLUSTER VARPSU;
-    STRATUM VARSTR;
     WEIGHT saqwt18f;
     CLASS sex (ref='Male') RACETHX (ref='Hispanic') INSCOV18 (ref='Any Private')/param=ref;
          model flushot(ref= '0')= agelast sex RACETHX  INSCOV18;
-      format agelast age18p_f. 
+      format agelast  age18p_f. 
       sex sex_fmt. 
       RACETHX racethx_fmt. 
       INSCOV18 INSCOV18_fmt.;
@@ -113,4 +111,5 @@ title;
 
 proc printto;
 run;
+
 

@@ -3,206 +3,261 @@ NOTE: PROCEDURE PRINTTO used (Total process time):
       cpu time            0.00 seconds
       
 
-1251  
-1252  
-1253  /* Clear log, output, and ODSRESULTS from the previous run automatically */
-1254  DM "Log; clear; output; clear; odsresults; clear";
-1255  proc datasets lib=work nolist kill;
-NOTE: Deleting WORK.FORMATS (memtype=CATALOG).
-NOTE: Deleting WORK.MEPS_1718 (memtype=DATA).
-NOTE: Deleting WORK.MEPS_2017 (memtype=DATA).
-NOTE: Deleting WORK.MEPS_2018 (memtype=DATA).
-NOTE: Deleting WORK.SASMAC1 (memtype=CATALOG).
-NOTE: Deleting WORK.SASMACR (memtype=CATALOG).
-NOTE: File WORK.SASMACR (memtype=CATALOG) cannot be deleted because it is in use.
-1255!                                     quit;
-
-NOTE: PROCEDURE DATASETS used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-      
-
-1255!                                           /* Delete  all files in the WORK library */
-1256  
-1257  OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
-1258  /* Turn Off the Warning Message
-1259  WARNING: Multiple lengths were specified for the variable Name by input data set(s).
-1260  */
-1261  OPTIONS varlenchk=nowarn;
-1262  
-1263  /* Create use-defined formats and store them in a catalog called FORMATS
-1264     in the work folder. They will be deleted at the end of the SAS session.
-1265  */
-1266  PROC FORMAT;
-1267  
-1268    VALUE totexp_fmt
-1269        0         = 'No Expense'
-1270        Other     = 'Any Expense';
-NOTE: Format TOTEXP_FMT has been output.
-1271  
-1272    VALUE agecat_fmt
-1273         18-49 = '18-49'
-1274         50-64 = '50-64'
-1275         65-high= '65+';
+1098  
+1099  
+1100  /* Create use-defined formats and store them in a catalog called FORMATS
+1101     in the work folder. They get deleted at the end of the SAS session.
+1102  */
+1103  PROC FORMAT;
+1104  
+1105    VALUE agecat_fmt
+1106         19-49 = '19-49'
+1107         50-64 = '50-64'
+1108         65-high= '65+';
 NOTE: Format AGECAT_FMT has been output.
-1276  
-1277  
-1278       value yes_no_fmt
-1279        1 = 'Yes'
-1280        2 = 'No';
+1109  
+1110       value yes_no_fmt
+1111        1 = 'Yes'
+1112        2 = 'No'
+1113        -1,-7,-8,-15,.= 'DK/REF/INAPP/MISSING';
 NOTE: Format YES_NO_FMT has been output.
-1281  
-1282  
-1283  run;
+1114  
+1115        value spop_fmt
+1116        1 = 'Age 18+'
+1117        0 = 'Age 0-17';
+NOTE: Format SPOP_FMT has been output.
+1118  run;
 
 NOTE: PROCEDURE FORMAT used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-1284  ***************  MEPS 2017;
-1285  %LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
-1286  libname CDATA "&DataFolder";
-NOTE: Libref CDATA was successfully assigned as follows: 
+1119  
+1120  %LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
+1121  libname NEW "&DataFolder";
+NOTE: Libref NEW refers to the same physical library as CDATA.
+NOTE: Libref NEW was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: C:\MEPS_Data
-1287  
-1288  %let kept_vars_2017 =  VARSTR VARPSU perwt17f agelast ARTHDX JTPAIN31 totexp17 totslf17;
-1289  data meps_2017;
-1290   set CDATA.h201v9 (keep= &kept_vars_2017
-1291                   rename=(totexp17=totexp
-1292                           totslf17=totslf));
-1293    perwtf = perwt17f/2;;
-1294  
-1295  
-1296     * Create a subpopulation indicator called SPOP
-1297      and a new variable called JOINT_PAIN  based on ARTHDX and JTPAIN31;
-1298  
-1299     spop=2;
-1300     if agelast>=18 and not (ARTHDX <=0 and JTPAIN31 <0) then do;
-1301        SPOP=1;
-1302       if ARTHDX=1 | JTPAIN31=1 then joint_pain =1;
-1303       else joint_pain=2;
-1304     end;
-1305  
-1306     label totexp = 'TOTAL HEALTH CARE EXP'
-1307           totslf = 'TOTAL AMOUNT PAID - SELF-FAMILY';
-1308  run;
+1122  
+1123  /* Create 3 macro variables, assigning a list of variables to each */
+1124  %let kept_vars_2017 =  dupersid panel VARSTR VARPSU perwt17f agelast ARTHDX JTPAIN31 totexp17 totslf17;
+1125  %let kept_vars_2018 =  dupersid panel VARSTR VARPSU perwt18f agelast ARTHDX JTPAIN31_m18 totexp18 totslf18;
+1126  %let kept_vars_2019 =  dupersid panel VARSTR VARPSU perwt19f agelast ARTHDX JTPAIN31_M18 totexp19 totslf19;
+1127  
+1128  /* Concatenate 2017, 2018 and 2018 Full Year Consolidated Files
+1129  * Use KEEP= abd RENAME= data set options on the SET statement for effeciency
+1130  */
+1131  data MEPS_171819;
+1132   set NEW.h201v9 (keep= &kept_vars_2017
+1133                   rename=(totexp17=totexp
+1134                           totslf17=totslf DUPERSID=t_DUPERSID) in=a)
+1135       NEW.h209v9 (keep= &kept_vars_2018
+1136                   rename=(totexp18=totexp
+1137                           totslf18=totslf) in=b)
+1138       NEW.h216 (keep= &kept_vars_2019
+1139                   rename=(totexp19=totexp
+1140                           totslf19=totslf) in=c);
+1141  
+1142        *Create new variable (YEAR) for data-checks;
+1143        if a =1 then year=2017;
+1144        else if b=1 then year=2018;
+1145        else if c=1 then year=2019;
+1146  
+1147        *Create a new weight variable by dividing the original weight by 3 for the pooled data set;
+1148        if year = 2017 then perwtf = perwt17f/3;
+1149        else if year = 2018 then perwtf = perwt18f/3;
+1150        else if year = 2019 then perwtf = perwt19f/3;
+1151  
+1152     /***********************************************************************************
+1153     *  Create new variables: JOINT_PAIN, SPOP (subpopulation indicator),
+1154     *  ZERO_WEIGHT (zero survey weight for QC purposes).
+1155     *  Change the 8-character DUPERSID to a 10-character one for 2017.
+1156     *  Such change is not needed for 2018 and 2019 because DUPERSID is a 10-character
+1157     *  variable for those years.
+1158     ************************************************************************************/
+1159  
+1160     if year = 2017 then do;
+1161          spop=0;
+1162          if agelast>=18 and not (ARTHDX <=0 and JTPAIN31 <0) then do;
+1163              DUPERSID = CATS(PANEL, T_DUPERSID);
+1164              drop t_DUPERSID;
+1165              spop=1;
+1166             if ARTHDX=1 | JTPAIN31=1 then joint_pain =1;  else joint_pain=2;
+1167          end;
+1168      end;
+1169      else if year in (2018, 2019) then do;
+1170              spop=0;
+1171              if agelast>=18 and not (ARTHDX <0 and JTPAIN31_M18 <0) then do;
+1172                spop=1;
+1173                if ARTHDX=1 | JTPAIN31_M18=1 then joint_pain =1; else joint_pain=2;
+1174               end;
+1175       end;
+1176  
+1177      if perwtf = 0 then zero_weight=1;
+1178      else zero_weight=0;
+1179  
+1180     label totexp = 'TOTAL HEALTH CARE EXPENSES 2017-19'
+1181           totslf='AMOUNT PAID BY SELF/FAMILY 2017-2019';
+1182   run;
 
-NOTE: There were 31880 observations read from the data set CDATA.H201V9.
-NOTE: The data set WORK.MEPS_2017 has 31880 observations and 11 variables.
+NOTE: There were 31880 observations read from the data set NEW.H201V9.
+NOTE: There were 30461 observations read from the data set NEW.H209V9.
+NOTE: There were 28512 observations read from the data set NEW.H216.
+NOTE: The data set WORK.MEPS_171819 has 90853 observations and 18 variables.
 NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.18 seconds
+      
+
+1183  
+1184  * Sort the pooled 2017-19 MEPS file by DUPERSID before match-merging
+1185    with the pooled linkage variance estimation file;
+1186  
+1187  proc sort data=MEPS_171819;
+1188    by dupersid ;
+1189  run;
+
+NOTE: There were 90853 observations read from the data set WORK.MEPS_171819.
+NOTE: The data set WORK.MEPS_171819 has 90853 observations and 18 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+
+1190  
+1191  
+1192   * Change the 8-character DUPERSID to 10-character DUPERSID for years before 2018;
+1193    Data VSfile ;
+1194      set new.h36u19 (rename=(DUPERSID=t_DUPERSID));
+1195      LENGTH DUPERSID $10;
+1196      if length(STRIP(t_dupersid))=8 then DUPERSID=CATS(put(panel,z2.), t_DUPERSID);
+1197      else DUPERSID = t_DUPERSID;
+1198    drop t_DUPERSID;
+1199  run;
+
+NOTE: There were 433143 observations read from the data set NEW.H36U19.
+NOTE: The data set WORK.VSFILE has 433143 observations and 30 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.17 seconds
+      cpu time            0.17 seconds
+      
+
+1200  
+1201  * Sort the pooled linkage variance estimation file for panels 21-24
+1202    by DUPERSID before match-merging ...;
+1203  proc sort data= VSfile (where = (panel in (21,22,23,24))) nodupkey
+1204     out=sorted_VSfile ;
+1205   by dupersid;
+1206   run;
+
+NOTE: There were 78090 observations read from the data set WORK.VSFILE.
+      WHERE panel in (21, 22, 23, 24);
+NOTE: 14630 observations with duplicate key values were deleted.
+NOTE: The data set WORK.SORTED_VSFILE has 63460 observations and 30 variables.
+NOTE: PROCEDURE SORT used (Total process time):
       real time           0.04 seconds
       cpu time            0.04 seconds
       
 
-1309  
-1310  
-1311  *** 2018 MEPS ;
-1312  
-1313  %let kept_vars_2018 =  VARSTR VARPSU perwt18f agelast ARTHDX JTPAIN31_M18 totexp18 totslf18;
-1314  data meps_2018;
-1315   set CDATA.h209v9 (keep= &kept_vars_2018
-1316                   rename=(totexp18=totexp
-1317                           totslf18=totslf));
-1318    perwtf = perwt18f/2;
-1319  
-1320    * Create a subpopulation indicator called SPOP
-1321      and a new variable called JOINT_PAIN  based on ARTHDX and JTPAIN31_M18;
-1322  
-1323     spop=2;
-1324     if agelast>=18 and not (ARTHDX <=0 and JTPAIN31_M18 <0) then do;
-1325        SPOP=1;
-1326       if ARTHDX=1 | JTPAIN31_M18=1 then joint_pain =1;
-1327       else joint_pain=2;
-1328     end;
-1329  run;
+1207  
+1208  * Match-merge the 2017-19 file with the pooled linkage variance estimation file
+1209    for panels 21-24;
+1210  
+1211  data MEPS_171819_m;
+1212   merge MEPS_171819 (in=a) Sorted_VSfile ;
+1213     by dupersid;
+1214   if a;
+1215  run;
 
-NOTE: There were 30461 observations read from the data set CDATA.H209V9.
-NOTE: The data set WORK.MEPS_2018 has 30461 observations and 11 variables.
+NOTE: There were 90853 observations read from the data set WORK.MEPS_171819.
+NOTE: There were 63460 observations read from the data set WORK.SORTED_VSFILE.
+NOTE: The data set WORK.MEPS_171819_M has 90853 observations and 46 variables.
 NOTE: DATA statement used (Total process time):
-      real time           0.06 seconds
-      cpu time            0.06 seconds
+      real time           0.03 seconds
+      cpu time            0.03 seconds
       
 
-1330  
-1331  
-1332  **** Concatenate 2017 and 2018 analytic data files;
-1333  
-1334  data MEPS_1718;
-1335    set meps_2017(rename=(JTPAIN31 = JTPAIN))
-1336        meps_2018 (rename=(JTPAIN31_M18 = JTPAIN));
-1337         TOTEXP_X = TOTEXP;
-1338  run;
+1216  
+1217  
+1218  /* The following PROC FREQ and PROC MEANS steps are for QC purposes */
+1219  /*
+1220  title 'MEPS 2017-19 combined for QC purposes';
+1221  proc freq data= MEPS_171819_m;
+1222  tables zero_weight ;
+1223  run;
+1224  
+1225  title 'MEPS 2017-19 combined, perwtf>0 for QC purposes';
+1226  proc freq data= MEPS_171819_m;
+1227  tables spop*joint_pain/list missing nopercent;
+1228  format joint_pain yes_no_fmt. spop spop_fmt.;
+1229  where  perwtf>0;
+1230  run;
+1231  
+1232  title 'MEPS 2017-19 combined, spop=1 & perwtf>0 for QC purposes';
+1233  proc freq data= MEPS_171819_m;
+1234  tables joint_pain/list missing nopercent;
+1235  format joint_pain yes_no_fmt. spop spop_fmt.;
+1236  where  spop=1 & perwtf>0;
+1237  run;
+1238  
+1239  proc means data= MEPS_171819_m N NMISS MIN MAX maxdec=0;
+1240  var stra9619  psu9619;
+1241  where  spop=1 & perwtf>0;
+1242  run;
+1243  
+1244  title 'MEPS 2017-19 combined, spop=1 & perwtf>0  & not  (stra9619 = . | psu9619=.)  ';
+1245  title2 'for QC purposes';
+1246  
+1247  proc freq data= MEPS_171819_m;
+1248  tables joint_pain/list missing nopercent;
+1249  format joint_pain yes_no_fmt. spop spop_fmt.;
+1250  where  spop=1 & perwtf>0 & not (stra9619 = . | psu9619=.) ;
+1251  run;
+1252  title;
+1253  */
+1254  title 'Pooled estiamtes for MEPS 2017-19';
+1255  ods graphics off;
+1256  ods select summary domain;
+1257  PROC SURVEYMEANS DATA=MEPS_171819_m  nobs mean stderr sum;
+1258      VAR joint_pain ;
+1259      stratum stra9619;
+1260      cluster psu9619;
+1261      WEIGHT perwtf;
+1262      domain spop('1');
+1263      class joint_pain;
+1264      format joint_pain yes_no_fmt. ;
+1265  RUN;
 
-NOTE: There were 31880 observations read from the data set WORK.MEPS_2017.
-NOTE: There were 30461 observations read from the data set WORK.MEPS_2018.
-NOTE: The data set WORK.MEPS_1718 has 62341 observations and 13 variables.
-NOTE: DATA statement used (Total process time):
-      real time           0.00 seconds
-      cpu time            0.01 seconds
-      
-
-1339  
-1340  
-1341  
-1342  title 'MEPS 2017-18 combined';
-1343  
-1344  proc freq data=MEPS_1718;
-1345  tables ARTHDX*JTPAIN*joint_pain
-1346         ARTHDX*JTPAIN*spop
-1347         spop joint_pain /list missing;
-1348  run;
-
-NOTE: There were 62341 observations read from the data set WORK.MEPS_1718.
-NOTE: PROCEDURE FREQ used (Total process time):
-      real time           0.01 seconds
-      cpu time            0.01 seconds
-      
-
-1349  
-1350  title 'MEPS 2017-18 combined';
-1351  ods exclude statistics;
-1352  PROC SURVEYMEANS DATA=meps_1718  nobs mean stderr sum ;
-1353      VAR joint_pain ;
-1354      CLUSTER VARPSU;
-1355      STRATUM VARSTR ;
-1356      WEIGHT perwtf;
-1357      domain spop('1');
-1358      class joint_pain;
-1359      format joint_pain yes_no_fmt. ;
-1360  RUN;
-
-NOTE: Due to nonpositive weights, 2210 observation(s) were deleted.
+NOTE: Due to nonpositive weights, 3074 observation(s) were deleted.
 NOTE: Only one cluster in a stratum for spop domains for variable(s) joint_pain. The estimate of variance for joint_pain will omit 
       this stratum.
 NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           0.08 seconds
+      real time           0.10 seconds
+      cpu time            0.11 seconds
+      
+
+1266  ods graphics off;
+1267  ods select summary domain;
+1268  PROC SURVEYMEANS DATA=MEPS_171819_m  nobs mean stderr sum;
+1269      VAR totexp totslf;
+1270      stratum stra9619;
+1271      cluster psu9619;
+1272      WEIGHT perwtf;
+1273      domain spop('1')*joint_pain;
+1274      format joint_pain yes_no_fmt.  ;
+1275  RUN;
+
+NOTE: Due to nonpositive weights, 3074 observation(s) were deleted.
+NOTE: PROCEDURE SURVEYMEANS used (Total process time):
+      real time           0.07 seconds
       cpu time            0.07 seconds
       
 
-1361  
-1362  title 'MEPS 2017-18 combined';
-1363  ods exclude statistics;
-1364  PROC SURVEYMEANS DATA=meps_1718  nobs mean stderr sum;
-1365      VAR totexp totslf;
-1366      CLUSTER VARPSU;
-1367      STRATUM VARSTR ;
-1368      WEIGHT perwtf;
-1369      domain spop('1')*joint_pain;
-1370      format joint_pain yes_no_fmt.  ;
-1371  RUN;
-
-NOTE: Due to nonpositive weights, 2210 observation(s) were deleted.
-NOTE: PROCEDURE SURVEYMEANS used (Total process time):
-      real time           1.16 seconds
-      cpu time            0.98 seconds
-      
-
-1372  TITLE;
-1373  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
-1374   only if used earlier., Otherswise. please comment out the next two lines  */
-1375  
-1376  proc printto;
-1377  run;
+1276  TITLE;
+1277  /* THE PROC PRINTTO null step is required to close the PROC PRINTTO,
+1278   only if used earlier., Otherswise. please comment out the next two lines  */
+1279  proc printto;
+1280  run;
 

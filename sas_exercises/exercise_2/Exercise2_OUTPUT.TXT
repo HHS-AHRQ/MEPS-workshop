@@ -1,40 +1,40 @@
-A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2018                                         1
+A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2019                                         1
 
- DUPERSID          RXRECIDX              LINKIDX         TC1S1_1    RXXP18X    RXSF18X
+ DUPERSID          RXRECIDX              LINKIDX         TC1S1_1    RXXP19X    RXSF19X
 
-2290016101    2290016101001403001    2290016101001403      191        4.03       2.31 
-2290032102    2290032102010403001    2290032102010403      191        1.38       0.00 
-2290032102    2290032102010403002    2290032102010403      191        8.56       0.00 
-2290032102    2290032102010403003    2290032102010403      191        8.56       0.00 
-2290032102    2290032102010403004    2290032102010403      191        8.56       0.00 
-2290032102    2290032102010503001    2290032102010503      191        8.97       0.00 
-2290032102    2290032102010503002    2290032102010503      191        8.97       0.00 
-2290032102    2290032102010503003    2290032102010503      191        8.97       0.00 
-2290032102    2290032102010503004    2290032102010503      191        6.10       0.00 
-2290032102    2290032102010503005    2290032102010503      191        6.10       0.00 
-2290046101    2290046101005403001    2290046101005403      191       29.99       0.00 
-2290046101    2290046101005503001    2290046101005503      191       29.99       0.00 
+2320008102    2320008102003503001    2320008102003503       60         8.60      8.60 
+2320018102    2320018102006403001    2320018102006403       60        11.99      0.22 
+2320019104    2320019104003303001    2320019104003303       60        99.95      0.00 
+2320019104    2320019104003303002    2320019104003303       60       218.59      0.00 
+2320019104    2320019104003303003    2320019104003303       60       218.59      0.00 
+2320019104    2320019104003503001    2320019104003503       60       113.94      0.00 
+2320019104    2320019104003503002    2320019104003503       60       170.46      0.00 
+2320019104    2320019104008403001    2320019104008403       60        12.31      0.00 
+2320019104    2320019104008403002    2320019104008403       60        12.31      0.00 
+2320019104    2320019104008403003    2320019104008403       60        12.31      0.00 
+2320019104    2320019104008403004    2320019104008403       60        12.31      0.00 
+2320024101    2320024101003503001    2320024101003503       60       284.30     35.00 
 A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR NARCOTIC ANALGESICS OR NARCOTIC ANALGESIC COMBOS                                   2
 
- Obs     DUPERSID     _TYPE_    _FREQ_     TOT      OOP
+ Obs     DUPERSID     N_PHRCHASE    TOT_EXP    OOP_EXP
 
-   1    2290016101       1         1       4.03    2.31
-   2    2290032102       1         9      66.17    0.00
-   3    2290046101       1         2      59.98    0.00
-                                ======
-                                  12                   
+   1    2320008102         1           8.60      8.60 
+   2    2320018102         1          11.99      0.22 
+   3    2320019104         9         870.77      0.00 
+                      ==========
+                          11                          
                                                                                                                                    3
 
 The SURVEYMEANS Procedure
 
                     Data Summary
 
-Number of Strata                                 117
-Number of Clusters                               257
-Number of Observations                         30461
-Number of Observations Used                    29415
-Number of Obs with Nonpositive Weights          1046
-Sum of Weights                             326327888
+Number of Strata                                 105
+Number of Clusters                               281
+Number of Observations                         28512
+Number of Observations Used                    27648
+Number of Obs with Nonpositive Weights           864
+Sum of Weights                             327396693
                                                                                                                                    4
 
 The SURVEYMEANS Procedure
@@ -44,14 +44,14 @@ The SURVEYMEANS Procedure
                                                                       Sum of                   Std Error                   Std Error
 SUBPOP              Variable     Label                       N       Weights          Mean       of Mean           Sum        of Sum
 ------------------------------------------------------------------------------------------------------------------------------------
-OnePlusNacroticEtc  N_PHRCHASE   # OF PURCHASES           2700      29007201      4.295530      0.112088     124601298       5391816
+OnePlusNacroticEtc  N_PHRCHASE   # OF PURCHASES           2298      25361942      3.883238      0.133469      98486445       5016215
                                  PER PERSON                                                                                         
-                    TOT          TOTAL EXPENSES           2700      29007201    252.771646     18.758064    7332197904     637133876
+                    TOT_EXP      TOTAL EXPENSES           2298      25361942    262.996593     23.833709    6670104261     654589878
                                  FOR NACROTIC                                                                                       
                                  ETC                                                                                                
-                    OOP          OUT-OF-POCKET            2700      29007201     55.007636      5.887614    1595617538     181942027
+                    OOP_EXP      OUT-OF-POCKET            2298      25361942     43.902296      4.702943    1113447465     124181450
                                  EXPENSES                                                                                           
-                    THIRD_PAYER  TOTAL EXPENSES           2700      29007201    197.764010     17.084372    5736580366     563384640
+                    THIRD_PAYER  TOTAL EXPENSES           2298      25361942    219.094298     21.420319    5556656796     584587812
                                  MINUS                                                                                              
                                  OUT-OF-POCKET                                                                                      
                                  EXPENSES                                                                                           
