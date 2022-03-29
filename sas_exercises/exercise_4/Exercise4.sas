@@ -5,28 +5,26 @@ in the last 12 months for the civilian noninstitutionized population, including:
 - Percentage of people with a flu shot (civilian noninstitutionized population), 2018:
 - Logistic regression: to identify demographic factors associated with receiving a flu shot
 
- Input file: 
-  - 2018 Full-year consolidated file
+ Input file: 2018 Full-year consolidated file
 
- This program is available at:
- https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/sas_exercises
 ********************************************************************/
 /* Clear log, output, and ODSRESULTS from the previous run automatically */
 DM "Log; clear; output; clear; odsresults; clear";
 proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK library */
 
 OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
-/*********************************************************************************
- IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
-    separate files for SAS log and output.  Otherwise comment  out these lines.
-***********************************************************************************/
 
+/*********************************************************************************
+ Uncomment the next 5 lines of code, only if you want SAS to create 
+    separate files for SAS log and output.  
+***********************************************************************************/
+/*
 %LET RootFolder= C:\Mar2022\sas_exercises\Exercise_4;
 FILENAME MYLOG "&RootFolder\Exercise4_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise4_OUTPUT.TXT";
+FILENAME MYPRINT "&RootFolder\Exercise4_output.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
-
+*/
 
 /* Create use-defined formats and store them in a catalog called FORMATS 
    in the work folder. They will be deleted at the end of the SAS session.
@@ -37,12 +35,6 @@ PROC FORMAT;
 value age18p_f 
     18-high = '18+'
     other = '0-17';
-
-
-value age_f 
-    18-34 = '18-34'
-    35-64 = '35-64'
-	65-High ='65+';
 
 value ADFLST42_fmt
     -15 = "Cann't be computed"
@@ -104,12 +96,12 @@ title 'PROC SURVEYLOGISTIC With param=ref option on the CLASS statement';
       INSCOV18 INSCOV18_fmt.;
     RUN;
 title;
+/* Uncomment the next two lines of code to close the PROC PRINTTO, 
+ only if used earlier. 
+*/
 
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
- only if used earlier., Otherswise. please comment out the next two lines  */
-
-
+/*
 proc printto;
 run;
-
+*/
 

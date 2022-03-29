@@ -13,9 +13,7 @@ This program generates National Totals and Per-person Averages for Narcotic
     - 2019 Prescribed medicines file
     - 2019 Full-year consolidated file
 
- This program is available at:
- https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/sas_exercises
-************************************************************************************/
+ ************************************************************************************/
 /* Clear log, output, and ODSRESULTS from the previous run automatically */
 DM "Log; clear; output; clear; odsresults; clear";
 proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK library */
@@ -23,19 +21,19 @@ proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK libr
 OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 
 /*********************************************************************************
-    IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
-    separate files for SAS log and output.  Otherwise comment  out these lines.
+ Uncomment the next 5 lines of code, only if you want SAS to create 
+    separate files for log and output.   
 ***********************************************************************************/
-
+/*
 %LET RootFolder= C:\Mar2022\sas_exercises\Exercise_2;
 FILENAME MYLOG "&RootFolder\Exercise2_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise2_OUTPUT.TXT";
+FILENAME MYPRINT "&RootFolder\Exercise2_output.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
-
+*/
 
 /* Create use-defined formats and store them in a catalog called FORMATS 
-   in the work folder. They will be deleted at the end of tjr SAS session.
+   in the work folder. They will be deleted at the end of the SAS session.
 */
 
 PROC FORMAT;
@@ -44,9 +42,9 @@ PROC FORMAT;
 		  2 = 'OTHERS';
 RUN;
 
-/* KEEP THE SPECIFIED VARIABLES WHEN READING THE INPUT DATA SET AND
-   RESTRICT TO OBSERVATIONS HAVING THERAPEUTIC CLASSIFICATION (TC) CODES
-   FOR NARCOTIC ANALGESICS OR NARCOTIC ANALGESIC COMBOS 
+/* Keep the specified variables when reading the input data set and
+   restrict to observations having THERAPEUTIC CLASSIFICATION (TC) codes
+   for NARCOTIC ANALGESICS OR NARCOTIC ANALGESIC COMBOS 
 */
 
 %LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
@@ -128,9 +126,11 @@ PROC SURVEYMEANS DATA=WORK.PersonRxLinked NOBS SUMWGT MEAN STDERR SUM;
   FORMAT SUBPOP SUBPOP.;
  RUN;
 title;
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
- only if used earlier., Otherswise. please comment out the next two lines  */
-
+/* 
+ Uncomment the next two lines of code to close the PROC PRINTTO, 
+ only if used earlier. 
+*/
+/*
 PROC PRINTTO;
 RUN;
-
+*/

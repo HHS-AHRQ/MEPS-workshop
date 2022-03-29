@@ -10,7 +10,7 @@ PROGRAM:      EXERCISE3.SAS
   - percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
   - average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
   - standard errors by specifying common variance structure when pooling data.
- for the U.S. civilian noninstitutionized population.
+ for the U.S. civilian noninstitutionalized population.
 
  Input files:
   - 2017 Full-year consolidated file
@@ -25,33 +25,23 @@ DM "Log; clear; output; clear; odsresults; clear";
 proc datasets nolist lib=work kill; quit; /* Delete  all files in the WORK library */
 OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
 
-/* Turn Off the Warning Message  
-WARNING: Multiple lengths were specified for the variable Name by input data set(s).
-*/
-OPTIONS varlenchk=nowarn;
 
 /*********************************************************************************
- IMPORTANT NOTE:  Use the next 5 lines of code, only if you want SAS to create 
-    separate files for SAS log and output.  Otherwise comment  out these lines.
+ Uncomment the next 5 lines of code, only if you want SAS to create 
+    separate files for log and output.  
 ***********************************************************************************/
-
+/*
 %LET RootFolder= C:\Mar2022\sas_exercises\Exercise_3;
 FILENAME MYLOG "&RootFolder\Exercise3_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise3_OUTPUT.TXT";
+FILENAME MYPRINT "&RootFolder\Exercise3_output.TXT";
 PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
 RUN;
-
+*/
 
 /* Create use-defined formats and store them in a catalog called FORMATS 
    in the work folder. They get deleted at the end of the SAS session.
 */
 PROC FORMAT;
-
-  VALUE agecat_fmt
-       19-49 = '19-49'
-       50-64 = '50-64'
-       65-high= '65+';
-
      value yes_no_fmt
       1 = 'Yes'
       2 = 'No'
@@ -126,15 +116,15 @@ data MEPS_171819;
          totslf='AMOUNT PAID BY SELF/FAMILY 2017-2019';
  run;
 
-* Sort the pooled 2017-19 MEPS file by DUPERSID before match-merging 
+* Sort the pooled 2017-19 MEPS file by DUPERSID before merging 
   with the pooled linkage variance estimation file;
 
 proc sort data=MEPS_171819;
-  by dupersid ;
+  by dupersid panel;
 run;
 
-
- * Change the 8-character DUPERSID to 10-character DUPERSID for years before 2018;
+ * Change the 8-character DUPERSID to 10-character DUPERSID 
+   for years Panel 22 (with 8-character DUPERSID);
   Data VSfile ;
     set new.h36u19 (rename=(DUPERSID=t_DUPERSID));
 	LENGTH DUPERSID $10;
@@ -147,54 +137,28 @@ run;
   by DUPERSID before match-merging ...;
 proc sort data= VSfile (where = (panel in (21,22,23,24))) nodupkey
    out=sorted_VSfile ;
- by dupersid;
+ by dupersid panel;
  run;
 
-* Match-merge the 2017-19 file with the pooled linkage variance estimation file 
+
+* Merge the 2017-19 file with the pooled linkage variance estimation file 
   for panels 21-24;
 
 data MEPS_171819_m;
  merge MEPS_171819 (in=a) Sorted_VSfile ;
-   by dupersid;
+   by dupersid panel;
  if a;
 run;
 
 
-/* The following PROC FREQ and PROC MEANS steps are for QC purposes */
+/* The following PROC FREQ step is for QC purposes */
 /*
-title 'MEPS 2017-19 combined for QC purposes';
-proc freq data= MEPS_171819_m;
-tables zero_weight ;
-run;
-
-title 'MEPS 2017-19 combined, perwtf>0 for QC purposes';
-proc freq data= MEPS_171819_m;
-tables spop*joint_pain/list missing nopercent;
-format joint_pain yes_no_fmt. spop spop_fmt.;
-where  perwtf>0;
-run;
-
 title 'MEPS 2017-19 combined, spop=1 & perwtf>0 for QC purposes';
 proc freq data= MEPS_171819_m;
 tables joint_pain/list missing nopercent;
 format joint_pain yes_no_fmt. spop spop_fmt.;
 where  spop=1 & perwtf>0;
 run;
-
-proc means data= MEPS_171819_m N NMISS MIN MAX maxdec=0;
-var stra9619  psu9619;
-where  spop=1 & perwtf>0;
-run;
-
-title 'MEPS 2017-19 combined, spop=1 & perwtf>0  & not  (stra9619 = . | psu9619=.)  ';
-title2 'for QC purposes';
-
-proc freq data= MEPS_171819_m;
-tables joint_pain/list missing nopercent;
-format joint_pain yes_no_fmt. spop spop_fmt.;
-where  spop=1 & perwtf>0 & not (stra9619 = . | psu9619=.) ;
-run;
-title;
 */
 title 'Pooled estiamtes for MEPS 2017-19';
 ods graphics off;
@@ -219,8 +183,14 @@ PROC SURVEYMEANS DATA=MEPS_171819_m  nobs mean stderr sum;
 	format joint_pain yes_no_fmt.  ;
 RUN;
 TITLE;
-/* THE PROC PRINTTO null step is required to close the PROC PRINTTO, 
- only if used earlier., Otherswise. please comment out the next two lines  */
+/* 
+ Uncomment the next two lines of code to close the PROC PRINTTO, 
+ only if used earlier. 
+*/
+/*
 proc printto;
 run;
+*/
+
+
 
