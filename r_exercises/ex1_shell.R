@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # This program generates the following estimates on national health care for 
-# the U.S. civilian non-institutionalized population, 2019:
+# the U.S. civilian non-institutionalized population, 2020:
 #  - Overall expenses (National totals)
 #  - Percentage of persons with an expense
 #  - Mean expense per person
@@ -10,7 +10,7 @@
 #    - Median expense per person with an expense, by age group
 #
 # Input file:
-#  - C:/MEPS/h216.dta (2019 Full-year file - Stata format)
+#  - C:/MEPS/h224.dta (2020 Full-year file - Stata format)
 #
 # -----------------------------------------------------------------------------
 
@@ -19,8 +19,8 @@
 # Can skip this part if already installed
 
 
-
   
+
 # Run this part each time you re-start R
 
 
@@ -38,31 +38,32 @@
 
 
 
-
-# Option 2: Use Stata format (recommended for Data Year 2019 and later)
-
+# Option 2: Use Stata format (recommended for Data Year 2020 and later)
 
 
 
 # View data
- 
 
 
  
 
 # Keep only needed variables --------------------------------------------------
-# - codebook: https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H216
+# - codebook: https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=h224
 
 # Using tidyverse syntax. The '%>%' is a pipe operator, which inverts
 # the order of the function call. For example, mean(x) becomes x %>% mean
   
- 
+
+
+
 
 
   
 # Add variables for persons with any expense and persons under 65 -------------
 
-  
+ 
+
+
 
 
 
@@ -72,8 +73,14 @@
 
 
 
+
+
+
 # Define the survey design ----------------------------------------------------
     
+ 
+
+
 
 
 
@@ -91,17 +98,22 @@
 
 
 
+
 # Percentage of persons with an expense
+
 
 
 
 # Mean expense per person
 
 
+
   
   
 # Mean/median expense per person with an expense --------------------
+
 # Subset design object to people with expense:
+
 
 
   
@@ -109,7 +121,9 @@
 
 
 
+
 # Mean expense per person with an expense, by age category
+
 
 
 

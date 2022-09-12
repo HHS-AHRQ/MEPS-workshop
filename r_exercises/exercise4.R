@@ -1,13 +1,12 @@
 # -----------------------------------------------------------------------------
-# This program includes a regression example for persons receiving a flu shot
-# in the last 12 months for the U.S. civilian non-institutionalized population, 
-# including:
-#  - Percentage of people with a flu shot
+# This program includes a regression example for persons delaying medical care
+# because of COVID, including:
+#  - Percentage of people who delayed care
 #  - Logistic regression: to identify demographic factors associated with
-#    receiving a flu shot
+#    delayed care
 #
 # Input file: 
-#  - C:/MEPS/h209.dta (2018 Full-year file)
+#  - C:/MEPS/h224.dta (2020 Full-year file)
 #
 # -----------------------------------------------------------------------------
 
@@ -37,58 +36,73 @@
 
 # Read in data from FYC file --------------------------------------------------
 
-  fyc18 = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
+  fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
 
   # # Alternative:
-  # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
+  # fyc20 = read_dta("C:/MEPS/h224.dta") # 2020 FYC
 
   # View data
-  fyc18 %>% select(DUPERSID, ADFLST42, AGELAST, SEX, RACETHX, INSCOV18)
+  fyc20 %>% 
+    select(DUPERSID, AGELAST, SEX, RACETHX, INSCOV20, REGION53, matches("CVDLAY"))
 
-  fyc18 %>% 
-    filter(SAQWT18F > 0) %>% 
-    count(ADFLST42)
+
   
 # Keep only needed variables --------------------------------------------------
-  fyc18_sub <- fyc18 %>%
-    select(DUPERSID, VARPSU, VARSTR,
-           ADFLST42, AGELAST, SEX, RACETHX, INSCOV18, matches("SAQ"))
+  fyc20_sub <- fyc20 %>%
+    select(DUPERSID, VARPSU, VARSTR, PERWT20F,
+           matches("CVDLAY"), AGELAST, SEX, RACETHX, INSCOV20, REGION53)
   
   
 # Create variables ------------------------------------------------------------
-#  - Convert ADFLST42 from 1/2 to 0/1 (for logistic regression)
-#  - Create 'subpop' to exclude people with Missing 'ADFLST42'
+#  - Convert CVDLAY**53 from 1/2 to 0/1 (for logistic regression)
+#  - Create 'subpop' to exclude people with Missing 'CVDLAY**'
   
  
-  fyc18x <- fyc18_sub %>% 
+  fyc20x <- fyc20_sub %>% 
     mutate(
       
-      ADFLST42 = as.numeric(ADFLST42),
+      CVDLAYCA53 = as.numeric(CVDLAYCA53),
+      CVDLAYDN53 = as.numeric(CVDLAYDN53),
+      CVDLAYPM53 = as.numeric(CVDLAYPM53),
+      
       
       # Convert outcome from 1/2 to 0/1:
-      flu_shot = case_when(
-        ADFLST42 == 1 ~ 1,
-        ADFLST42 == 2 ~ 0,
-        TRUE ~ ADFLST42),
+      covid_delay_CARE = case_when(
+        CVDLAYCA53 == 1 ~ 1,
+        CVDLAYCA53 == 2 ~ 0,
+        TRUE ~ CVDLAYCA53),
       
-      # Create subpop to exclude Missings
-      subpop = (ADFLST42 >= 0))
+      covid_delay_DENTAL = case_when(
+        CVDLAYDN53 == 1 ~ 1,
+        CVDLAYDN53 == 2 ~ 0,
+        TRUE ~ CVDLAYDN53),
+      
+      covid_delay_PMED = case_when(
+        CVDLAYPM53 == 1 ~ 1,
+        CVDLAYPM53 == 2 ~ 0,
+        TRUE ~ CVDLAYPM53),
+      
+      
+      # Create subpops to exclude Missings
+      subpop_CARE   = (CVDLAYCA53 >= 0),
+      subpop_DENTAL = (CVDLAYDN53 >= 0),
+      subpop_PMED   = (CVDLAYPM53 >= 0))
   
   
-  # QC new variable
-  fyc18x %>% 
-    # filter(SAQWT18F > 0) %>%
-    count(flu_shot, ADFLST42, subpop)
+  # QC new variables
+  fyc20x %>% count(covid_delay_CARE,   CVDLAYCA53, subpop_CARE)
+  fyc20x %>% count(covid_delay_DENTAL, CVDLAYDN53, subpop_DENTAL)
+  fyc20x %>% count(covid_delay_PMED,   CVDLAYPM53, subpop_PMED)
   
   
 # Check variables in regression -----------------------------------------------
   
-  fyc18x %>% count(SEX)
+  fyc20x %>% count(SEX)
   # SEX: 
   #   1 = MALE
   #   2 = FEMALE
   
-  fyc18x %>% count(RACETHX)
+  fyc20x %>% count(RACETHX)
   # RACETHX: 
   #   1 = HISPANIC
   #   2 = NON-HISPANIC WHITE
@@ -96,47 +110,71 @@
   #   4 = NON-HISPANIC ASIAN
   #   5 = NON-HISPANIC OTHER/MULTIPLE
   
-  fyc18x %>% count(INSCOV18)
+  fyc20x %>% count(INSCOV20)
   # INSCOV:
   #   1 = ANY PRIVATE
   #   2 = PUBLIC ONLY
   #   3 = UNINSURED
   
+  fyc20x %>% count(REGION53)
+  # REGION53:
+  #   1 = NORTHEAST
+  #   2 = MIDWEST
+  #   3 = SOUTH
+  #   4 = WEST
   
-  fyc18x %>% pull(AGELAST) %>% summary
+  
+  fyc20x %>% pull(AGELAST) %>% summary
   # AGELAST: 0-85
 
   
 # Define the survey design ----------------------------------------------------
   
-  saq_dsgn = svydesign(
+  meps_dsgn = svydesign(
     id = ~VARPSU,
     strata = ~VARSTR,
-    weights = ~SAQWT18F,
-    data = fyc18x,
+    weights = ~PERWT20F,
+    data = fyc20x,
     nest = TRUE)
 
-  flu_dsgn = subset(saq_dsgn, subpop)
-
-  
-  # QC sub-design
-  saq_dsgn$variables %>% count(flu_shot)
-  flu_dsgn$variables %>% count(flu_shot)
 
   
 # Calculate survey estimates ---------------------------------------------------
-#  - Percentage of people with a flu shot
+#  - Percentage of people delaying care
 #  - Logistic regression: to identify demographic factors associated with
-#    receiving a flu shot  
+#    delayed care  
 
-# Percentage of people with a flu shot
-  svymean(~flu_shot, design = flu_dsgn)
+# Percentage of people delaying care
+  svymean(~covid_delay_CARE,   design = subset(meps_dsgn, subpop_CARE))
+  svymean(~covid_delay_DENTAL, design = subset(meps_dsgn, subpop_DENTAL))
+  svymean(~covid_delay_PMED,   design = subset(meps_dsgn, subpop_PMED))
+  
   
 # Logistic regression
 # - specify 'family = quasibinomial' to get rid of warning messages
   
+  # Delaying Medical Care
   svyglm(
-    flu_shot ~ AGELAST + as.factor(SEX) + as.factor(RACETHX) + as.factor(INSCOV18), 
-    design = flu_dsgn, family = quasibinomial) %>%  
+    covid_delay_CARE ~ AGELAST + as.factor(SEX) + as.factor(RACETHX) + 
+      as.factor(INSCOV20) + as.factor(REGION53), 
+    design = subset(meps_dsgn, subpop_CARE), family = quasibinomial) %>%  
     summary
+  
+  # Delaying Dental Care
+  svyglm(
+    covid_delay_DENTAL ~ AGELAST + as.factor(SEX) + as.factor(RACETHX) + 
+      as.factor(INSCOV20) + as.factor(REGION53), 
+    design = subset(meps_dsgn, subpop_DENTAL), family = quasibinomial) %>%  
+    summary
+  
+  # Delaying PMEDs 
+  svyglm(
+    covid_delay_PMED ~ AGELAST + as.factor(SEX) + as.factor(RACETHX) + 
+      as.factor(INSCOV20) + as.factor(REGION53), 
+    design = subset(meps_dsgn, subpop_PMED), family = quasibinomial) %>%  
+    summary
+  
+  
+  
+  
   

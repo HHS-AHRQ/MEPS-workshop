@@ -1,29 +1,26 @@
 # -----------------------------------------------------------------------------
-# This program illustrates how to pool MEPS data files from different years. It
-# highlights one example of a discontinuity that may be encountered when 
-# working with data from before and after the 2018 CAPI re-design. 
-#
-# It also demonstrates use of the Pooled Variance file (h36u19) to pool data 
-# years before and after 2019.
+# This program illustrates how to pool MEPS data files from different years. 
+# It  demonstrates use of the Pooled Variance file (h36u19) to pool data years 
+# before and after 2019.
 # 
 #
-# The program pools 2017, 2018, and 2019 data and calculates:
-#  - Percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
-#  - Average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
+# The program pools 2018, 2019, and 2020 data and calculates:
+#  - Percentage of people with Bladder Cancer (CABLADDR)
+#  - Average expenditures per person with Bladder Cancer (TOTEXP, TOTSLF)
 #
 # Notes:
 #  - Variables with year-specific names must be renamed before combining files
-#    (e.g. 'TOTEXP18' and 'TOTEXP18' renamed to 'totexp')
+#    (e.g. 'TOTEXP19' and 'TOTEXP20' renamed to 'totexp')
 #
 #  - When pooling data years before and after 2002 or 2019, the Pooled Variance 
-#    file (h36u19) must be used for correct variance estimation 
+#    file (h36u20) must be used for correct variance estimation 
 #
 # 
 # Input files: 
+#  - C:/MEPS/h224.dta (2020 Full-year file)
 #  - C:/MEPS/h216.dta (2019 Full-year file)
 #  - C:/MEPS/h209.dta (2018 Full-year file)
-#  - C:/MEPS/h201.dta (2017 Full-year file)
-#  - C:/MEPS/h36u19.dta (Pooled Variance Linkage file)
+#  - C:/MEPS/h36u20.dta (Pooled Variance Linkage file)
 #
 # -----------------------------------------------------------------------------
 
@@ -51,130 +48,124 @@
 
 
 # Read in data ----------------------------------------------------------------
+  fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
   fyc19 = read_MEPS(year = 2019, type = "FYC") # 2019 FYC
   fyc18 = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
-  fyc17 = read_MEPS(year = 2017, type = "FYC") # 2017 FYC
   
   linkage = read_MEPS(type = "Pooled linkage") # Pooled Linkage file
   
-
   # # Alternative:
+  # fyc20 = read_dta("C:/MEPS/h224.dta") # 2020 FYC
   # fyc19 = read_dta("C:/MEPS/h216.dta") # 2019 FYC
   # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
-  # fyc17 = read_dta("C:/MEPS/h201.dta") # 2017 FYC
-  
+
   # >> Note: File name for linkage file will change every year!!
-  # linkage = read_dta("C:/MEPS/h36u19.dta") # Pooled Linkage file
-  
-  
+  # linkage = read_dta("C:/MEPS/h36u20.dta") # Pooled Linkage file
 
 # View data -------------------------------------------------------------------
-# JTPAIN** and ARTHDX values
-#  -15 = Cannot be computed (2018 and later)
-#   -9 = Not ascertained (pre-2018)
-#   -8 = Don't know
-#   -7 = Refused
-#   -1 = Inapplicable
-#    1 = Yes
-#    2 = No
 
-
-# Starting in 2018, most people that report Arthritis (ARTHDX = '1 Yes') have 
-#  JTPAIN31_M18 = '-1 Inapplicable' (due to new skip pattern)
-fyc17 %>% filter(ARTHDX == 1) %>% count(ARTHDX, JTPAIN31) 
-fyc18 %>% filter(ARTHDX == 1) %>% count(ARTHDX, JTPAIN31_M18) 
-fyc19 %>% filter(ARTHDX == 1) %>% count(ARTHDX, JTPAIN31_M18) 
+  fyc20 %>% count(CABLADDR)
+  
+  
+# From the documentation: 
+#  - Questions about cancer were asked only of persons aged 18 or older. 
+#  - CANCERDX asks whether person ever diagnosed with cancer 
+#  - If YES, then asked what type (CABLADDR, CABLOOD, CABREAST...)
+  
+  fyc20 %>% 
+    mutate(AGEgt18 = ifelse(AGELAST >= 18, "18+", "AGE < 18"))  %>% 
+    count(AGEgt18, CANCERDX, CABLADDR)
+  
 
 
 # Create variables ------------------------------------------------------------
-#  - any_jtpain = "1 YES" if JTPAIN** = 1 OR ARTHDX = 1
-#  - any_jtpain = "Missing" if JTPAIN < 0 AND ARTHDX < 0 
+#  - bladder_cancer = "1 Yes" if CABLADDR = 1
+#  - bladder_cancer = "2 No" if CABLADDR = 2 or CANCERDX = 2
 
-fyc19x <- fyc19 %>% 
-  mutate(any_jtpain = case_when(
-    JTPAIN31_M18 == 1 | ARTHDX == 1 ~ "1 Yes",
-    JTPAIN31_M18 < 0  & ARTHDX < 0 ~ "Missing",
-    TRUE ~ "2 No"))
 
-fyc18x <- fyc18 %>% 
-  mutate(any_jtpain = case_when(
-    JTPAIN31_M18 == 1 | ARTHDX == 1 ~ "1 Yes",
-    JTPAIN31_M18 < 0  & ARTHDX < 0 ~ "Missing",
-    TRUE ~ "2 No"))
+fyc20x = fyc20 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing")) 
+    
+fyc19x = fyc19 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing")) 
 
-fyc17x <- fyc17 %>% 
-  mutate(any_jtpain = case_when(
-    JTPAIN31 == 1 | ARTHDX == 1 ~ "1 Yes",
-    JTPAIN31 < 0  & ARTHDX < 0 ~ "Missing",
-    TRUE ~ "2 No"))
+fyc18x = fyc18 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing"))  
 
 
 # QC variables:
-fyc19x %>% 
-  filter(AGELAST >= 18) %>%   
-  count(any_jtpain, JTPAIN31_M18, ARTHDX)
+  fyc20x %>% count(CANCERDX, CABLADDR, bladder_cancer)
+  fyc19x %>% count(CANCERDX, CABLADDR, bladder_cancer)
+  fyc18x %>% count(CANCERDX, CABLADDR, bladder_cancer)
+  
+    
+  
+# Rename year-specific variables prior to combining --------------------------- 
+  
+fyc20p = fyc20x %>%
+  rename(
+    perwt  = PERWT20F,
+    totslf = TOTSLF20,
+    totexp = TOTEXP20) %>%
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
 
-fyc18x %>% 
-  filter(AGELAST >= 18) %>%   
-  count(any_jtpain, JTPAIN31_M18, ARTHDX)
-
-fyc17x %>% 
-  filter(AGELAST >= 18) %>%
-  count(any_jtpain, JTPAIN31, ARTHDX) %>%
-  print(n = 50)
-
-
-
-# Rename year-specific variables prior to combining ---------------------------
 
 fyc19p = fyc19x %>%
   rename(
     perwt  = PERWT19F,
     totslf = TOTSLF19,
     totexp = TOTEXP19) %>%
-  select(DUPERSID, PANEL, VARSTR, VARPSU, AGELAST, perwt, totslf, totexp, ARTHDX, matches("JTPAIN"))
-
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
+   
+ 
 fyc18p = fyc18x %>%
   rename(
     perwt  = PERWT18F,
     totslf = TOTSLF18,
     totexp = TOTEXP18) %>%
-  select(DUPERSID, PANEL, VARSTR, VARPSU, AGELAST, perwt, totslf, totexp, ARTHDX, matches("JTPAIN"))
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
 
-fyc17p = fyc17x %>%
-  rename(
-    perwt  = PERWT17F,
-    totslf = TOTSLF17,
-    totexp = TOTEXP17) %>%
-  select(DUPERSID, PANEL, VARSTR, VARPSU, AGELAST, perwt, totslf, totexp, ARTHDX, matches("JTPAIN"))
-
-
+head(fyc20p)
 head(fyc19p)
 head(fyc18p)
-head(fyc17p)
 
 
-# Stack data and define pooled weight variable and subpop of interest ---------
-#  - Subpop: AGELAST >= 18 AND any_jtpain not missing
+# Stack data and define pooled weight variable ---------------------------------
+#  - for poolwt, divide perwt by number of years (3):
 
-pool = bind_rows(fyc19p, fyc18p, fyc17p) %>%
-  mutate(
-  # for poolwt, divide perwt by number of years (3):
-    poolwt = perwt / 3, 
-    subpop = (AGELAST >=18 & any_jtpain != "Missing"))
+pool = bind_rows(fyc20p, fyc19p, fyc18p) %>%
+  mutate(poolwt = perwt / 3)
 
 
-# Merge the Pooled Linkage Variance file (since pooling 2019 data) ---
+# Merge the Pooled Linkage Variance file (since pooling before and after 2019 data)
 #  Notes: 
 #   - DUPERSIDs are recycled, so must join by DUPERSID AND PANEL
-#   - File name will change every year!! (e.g. 'h36u20' once 2020 data is added)
+#   - File name will change every year!! (e.g. 'h36u21' once 2021 data is added)
 
 head(pool)
 head(linkage)
 
 
 linkage_sub = linkage %>% 
-  select(DUPERSID, PANEL, STRA9619, PSU9619)
+  select(DUPERSID, PANEL, STRA9620, PSU9620)
 
 pool_linked =  left_join(pool, linkage_sub, by = c("DUPERSID", "PANEL"))
 
@@ -186,25 +177,27 @@ pool_linked %>% count(PANEL)
 
 
 # Define the survey design ----------------------------------------------------
-#  - Use PSU9619 and STRA9619 variables, since pooling before and after 2019
+#  - Use PSU9620 and STRA9620 variables, since pooling before and after 2019
 
 pool_dsgn = svydesign(
-  id = ~PSU9619,
-  strata = ~STRA9619,
+  id = ~PSU9620,
+  strata = ~STRA9620,
   weights = ~poolwt,
   data = pool_linked,
   nest = TRUE)
 
 
+
 # Calculate survey estimates ---------------------------------------------------
-#  - Percentage of people with Joint Pain / Arthritis (any_jtpain)
+#  - Percentage of adults with Bladder Cancer
 #  - Average expenditures per person, by Joint Pain status (totexp, totslf)
 
-# Percent with any joint pain (any_jtpain)
-svymean(~any_jtpain, design = subset(pool_dsgn, subpop))
+# Percent with bladder cancer
+svymean(~bladder_cancer, design = subset(pool_dsgn, bladder_cancer != "Missing"))
 
 # Avg. expenditures per person
-svyby(~totslf + totexp, by = ~any_jtpain, FUN = svymean, 
-      design = subset(pool_dsgn, subpop))
+svyby(~totslf + totexp, by = ~bladder_cancer, FUN = svymean, 
+      design = subset(pool_dsgn, bladder_cancer != "Missing"))
+
 
 

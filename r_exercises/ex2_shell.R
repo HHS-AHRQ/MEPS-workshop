@@ -8,8 +8,8 @@
 #  - Third-party payments        
 #
 # Input files:
-#  - C:/MEPS/h216.dta  (2019 Full-year file)
-#  - C:/MEPS/h213a.dta (2019 Prescribed medicines file)
+#  - C:/MEPS/h224.dta  (2020 Full-year file)
+#  - C:/MEPS/h220a.dta (2020 Prescribed medicines file)
 #
 # -----------------------------------------------------------------------------
 
@@ -42,15 +42,16 @@
   
     
   # # Alternative:
-  # fyc19 = read_dta("C:/MEPS/h216.dta")   # 2019 FYC
-  # rx19  = read_dta("C:/MEPS/h213a.dta")  # 2019 RX
+  # fyc20 = read_dta("C:/MEPS/h224.dta")   # 2020 FYC
+  # rx20  = read_dta("C:/MEPS/h220astata.dta")  # 2020 RX
   
 
 # Keep only needed variables --------------------------------------------------
   
-
+ 
   
-      
+  
+     
 
 # Identify Narcotic analgesics or Narcotic analgesic combos -------------------
 #  Use therapeutic classification codes (TC1S1_1)
@@ -60,11 +61,12 @@
 # LINKIDX:  ID FOR LINKAGE TO COND/OTH EVENT FILES
 # TC1S1_1:  MULTUM THERAPEUT SUB-SUB-CLASS FOR TC1S1
 #
-# RXXP19X:  SUM OF PAYMENTS RXSF19X-RXOU19X(IMPUTED)
-# RXSF19X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
+# RXXP20X:  SUM OF PAYMENTS RXSF20X-RXOU20X(IMPUTED)
+# RXSF20X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
 
 
- 
+  
+  
   
   
 
@@ -74,14 +76,23 @@
   
   
   
-# Merge the person-level expenditures to the FY PUF to get complete PSUs, Strata
   
+  
+  
+  
+  
+# Merge the person-level expenditures to the FY PUF to get complete PSUs, Strata
  
   
   
+  
+  
+  
+
 # Define the survey design ----------------------------------------------------
   
  
+  
   
   
   
@@ -95,16 +106,13 @@
   
   
 # National totals 
- 
+
   
-  
-  
+   
   
 # Average per person
- 
+
   
   
-  
-  
-  
+
   

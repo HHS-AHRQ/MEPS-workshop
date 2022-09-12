@@ -8,8 +8,8 @@
 #  - Third-party payments        
 #
 # Input files:
-#  - C:/MEPS/h216.dta  (2019 Full-year file)
-#  - C:/MEPS/h213a.dta (2019 Prescribed medicines file)
+#  - C:/MEPS/h224.dta  (2020 Full-year file)
+#  - C:/MEPS/h220a.dta (2020 Prescribed medicines file)
 #
 # -----------------------------------------------------------------------------
 
@@ -37,18 +37,18 @@
 
 # Read in data from FYC file --------------------------------------------------
 
-  fyc19 = read_MEPS(year = 2019, type = "FYC") # 2019 FYC
-  rx19  = read_MEPS(year = 2019, type = "RX")  # 2019 RX
+  fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
+  rx20  = read_MEPS(year = 2020, type = "RX")  # 2020 RX
   
   # # Alternative:
-  # fyc19 = read_dta("C:/MEPS/h216.dta")   # 2019 FYC
-  # rx19  = read_dta("C:/MEPS/h213a.dta")  # 2019 RX
+  # fyc20 = read_dta("C:/MEPS/h224.dta")   # 2020 FYC
+  # rx20  = read_dta("C:/MEPS/h220astata.dta")  # 2020 RX
   
 
 # Keep only needed variables --------------------------------------------------
   
-  fyc19_sub = fyc19 %>%
-    select(DUPERSID, VARSTR, VARPSU, PERWT19F) # needed for survey design
+  fyc20_sub = fyc20 %>%
+    select(DUPERSID, VARSTR, VARPSU, PERWT20F) # needed for survey design
     
 
 # Identify Narcotic analgesics or Narcotic analgesic combos -------------------
@@ -59,13 +59,13 @@
 # LINKIDX:  ID FOR LINKAGE TO COND/OTH EVENT FILES
 # TC1S1_1:  MULTUM THERAPEUT SUB-SUB-CLASS FOR TC1S1
 #
-# RXXP19X:  SUM OF PAYMENTS RXSF19X-RXOU19X(IMPUTED)
-# RXSF19X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
+# RXXP20X:  SUM OF PAYMENTS RXSF20X-RXOU20X(IMPUTED)
+# RXSF20X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
 
 
-  narc = rx19 %>%
+  narc = rx20 %>%
     filter(TC1S1_1 %in% c(60, 191)) %>%
-    select(DUPERSID, RXRECIDX, LINKIDX, TC1S1_1, RXXP19X, RXSF19X)
+    select(DUPERSID, RXRECIDX, LINKIDX, TC1S1_1, RXXP20X, RXSF20X)
   
   head(narc)
   narc %>% count(TC1S1_1)
@@ -75,8 +75,8 @@
   narc_pers = narc %>%
     group_by(DUPERSID) %>%
     summarise(
-      tot = sum(RXXP19X),
-      oop = sum(RXSF19X),
+      tot = sum(RXXP20X),
+      oop = sum(RXSF20X),
       n_purchase = n()) %>%
     mutate(
       third_payer = tot - oop,
@@ -87,7 +87,7 @@
   
 # Merge the person-level expenditures to the FY PUF to get complete PSUs, Strata
   
-  narc_fyc = full_join(narc_pers, fyc19_sub, by = "DUPERSID")
+  narc_fyc = full_join(narc_pers, fyc20_sub, by = "DUPERSID")
   
   head(narc_fyc)
 
@@ -100,7 +100,7 @@
   mepsdsgn = svydesign(
     id = ~VARPSU,
     strata = ~VARSTR,
-    weights = ~PERWT19F,
+    weights = ~PERWT20F,
     data = narc_fyc,
     nest = TRUE)
 

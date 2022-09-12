@@ -1,13 +1,12 @@
 # -----------------------------------------------------------------------------
-# This program includes a regression example for persons receiving a flu shot
-# in the last 12 months for the U.S. civilian non-institutionalized population, 
-# including:
-#  - Percentage of people with a flu shot
+# This program includes a regression example for persons delaying medical care
+# because of COVID, including:
+#  - Percentage of people who delayed care
 #  - Logistic regression: to identify demographic factors associated with
-#    receiving a flu shot
+#    delayed care
 #
 # Input file: 
-#  - C:/MEPS/h209.dta (2018 Full-year file)
+#  - C:/MEPS/h224.dta (2020 Full-year file)
 #
 # -----------------------------------------------------------------------------
 
@@ -39,40 +38,53 @@
 
  
   
+  
+  
   # # Alternative:
-  # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
+  # fyc20 = read_dta("C:/MEPS/h224.dta") # 2020 FYC
 
   # View data
  
   
   
+
   
 # Keep only needed variables --------------------------------------------------
- 
+
   
-   
+  
+    
   
 # Create variables ------------------------------------------------------------
-#  - Convert ADFLST42 from 1/2 to 0/1 (for logistic regression)
-#  - Create 'subpop' to exclude people with Missing 'ADFLST42'
+#  - Convert CVDLAY**53 from 1/2 to 0/1 (for logistic regression)
+#  - Create 'subpop' to exclude people with Missing 'CVDLAY**'
   
  
  
+        
+      
+      # Convert outcome from 1/2 to 0/1:
+    
+  
+      
+      # Create subpops to exclude Missings
+   
   
   
-  # QC new variable
+  # QC new variables
 
+  
    
   
 # Check variables in regression -----------------------------------------------
   
-
+ 
   
   # SEX: 
   #   1 = MALE
   #   2 = FEMALE
   
-  
+ 
   
   # RACETHX: 
   #   1 = HISPANIC
@@ -80,10 +92,8 @@
   #   3 = NON-HISPANIC BLACK
   #   4 = NON-HISPANIC ASIAN
   #   5 = NON-HISPANIC OTHER/MULTIPLE
+ 
   
-  
-  
-
   # INSCOV:
   #   1 = ANY PRIVATE
   #   2 = PUBLIC ONLY
@@ -91,34 +101,46 @@
   
   
   
+  # REGION53:
+  #   1 = NORTHEAST
+  #   2 = MIDWEST
+  #   3 = SOUTH
+  #   4 = WEST
+  
+ 
+  
   # AGELAST: 0-85
 
   
 # Define the survey design ----------------------------------------------------
   
-  
-  
-
-  
-  # QC sub-design
  
   
-  
+
+
   
 # Calculate survey estimates ---------------------------------------------------
-#  - Percentage of people with a flu shot
+#  - Percentage of people delaying care
 #  - Logistic regression: to identify demographic factors associated with
-#    receiving a flu shot  
+#    delayed care  
 
-  
-# Percentage of people with a flu shot
+# Percentage of people delaying care
  
-  
-  
+    
   
 # Logistic regression
 # - specify 'family = quasibinomial' to get rid of warning messages
   
+  # Delaying Medical Care
+
+  
+  
+  # Delaying Dental Care
+ 
+  
+  
+  # Delaying PMEDs 
+ 
   
   
   
