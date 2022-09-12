@@ -1,136 +1,132 @@
 /*********************************************************************
-PROGRAM: 	EXERCISE2.SAS
+program: 	exercise2.sas
 
-This program generates National Totals and Per-person Averages for Narcotic
- analgesics and Narcotic analgesic combos care for the U.S. civilian 
- non-institutionalized population (2019), including:
-  - Number of purchases (fills)  
-  - Total expenditures          
-  - Out-of-pocket payments       
-  - Third-party payments        
+this program generates national totals and per-person averages for narcotic
+ analgesics and narcotic analgesic combos care for the u.s. civilian 
+ non-institutionalized population (2020), including:
+  - number of purchases (fills)  
+  - total expenditures 
+    (sums all the expenditures from the various sources of payment
+     for the prescribed medicine event) 
+  - out-of-pocket payments for the prescribed medicine event    
+  - third-party payments for the prescribed medicine event    
 
- Input files:
-    - 2019 Prescribed medicines file
-    - 2019 Full-year consolidated file
+ input files:
+    - 2020 prescribed medicines file
+    - 2020 full-year consolidated file
 
  ************************************************************************************/
-/* Clear log, output, and ODSRESULTS from the previous run automatically */
-DM "Log; clear; output; clear; odsresults; clear";
-proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK library */
+/* clear log, output, and odsresults from the previous run automatically */
+dm "log; clear; output; clear; odsresults; clear";
+proc datasets nolist lib=work  kill; quit; /* delete  all files in the work library */
 
-OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
+options nocenter ls=132 ps=79 nodate formchar="|----|+|---+=|-/\<>*" pageno=1;
 
 /*********************************************************************************
- Uncomment the next 5 lines of code, only if you want SAS to create 
-    separate files for log and output.   
+ uncomment the next 5 lines of code, only if you want sas to create 
+ separate files for log and output   
 ***********************************************************************************/
 /*
-%LET RootFolder= C:\Mar2022\sas_exercises\Exercise_2;
-FILENAME MYLOG "&RootFolder\Exercise2_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise2_output.TXT";
-PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
-RUN;
+%let rootfolder= c:\SASHandsOnSep2022\sas_exercises\exercise_2;
+filename mylog "&rootfolder\exercise2_log.txt";
+filename myprint "&rootfolder\exercise2_output.txt";
+proc printto log=mylog print=myprint new;
+run;
 */
+/* create use-defined formats and store them in the work folder */
+proc format;
+   value subpop    
+      1 = 'oneplusnacroticetc'
+	  2 = 'others';
+run;
 
-/* Create use-defined formats and store them in a catalog called FORMATS 
-   in the work folder. They will be deleted at the end of the SAS session.
-*/
+/***************************************************************************** 
+keep the specified variables when reading the input data set and
+restrict to observations having therapeutic classification (tc) 
+codes for narcotic analgesics or narcotic analgesic combos 
+*******************************************************************************/
 
-PROC FORMAT;
-   VALUE SUBPOP    
-          1 = 'OnePlusNacroticEtc'
-		  2 = 'OTHERS';
-RUN;
+%let datafolder = c:\meps_data;  /* adjust the folder name if needed */
+libname cdata "&datafolder"; 
 
-/* Keep the specified variables when reading the input data set and
-   restrict to observations having THERAPEUTIC CLASSIFICATION (TC) codes
-   for NARCOTIC ANALGESICS OR NARCOTIC ANALGESIC COMBOS 
-*/
+data work.drug;
+  set cdata.h220a (keep=dupersid rxrecidx linkidx tc1s1_1 rxxp20x rxsf20x
+                   where=(tc1s1_1 in (60, 191))); 
+run;
 
-%LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
-libname CDATA "&DataFolder"; 
-
-DATA WORK.DRUG;
-  SET CDATA.H213A (KEEP=DUPERSID RXRECIDX LINKIDX TC1S1_1 RXXP19X RXSF19X
-                   WHERE=(TC1S1_1 IN (60, 191))); 
-RUN;
-
-ODS HTML CLOSE; /* This will make the default HTML output no longer active,
-                  and the output will not be displayed in the Results Viewer.*/
-TITLE "A SAMPLE DUMP FOR PMED RECORDS WITH Narcotic analgesics or Narcotic analgesic combos, 2019";
-PROC PRINT DATA=WORK.DRUG (OBS=12) noobs;
-   VAR dupersid RXRECIDX LINKIDX TC1S1_1 RXXP19X RXSF19X;
-RUN;
+ods html close; /* this will make the default html output no longer active,
+                  and the output will not be displayed in the results viewer.*/
+title 'sample dump for pmed records with narcotic analgesics or narcotic analgesic combos, 2020';
+proc print data=work.drug (obs=12) noobs;
+   var dupersid rxrecidx linkidx tc1s1_1 rxxp20x rxsf20x;
+run;
 
 
-/* SUM "RXXP19X and RXSF19X" DATA TO PERSON-LEVEL*/
+/* sum "rxxp20x and rxsf20x" data to person-level */
 
-PROC SUMMARY DATA=WORK.DRUG NWAY;
-  CLASS DUPERSID;
-  VAR RXXP19X RXSF19X;
-  OUTPUT OUT=WORK.PERDRUG (DROP = _TYPE_ RENAME=(_FREQ_ = N_PHRCHASE))
-                  /*# OF PURCHASES PER PERSON */
-             sum=TOT_EXP OOP_EXP;
-RUN;
+proc summary data=work.drug nway;
+  class dupersid;
+  var rxxp20x rxsf20x;
+  output out=work.perdrug (drop = _type_ rename=(_freq_ = n_phrchase))
+                  /*# of purchases per person */
+             sum=tot_exp oop_exp;
+run;
 
-TITLE "A SAMPLE DUMP FOR PERSON-LEVEL EXPENDITURES FOR NARCOTIC ANALGESICS OR NARCOTIC ANALGESIC COMBOS";
-PROC PRINT DATA=PERDRUG (OBS=3);
-SUM N_PHRCHASE;
-RUN;
+title 'sample dump for person-level expenditures for narcotic analgesics or narcotic analgesic combos';
+proc print data=perdrug (obs=3);
+sum n_phrchase;
+run;
 
-DATA WORK.PERDRUG;
- SET PERDRUG; 
- /* CREATE A NEW VARIABLE FOR EXPENSES EXCLUDING OUT-OF-POCKET EXPENSES */
- THIRD_PAYER   = TOT_EXP- OOP_EXP; 
- RUN;
-PROC SORT DATA=WORK.PERDRUG; BY DUPERSID; RUN;
+data work.perdrug;
+ set perdrug; 
+ /* create a new variable for expenses excluding out-of-pocket expenses */
+ third_payer   = tot_exp- oop_exp; 
+ run;
+proc sort data=work.perdrug; by dupersid; run;
 
-/*SORT THE FULL-YEAR(FY) CONSOLIDATED FILE*/
-PROC SORT DATA=CDATA.H216 (KEEP=DUPERSID VARSTR VARPSU PERWT19F) OUT=WORK.H216;
-BY DUPERSID; RUN;
+/*sort the full-year(fy) consolidated file*/
+proc sort data=cdata.h224 (keep=dupersid varstr varpsu perwt20f) out=work.h224;
+by dupersid; run;
 
-/*MERGE THE PERSON-LEVEL EXPENDITURES TO THE FY PUF*/
-DATA  WORK.PersonRxLinked;
-MERGE WORK.H216 (IN=Person) 
-      WORK.PERDRUG  (IN=RX KEEP=DUPERSID N_PHRCHASE TOT_EXP OOP_EXP THIRD_PAYER);
-   BY DUPERSID;
-   IF Person and RX THEN SUBPOP = 1; /*PERSONS WITH 1+ Narcotic analgesics or Narcotic analgesic combos */
+/*merge the person-level expenditures to the fy puf*/
+data  work.personrxlinked;
+merge work.h224 (in=person) 
+      work.perdrug  (in=rx keep=dupersid n_phrchase tot_exp oop_exp third_payer);
+   by dupersid;
+   if person and rx then subpop = 1; /*persons with 1+ narcotic analgesics or narcotic analgesic combos */
 
-   ELSE IF Person NE RX THEN DO;   
-         SUBPOP         = 2 ;  /*PERSONS WITHOUT ANY PURCHASE OF Narcotic analgesics or Narcotic analgesic combos*/
-         N_PHRCHASE  = 0 ;  /*# OF PURCHASES PER PERSON */
-         THIRD_PAYER = 0 ;
-         TOT_EXP = 0 ;
-         OOP_EXP = 0 ;
-    END;
-    IF PERSON; 
-	LABEL   TOT_EXP= 'TOTAL EXPENSES FOR NACROTIC ETC'
-	        OOP_Exp = 'OUT-OF-POCKET EXPENSES'
-            THIRD_PAYER = 'TOTAL EXPENSES MINUS OUT-OF-POCKET EXPENSES'
-            N_PHRCHASE  = '# OF PURCHASES PER PERSON';
-RUN;
-TITLE;
+   else if person ne rx then do;   
+         subpop         = 2 ;  /*persons without any purchase of narcotic analgesics or narcotic analgesic combos*/
+         n_phrchase  = 0 ;  /*# of purchases per person */
+         third_payer = 0 ;
+         tot_exp = 0 ;
+         oop_exp = 0 ;
+    end;
+    if person; 
+	label   tot_exp= 'total expenses for nacrotic etc'
+	        oop_exp = 'out-of-pocket expenses'
+            third_payer = 'total expenses minus out-of-pocket expenses'
+            n_phrchase  = '# of purchases per person';
+run;
 
-/* CALCULATE ESTIMATES ON USE AND EXPENDITURES*/
-ods graphics off; /*Suppress the graphics */
-ods listing; /* Open the listing destination*/
-ods exclude Statistics /* Not to generate output for the overall population */
-TITLE "PERSON-LEVEL ESTIMATES ON EXPENDITURES AND USE FOR NARCOTIC ANALGESICS or NARCOTIC COMBOS, 2168";
-/* When you request SUM in PROC SURVEYMEANS, the procedure computes STD by default.*/
-PROC SURVEYMEANS DATA=WORK.PersonRxLinked NOBS SUMWGT MEAN STDERR SUM;
-  VAR  N_PHRCHASE TOT_EXP OOP_EXP THIRD_PAYER ;
-  STRATA  VARSTR ;
-  CLUSTER VARPSU;
-  WEIGHT  PERWT19f;
-  DOMAIN  SUBPOP("OnePlusNacroticEtc");
-  FORMAT SUBPOP SUBPOP.;
- RUN;
-title;
-/* 
- Uncomment the next two lines of code to close the PROC PRINTTO, 
- only if used earlier. 
-*/
+/* calculate estimates on use and expenditures*/
+ods graphics off; /*suppress the graphics */
+ods listing; /* open the listing destination*/
+ods exclude statistics /* not to generate output for the overall population */
+title 'person-level estimates on expenditures and use for narcotic analgesics or narcotic combos, 2020';
+/* when you request sum in proc surveymeans, the procedure computes std by default.*/
+proc surveymeans data=work.personrxlinked nobs sumwgt mean stderr sum;
+  var  n_phrchase tot_exp oop_exp third_payer ;
+  strata  varstr ;
+  cluster varpsu;
+  weight  perwt20f;
+  domain  subpop("oneplusnacroticetc");
+  format subpop subpop.;
+ run;
+title; /* cancel the TITLE and TITLE2 statements */
+
+/* uncomment the next 2 lines of code to close the proc printto if used earlier */
 /*
-PROC PRINTTO;
-RUN;
+proc printto;
+run;
 */

@@ -1,5 +1,5 @@
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             1
-PROPORTION OF PERSONS WITH AN EXPENSE (2-category NUMERIC VARIABLE/CLASS statement required), 2019 _Method 1
+meps full-year consolidated file, 2020                                                                                             1
+proportion of persons with an expense (2-category numeric variable/class statement required), 2020 _method 1
 
 The SURVEYMEANS Procedure
 
@@ -7,17 +7,17 @@ The SURVEYMEANS Procedure
 
 Number of Strata                                 105
 Number of Clusters                               281
-Number of Observations                         28512
-Number of Observations Used                    27648
-Number of Obs with Nonpositive Weights           864
-Sum of Weights                             327396693
+Number of Observations                         27805
+Number of Observations Used                    26847
+Number of Obs with Nonpositive Weights           958
+Sum of Weights                             328545297
 
 
                 Class Level Information
  
 Variable             Levels    Values
 
-WITH_AN_EXPENSE           2    No Expense Any Expense  
+with_an_expense           2    no expense any expense  
 
 
                                                   Statistics
@@ -25,11 +25,11 @@ WITH_AN_EXPENSE           2    No Expense Any Expense
                                                                      Std Error                       Std Error
 Variable           Level                     N            Mean         of Mean             Sum          of Sum
 --------------------------------------------------------------------------------------------------------------
-WITH_AN_EXPENSE    No Expense             3946        0.141390        0.004022        46290705         1813192
-                   Any Expense           23702        0.858610        0.004022       281105988         7661066
+with_an_expense    no expense             4476        0.150373        0.004432        49404196         1960398
+                   any expense           22371        0.849627        0.004432       279141101         7532374
 --------------------------------------------------------------------------------------------------------------
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             2
-PROPORTION OF PERSONS WITH AN EXPENSE (2-CATEGORY CHARACTER VARIABLE), 2019 - Method 2
+meps full-year consolidated file, 2020                                                                                             2
+proportion of persons with an expense (2-category character variable), 2020 - method 2
 
 The SURVEYMEANS Procedure
 
@@ -37,17 +37,17 @@ The SURVEYMEANS Procedure
 
 Number of Strata                                 105
 Number of Clusters                               281
-Number of Observations                         28512
-Number of Observations Used                    27648
-Number of Obs with Nonpositive Weights           864
-Sum of Weights                             327396693
+Number of Observations                         27805
+Number of Observations Used                    26847
+Number of Obs with Nonpositive Weights           958
+Sum of Weights                             328545297
 
 
                   Class Level Information
  
 Variable                  Levels    Values
 
-CHAR_WITH_AN_EXPENSE           2    Any Expense No Expense  
+char_with_an_expense           2    any expense no expense  
 
 
                                                     Statistics
@@ -55,11 +55,11 @@ CHAR_WITH_AN_EXPENSE           2    Any Expense No Expense
                                                                           Std Error                       Std Error
 Variable                Level                     N            Mean         of Mean             Sum          of Sum
 -------------------------------------------------------------------------------------------------------------------
-CHAR_WITH_AN_EXPENSE    Any Expense           23702        0.858610        0.004022       281105988         7661066
-                        No Expense             3946        0.141390        0.004022        46290705         1813192
+char_with_an_expense    any expense           22371        0.849627        0.004432       279141101         7532374
+                        no expense             4476        0.150373        0.004432        49404196         1960398
 -------------------------------------------------------------------------------------------------------------------
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             3
-PERCENTAGE OF PERSONS WITH AN EXPENSE, 2019 - Method 3
+meps full-year consolidated file, 2020                                                                                             3
+percentage of persons with an expense, 2020 - method 3
 
 The SURVEYFREQ Procedure
 
@@ -67,24 +67,24 @@ The SURVEYFREQ Procedure
 
 Number of Strata                                 105
 Number of Clusters                               281
-Number of Observations                         28512
-Number of Observations Used                    27648
-Number of Obs with Nonpositive Weights           864
-Sum of Weights                             327396693
+Number of Observations                         27805
+Number of Observations Used                    26847
+Number of Obs with Nonpositive Weights           958
+Sum of Weights                             328545297
 
 
-                         Table of CHAR_WITH_AN_EXPENSE
+                         Table of char_with_an_expense
  
-CHAR_WITH_                     Weighted    Std Err of                Std Err of
-AN_EXPENSE      Frequency     Frequency      Wgt Freq     Percent       Percent
+char_with_                     Weighted    Std Err of                Std Err of
+an_expense      Frequency     Frequency      Wgt Freq     Percent       Percent
 -------------------------------------------------------------------------------
-Any Expense         23702     281105988       7661066     85.8610        0.4022
-No Expense           3946      46290705       1813192     14.1390        0.4022
+any expense         22371     279141101       7532374     84.9627        0.4432
+no expense           4476      49404196       1960398     15.0373        0.4432
 
-Total               27648     327396693       8793588    100.0000              
+Total               26847     328545297       8702795    100.0000              
 -------------------------------------------------------------------------------
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             4
-MEAN AND MEDIAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2019
+meps full-year consolidated file, 2020                                                                                             4
+mean and median expense per person with an expense, oveall and for ages 0-64, and 65+, 2020
 
 The SURVEYMEANS Procedure
 
@@ -92,10 +92,10 @@ The SURVEYMEANS Procedure
 
 Number of Strata                                 105
 Number of Clusters                               281
-Number of Observations                         28512
-Number of Observations Used                    27648
-Number of Obs with Nonpositive Weights           864
-Sum of Weights                             327396693
+Number of Observations                         27805
+Number of Observations Used                    26847
+Number of Obs with Nonpositive Weights           958
+Sum of Weights                             328545297
 
 
                                                    Statistics
@@ -103,8 +103,8 @@ Sum of Weights                             327396693
                                                                        Std Error                       Std Error
 Variable    Label                              N            Mean         of Mean             Sum          of Sum
 ----------------------------------------------------------------------------------------------------------------
-TOTEXP19    TOTAL HEALTH CARE              27648     6251.636502      117.079251    2.0467651E12     61740663128
-            EXP 19                                                                                              
+TOTEXP20    TOTAL HEALTH CARE              26847     6266.138314      164.375137    2.0587103E12     71664946485
+            EXP 20                                                                                              
 ----------------------------------------------------------------------------------------------------------------
 
 
@@ -113,56 +113,56 @@ TOTEXP19    TOTAL HEALTH CARE              27648     6251.636502      117.079251
                                                                              Std
 Variable    Label                      Percentile       Estimate           Error    95% Confidence Limits
 ---------------------------------------------------------------------------------------------------------
-TOTEXP19    TOTAL HEALTH CARE             50 Median  1312.602570       41.645582    1230.41358 1394.79156
-            EXP 19                                 
+TOTEXP20    TOTAL HEALTH CARE             50 Median  1149.464786       39.866150    1070.78757 1228.14200
+            EXP 20                                 
 ---------------------------------------------------------------------------------------------------------
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             5
-MEAN AND MEDIAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2019
+meps full-year consolidated file, 2020                                                                                             5
+mean and median expense per person with an expense, oveall and for ages 0-64, and 65+, 2020
 
 The SURVEYMEANS Procedure
 
-                                            Statistics for WITH_AN_EXPENSE Domains
+                                            Statistics for with_an_expense Domains
  
-WITH_AN_                                                                              Std Error                       Std Error
-EXPENSE        Variable    Label                              N            Mean         of Mean             Sum          of Sum
+with_an_                                                                              Std Error                       Std Error
+expense        Variable    Label                              N            Mean         of Mean             Sum          of Sum
 -------------------------------------------------------------------------------------------------------------------------------
-Any Expense    TOTEXP19    TOTAL HEALTH CARE              23702     7281.115333      128.930766    2.0467651E12     61740663128
-                           EXP 19                                                                                              
+any expense    TOTEXP20    TOTAL HEALTH CARE              22371     7375.159963      187.267405    2.0587103E12     71664946485
+                           EXP 20                                                                                              
 -------------------------------------------------------------------------------------------------------------------------------
 
 
-                                         Quantiles for WITH_AN_EXPENSE Domains
+                                         Quantiles for with_an_expense Domains
  
-WITH_AN_                                                                                    Std
-EXPENSE        Variable    Label                      Percentile       Estimate           Error    95% Confidence Limits
+with_an_                                                                                    Std
+expense        Variable    Label                      Percentile       Estimate           Error    95% Confidence Limits
 ------------------------------------------------------------------------------------------------------------------------
-Any Expense    TOTEXP19    TOTAL HEALTH CARE             50 Median  1889.918777       43.325317    1804.41477 1975.42278
-                           EXP 19                                 
+any expense    TOTEXP20    TOTAL HEALTH CARE             50 Median  1729.084544       38.302974    1653.49231 1804.67678
+                           EXP 20                                 
 ------------------------------------------------------------------------------------------------------------------------
-MEPS FULL-YEAR CONSOLIDATED FILE, 2019                                                                                             6
-MEAN AND MEDIAN EXPENSE PER PERSON WITH AN EXPENSE, OVEALL and FOR AGES 0-64, AND 65+, 2019
+meps full-year consolidated file, 2020                                                                                             6
+mean and median expense per person with an expense, oveall and for ages 0-64, and 65+, 2020
 
 The SURVEYMEANS Procedure
 
-                                          Statistics for WITH_AN_EXPENSE*AGELAST Domains
+                                          Statistics for with_an_expense*AGELAST Domains
  
-WITH_AN_                                                                                   Std Error                     Std Error
-EXPENSE       AGELAST   Variable   Label                             N           Mean        of Mean            Sum         of Sum
+with_an_                                                                                   Std Error                     Std Error
+expense       AGELAST   Variable   Label                             N           Mean        of Mean            Sum         of Sum
 ----------------------------------------------------------------------------------------------------------------------------------
-Any Expense   0-64      TOTEXP19   TOTAL HEALTH CARE             18380    5846.519852     123.343121   1.3339919E12    47338406339
-                                   EXP 19                                                                                         
-              65+       TOTEXP19   TOTAL HEALTH CARE              5322          13464     369.096608   712773260719    26611233439
-                                   EXP 19                                                                                         
+any expense   0-64      TOTEXP20   TOTAL HEALTH CARE             16762    5986.746553     202.125652   1.3338455E12    56128891069
+                                   EXP 20                                                                                         
+              65+       TOTEXP20   TOTAL HEALTH CARE              5609          12866     379.241751   724864743896    31650308581
+                                   EXP 20                                                                                         
 ----------------------------------------------------------------------------------------------------------------------------------
 
 
-                                           Quantiles for WITH_AN_EXPENSE*AGELAST Domains
+                                           Quantiles for with_an_expense*AGELAST Domains
  
-WITH_AN_                                                                                               Std
-EXPENSE        AGELAST    Variable    Label                      Percentile       Estimate           Error    95% Confidence Limits
+with_an_                                                                                               Std
+expense        AGELAST    Variable    Label                      Percentile       Estimate           Error    95% Confidence Limits
 -----------------------------------------------------------------------------------------------------------------------------------
-Any Expense    0-64       TOTEXP19    TOTAL HEALTH CARE             50 Median  1438.595155       37.705176    1364.18269 1513.00762
-                                      EXP 19                                 
-               65+        TOTEXP19    TOTAL HEALTH CARE             50 Median  6041.613122      184.007328    5678.46833 6404.75791
-                                      EXP 19                                 
+any expense    0-64       TOTEXP20    TOTAL HEALTH CARE             50 Median  1295.131235       32.899902    1230.20215 1360.06032
+                                      EXP 20                                 
+               65+        TOTEXP20    TOTAL HEALTH CARE             50 Median  4789.166295      146.835402    4499.38158 5078.95101
+                                      EXP 20                                 
 -----------------------------------------------------------------------------------------------------------------------------------

@@ -1,107 +1,131 @@
 /*******************************************************************
-PROGRAM:      EXERCISE4.SAS
-This program includes a regression example for persons receiving a flu shot
-in the last 12 months for the civilian noninstitutionized population, including:
-- Percentage of people with a flu shot (civilian noninstitutionized population), 2018:
-- Logistic regression: to identify demographic factors associated with receiving a flu shot
+program:      exercise4.sas
+this program includes an example of 3 logistic regression models, each with a
+sepatate dependent variable. 
 
- Input file: 2018 Full-year consolidated file
+	
+cvdlayca53 - delay med care for covid r5/3 - recoded to yes/no (1,0)
+cvdlaypm53 - delay getting pmed for covid r5/3 - recoded to yes/no (1,0)
+cvdlaydn53 - delay getting dental for covid r5/3 - recoded to yes/no (1,0)
 
+covariates: age, gender, race/ethnicity, health insurance coverage status, and region
+
+the program also estimate the propotion of persons with delayed care events 
+in the civilian noninstitutionized population.
+
+input file: 2020 full-year consolidated file
 ********************************************************************/
-/* Clear log, output, and ODSRESULTS from the previous run automatically */
-DM "Log; clear; output; clear; odsresults; clear";
-proc datasets nolist lib=work  kill; quit; /* Delete  all files in the WORK library */
+/* clear log, output, and odsresults from the previous run automatically */
+dm "log; clear; output; clear; odsresults; clear";
+proc datasets nolist lib=work  kill; quit; /* delete  all files in the work library */
 
-OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
+options nocenter ls=132 ps=79 nodate formchar="|----|+|---+=|-/\<>*" pageno=1;
 
 /*********************************************************************************
- Uncomment the next 5 lines of code, only if you want SAS to create 
-    separate files for SAS log and output.  
+ uncomment the next 5 lines of code, only if you want sas to create 
+ separate files for sas log and output  
 ***********************************************************************************/
 /*
-%LET RootFolder= C:\Mar2022\sas_exercises\Exercise_4;
-FILENAME MYLOG "&RootFolder\Exercise4_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise4_output.TXT";
-PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
-RUN;
+%let rootfolder= c:\SASHandsOnSep2022\sas_exercises\exercise_4;
+filename mylog "&rootfolder\exercise4_log.txt";
+filename myprint "&rootfolder\exercise4_output.txt";
+proc printto log=mylog print=myprint new;
+run;
 */
+/* create use-defined formats and store the the work folder */
+proc format;
 
-/* Create use-defined formats and store them in a catalog called FORMATS 
-   in the work folder. They will be deleted at the end of the SAS session.
-*/
-
-PROC FORMAT;
-
-value age18p_f 
-    18-high = '18+'
-    other = '0-17';
-
-value ADFLST42_fmt
-    -15 = "Cann't be computed"
-	-1 = 'Inapplicable'
-    1  = 'Yes'
-	0,2  ='No';
-
-
-value sex_fmt   1 = 'Male'
-                2 = 'Female'; 
+value sex_fmt   1 = '1. male'
+                2 = '2. female'; 
 			
+value region_fmt 1 = '1. northeast'
+		 2 = '2. midwest'	
+		 3 = '3. south'
+		 4 = '4. west';
 
-VALUE Racethx_fmt
-  1 = 'Hispanic'
-  2 = 'NH White only'
-  3 = 'NH Black only'
-  4 = 'NH Asian only'
-  5 = 'NH Other etc';
+ value inscov20_fmt
+   1 = '1. any private'
+   2 = '2. public only'
+   3 = '3. uninsured';
 
- value INSCOV18_fmt
-   1 = 'Any Private'
-   2 = 'Public Only'
-   3 = 'Uninsured';
+value racethx_fmt
+  1 = '1. hispanic'
+  2 = '2. nh white only'
+  3 = '3. nh black only'
+  4 = '4. nh asian only'
+  5 = '5. nh other etc';
 run;
 
-%LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
-libname CDATA "&DataFolder"; 
-%let kept_vars_2018 =  VARSTR VARPSU perwt18f saqwt18f ADFLST42  AGELAST RACETHX POVCAT18 INSCOV18 SEX;
-data meps_2018;
- set CDATA.h209v9 (keep= &kept_vars_2018);
- 
-if ADFLST42 = 1 then flushot =1;
-else if ADFLST42 = 2 then flushot =0;
-else flushot =.;
+%let datafolder = c:\meps_data;  /* adjust the folder name, if needed */
+libname cdata "&datafolder"; 
+%let kept_vars_2020 =  %cmpres(varstr varpsu perwt20f cvdlayca53 cvdlaypm53 cvdlaydn53
+                       agelast sex racethx povcat20 inscov20 region53);
+%put &=kept_vars_2020;
+
+data meps_2020;
+ set cdata.h224 (keep= &kept_vars_2020);
+ region = region53; if region53 = -1 then region =.; /* region recode */
+ array x[3] cvdlayca53  cvdlaydn53 cvdlaypm53;
+ array y{3] delayed_care_med delayed_care_dental delayed_care_pmeds;
+ do i = 1 to 3;
+ 	if x[i] = 1 then y[i] = 1;
+ 	else if x[i] = 2 then y[i] = 0;
+    else if x[i] <0 then y[i] = .;
+ end;
 run;
 
-title " 2018 MEPS";
-
+title 'proportion of persons with delayed care events';
 ods graphics off;
-ods select domain;
-PROC SURVEYMEANS DATA=meps_2018 nobs mean stderr ;
-    VAR flushot;
-    STRATUM VARSTR;
-	CLUSTER VARPSU;
-    WEIGHT saqwt18f;
-    DOMAIN  agelast('18+');
-	format agelast  age18p_f.;
-RUN;
-title 'PROC SURVEYLOGISTIC With param=ref option on the CLASS statement';
-	PROC SURVEYLOGISTIC DATA=meps_2018 ;
-	STRATUM VARSTR;
-    CLUSTER VARPSU;
-    WEIGHT saqwt18f;
-    CLASS sex (ref='Male') RACETHX (ref='Hispanic') INSCOV18 (ref='Any Private')/param=ref;
-         model flushot(ref= '0')= agelast sex RACETHX  INSCOV18;
-      format agelast  age18p_f. 
-      sex sex_fmt. 
-      RACETHX racethx_fmt. 
-      INSCOV18 INSCOV18_fmt.;
-    RUN;
-title;
-/* Uncomment the next two lines of code to close the PROC PRINTTO, 
- only if used earlier. 
-*/
+proc surveymeans data=meps_2020 nobs mean stderr ;
+    var delayed_care_med delayed_care_dental delayed_care_pmeds;
+    stratum varstr;
+	cluster varpsu;
+    weight perwt20f;
+   run;
+title 'proc surveylogistic with param=ref option on the class statement';
+title2 "dependent variable: delayed medical care";
+	proc surveylogistic data=meps_2020 ;
+	stratum varstr;
+    cluster varpsu;
+    weight perwt20f;
+    class sex (ref='1. male') racethx (ref='1. hispanic') inscov20 (ref='1. any private')
+          region (ref='1. northeast') /param=ref;
+	 model delayed_care_med (ref= '0')= agelast sex racethx  inscov20 region;
+	format   sex sex_fmt. 
+      		 racethx racethx_fmt. 
+			 inscov20 inscov20_fmt.
+			 region region_fmt.	;
+    run;
+title2 'dependent variable: delayed  dental care';
+	proc surveylogistic data=meps_2020 ;
+	stratum varstr;
+    cluster varpsu;
+    weight perwt20f;
+    class sex (ref='1. male') racethx (ref='1. hispanic') inscov20 (ref='1. any private')
+          region (ref='1. northeast') /param=ref;
+    model delayed_care_dental (ref= '0')= agelast sex racethx  inscov20 region;
+	format   sex sex_fmt. 
+      		 racethx racethx_fmt. 
+			 inscov20 inscov20_fmt.
+			 region region_fmt.;
+    run;
+   title2 'dependent variable: delayed prescribed medicines';
+	proc surveylogistic data=meps_2020 ;
+	stratum varstr;
+    cluster varpsu;
+    weight perwt20f;
+    class sex (ref='1. male') racethx (ref='1. hispanic') inscov20 (ref='1. any private')
+          region (ref='1. northeast') /param=ref;
+    model delayed_care_pmeds (ref= '0')= agelast sex racethx  inscov20 region;
+	format   sex sex_fmt. 
+      		 racethx racethx_fmt. 
+			 inscov20 inscov20_fmt.
+			 region region_fmt. ;
+    run;
+title; /* cancel the TITLE and TITLE2 statements */
 
+/* uncomment the next two lines of code to close the proc printto, only if used earlier. */
 /*
 proc printto;
 run;
 */
-

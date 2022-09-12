@@ -1,196 +1,143 @@
 
 /******************************************************************************************
-PROGRAM:      EXERCISE3.SAS
+program:      exercise3.sas
 
- This program illustrates how to pool MEPS data files from different years. It
- highlights one example of a discontinuity that may be encountered when 
- working with data from before and after the 2018 MEPS CAPI re-design.
- 
- The program pools 2017, 2018 and 2019 data and calculates  
-  - percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
-  - average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
-  - standard errors by specifying common variance structure when pooling data.
- for the U.S. civilian noninstitutionalized population.
+ this program pools 2018, 2019 and 2020 MEPS data and calculates  
+  - proportion of persons diagnosed with bladder cancer
+  - average expenditures and amount paid by self/family per person 
+     by bladder cancer diagnosis status 
+  - standard errors by specifying common variance structure.
 
- Input files:
-  - 2017 Full-year consolidated file
-  - 2018 Full-year consolidated file
-  - 2019 Full-year consolidated file
-  - 1996-2019 pooled linkage variance estimation file
-*/
+ input files:
+  - 2018 full-year consolidated file
+  - 2019 full-year consolidated file
+  - 2020 full-year consolidated file
+  - 1996-2020 pooled linkage variance estimation (PLVE) file
+**********************************************************************/
 
+/* clear log, output, and odsresults from the previous run automatically */
+dm "log; clear; output; clear; odsresults; clear";
+proc datasets nolist lib=work kill; quit; /* delete  all files */
 
-/* Clear log, output, and ODSRESULTS from the previous run automatically */
-DM "Log; clear; output; clear; odsresults; clear";
-proc datasets nolist lib=work kill; quit; /* Delete  all files in the WORK library */
-OPTIONS NOCENTER LS=132 PS=79 NODATE FORMCHAR="|----|+|---+=|-/\<>*" PAGENO=1;
-
+options nocenter ls=132 ps=79 nodate formchar="|----|+|---+=|-/\<>*" pageno=1;
+options varlenchk = nowarn;
 
 /*********************************************************************************
- Uncomment the next 5 lines of code, only if you want SAS to create 
-    separate files for log and output.  
+ uncomment the next 5 lines of code, only if you want sas to create 
+    separate files for log and output 
 ***********************************************************************************/
 /*
-%LET RootFolder= C:\Mar2022\sas_exercises\Exercise_3;
-FILENAME MYLOG "&RootFolder\Exercise3_log.TXT";
-FILENAME MYPRINT "&RootFolder\Exercise3_output.TXT";
-PROC PRINTTO LOG=MYLOG PRINT=MYPRINT NEW;
-RUN;
-*/
-
-/* Create use-defined formats and store them in a catalog called FORMATS 
-   in the work folder. They get deleted at the end of the SAS session.
-*/
-PROC FORMAT;
-     value yes_no_fmt
-      1 = 'Yes'
-      2 = 'No'
-      -1,-7,-8,-15,.= 'DK/REF/INAPP/MISSING'; 
-
-	  value spop_fmt
-      1 = 'Age 18+'
-	  0 = 'Age 0-17';
+%let rootfolder= c:\SASHandsOnSep2022\sas_exercises\exercise_3;
+filename mylog "&rootfolder\exercise3_log.txt";
+filename myprint "&rootfolder\exercise3_output.txt";
+proc printto log=mylog print=myprint new;
 run;
-
-%LET DataFolder = C:\MEPS_Data;  /* Adjust the folder name, if needed */
-libname NEW "&DataFolder"; 
-
-/* Create 3 macro variables, assigning a list of variables to each */
-%let kept_vars_2017 =  dupersid panel VARSTR VARPSU perwt17f agelast ARTHDX JTPAIN31 totexp17 totslf17;
-%let kept_vars_2018 =  dupersid panel VARSTR VARPSU perwt18f agelast ARTHDX JTPAIN31_m18 totexp18 totslf18;
-%let kept_vars_2019 =  dupersid panel VARSTR VARPSU perwt19f agelast ARTHDX JTPAIN31_M18 totexp19 totslf19;
-
-/* Concatenate 2017, 2018 and 2018 Full Year Consolidated Files 
-* Use KEEP= abd RENAME= data set options on the SET statement for effeciency
 */
-data MEPS_171819;
- set NEW.h201v9 (keep= &kept_vars_2017
-                 rename=(totexp17=totexp
-                         totslf17=totslf DUPERSID=t_DUPERSID) in=a)
-     NEW.h209v9 (keep= &kept_vars_2018
+/* create use-defined formats and store them in a catalog called formats in the work folde */
+
+%let datafolder = c:\meps_data;  /* adjust the folder name, if needed */
+libname new "&datafolder"; 
+
+/* create 3 macro variables, assigning a list of variables to each */
+%let kept_vars_2018 =  dupersid panel  perwt18f cancerdx cabladdr totexp18 totslf18;
+%let kept_vars_2019 =  dupersid panel  perwt19f cancerdx cabladdr totexp19 totslf19;
+%let kept_vars_2020 =  dupersid panel  perwt20f cancerdx cabladdr totexp20 totslf20;
+
+/************************************************************************************************ 
+concatenate 2018, 2019 and 2020 full year consolidated files 
+use keep= and rename= data set options on the set statement for effeciency
+*************************************************************************************************/
+data meps_181920;
+ set new.h209v9 (keep= &kept_vars_2018
                  rename=(totexp18=totexp
-                         totslf18=totslf) in=b)
-     NEW.h216 (keep= &kept_vars_2019
+                         totslf18=totslf) in=a)
+     new.h216 (keep= &kept_vars_2019
                  rename=(totexp19=totexp
-                         totslf19=totslf) in=c);
+                         totslf19=totslf) in=b)
+     new.h224 (keep= &kept_vars_2020
+                 rename=(totexp20=totexp
+                         totslf20=totslf) in=c);
 
-	  *Create new variable (YEAR) for data-checks; 
-      if a =1 then year=2017;
-      else if b=1 then year=2018;
-	  else if c=1 then year=2019;
+  /* create new variable (year) for data-checks */
+      if a =1 then year=2018;
+      else if b=1 then year=2019;
+	  else if c=1 then year=2020;
 
-	  *Create a new weight variable by dividing the original weight by 3 for the pooled data set;
-      if year = 2017 then perwtf = perwt17f/3;
-      else if year = 2018 then perwtf = perwt18f/3;
+  /* create a new weight variable by dividing the original weight by 3 for the pooled data set */
+      if year = 2018 then perwtf = perwt18f/3;
       else if year = 2019 then perwtf = perwt19f/3;
+      else if year = 2020 then perwtf = perwt20f/3;
 
-   /***********************************************************************************
-   *  Create new variables: JOINT_PAIN, SPOP (subpopulation indicator), 
-   *  ZERO_WEIGHT (zero survey weight for QC purposes).
-   *  Change the 8-character DUPERSID to a 10-character one for 2017.
-   *  Such change is not needed for 2018 and 2019 because DUPERSID is a 10-character 
-   *  variable for those years.
-   ************************************************************************************/ 
-   
-   if year = 2017 then do;
-        spop=0;
-   		if agelast>=18 and not (ARTHDX <=0 and JTPAIN31 <0) then do;
-		    DUPERSID = CATS(PANEL, T_DUPERSID);
-			drop t_DUPERSID;
-  		    spop=1; 
-   		   if ARTHDX=1 | JTPAIN31=1 then joint_pain =1;	 else joint_pain=2;
-        end;
-    end;
-    else if year in (2018, 2019) then do;
-            spop=0;
-   			if agelast>=18 and not (ARTHDX <0 and JTPAIN31_M18 <0) then do;
-     		  spop=1; 
-			  if ARTHDX=1 | JTPAIN31_M18=1 then joint_pain =1; else joint_pain=2;
-   		     end;
-     end;
-
-	if perwtf = 0 then zero_weight=1;
-	else zero_weight=0;
-
-   label totexp = 'TOTAL HEALTH CARE EXPENSES 2017-19'
-         totslf='AMOUNT PAID BY SELF/FAMILY 2017-2019';
+    /* create a new variable: bladder_cancer */
+        if cabladdr = 1 then bladder_cancer = 1; 
+        else if cabladdr = 2 | cancerdx = 2 then bladder_cancer = 0;
+		else if cabladdr < 0 then bladder_cancer = .;
+    
+     label totexp = 'total health care expenses 2018-2020'
+         totslf='amount paid by self/family 2018-2020';
  run;
 
-* Sort the pooled 2017-19 MEPS file by DUPERSID before merging 
-  with the pooled linkage variance estimation file;
+/* sort the pooled 2018-2020 meps file by dupersid before merging with the PLVE file */
 
-proc sort data=MEPS_171819;
+proc sort data=meps_181920;
   by dupersid panel;
 run;
+/***********************************************************************
+- change the 8-character dupersid to 10-character dupersid 
+by adding the panel number to DUPERSIDs of panel 22 year 2017 
+and panels 1-21 in the PLVE file 
+- there is no year variable in the PLVE file 
+- implement this change by using the LENGTH and STRIP functions as folows
+*************************************************************************/
 
- * Change the 8-character DUPERSID to 10-character DUPERSID 
-   for years Panel 22 (with 8-character DUPERSID);
-  Data VSfile ;
-    set new.h36u19 (rename=(DUPERSID=t_DUPERSID));
-	LENGTH DUPERSID $10;
-	if length(STRIP(t_dupersid))=8 then DUPERSID=CATS(put(panel,z2.), t_DUPERSID);
-  	else DUPERSID = t_DUPERSID;   
-  drop t_DUPERSID;
+  data vsfile ;
+    length dupersid $10;
+    set new.h36u20 (rename=(dupersid=t_dupersid));
+		if length(strip(t_dupersid))=8 then 
+          dupersid=cats(put(panel,z2.), t_dupersid);
+  	    else dupersid = t_dupersid;   
+  drop t_dupersid;
 run;
 
-* Sort the pooled linkage variance estimation file for panels 21-24
-  by DUPERSID before match-merging ...;
-proc sort data= VSfile (where = (panel in (21,22,23,24))) nodupkey
-   out=sorted_VSfile ;
+/* sort the PLVE file for panels 22-25 by dupersid before match-merging ...*/
+proc sort data= vsfile (where = (panel in (22,23,24,25))) nodupkey
+   out=sorted_vsfile ;
  by dupersid panel;
  run;
 
 
-* Merge the 2017-19 file with the pooled linkage variance estimation file 
-  for panels 21-24;
+/* merge the pooled 2018-2020 meps data file with the PLVE file for panels 22-25 */
 
-data MEPS_171819_m;
- merge MEPS_171819 (in=a) Sorted_VSfile ;
+data meps_181920_m;
+ merge meps_181920 (in=a) sorted_vsfile ;
    by dupersid panel;
  if a;
 run;
 
-
-/* The following PROC FREQ step is for QC purposes */
-/*
-title 'MEPS 2017-19 combined, spop=1 & perwtf>0 for QC purposes';
-proc freq data= MEPS_171819_m;
-tables joint_pain/list missing nopercent;
-format joint_pain yes_no_fmt. spop spop_fmt.;
-where  spop=1 & perwtf>0;
+ods graphics off;
+title 'meps pooled files, 2018-2020';
+title2 'proportion of persons diagnosed with bladder cancer';
+proc surveymeans data=meps_181920_m  nobs mean stderr sum;
+    var bladder_cancer;
+    stratum stra9620;
+	cluster psu9620;
+    weight perwtf;
 run;
-*/
-title 'Pooled estiamtes for MEPS 2017-19';
-ods graphics off;
 ods select summary domain;
-PROC SURVEYMEANS DATA=MEPS_171819_m  nobs mean stderr sum;
-    VAR joint_pain ;
-    stratum stra9619;
-	cluster psu9619;
-    WEIGHT perwtf;
-	domain spop('1');
-	class joint_pain;
-  	format joint_pain yes_no_fmt. ;
-RUN;
-ods graphics off;
-ods select summary domain;
-PROC SURVEYMEANS DATA=MEPS_171819_m  nobs mean stderr sum;
-    VAR totexp totslf;
-    stratum stra9619;
-	cluster psu9619;
-    WEIGHT perwtf;
-	domain spop('1')*joint_pain;
-	format joint_pain yes_no_fmt.  ;
-RUN;
-TITLE;
-/* 
- Uncomment the next two lines of code to close the PROC PRINTTO, 
- only if used earlier. 
-*/
+title2 'average expenditures and amount paid by self/family per person';
+proc surveymeans data=meps_181920_m  nobs mean stderr sum;
+    var totexp totslf;
+    stratum stra9620;
+	cluster psu9620;
+    weight perwtf;
+	domain bladder_cancer;
+run;
+ods select all; /* clear the SELECT lists for all destinations*/
+title;  /* cancel the TITLE and TITLE2 statements */
+
+
+/* uncomment the next 2 lines of code to close the proc printto if used earlier */
 /*
 proc printto;
 run;
 */
-
-
-
