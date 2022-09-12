@@ -1,15 +1,16 @@
-*****************************************************************************************************
+*************************************************************************************************************************
 * Exercise 4
-*  This program includes a regression example for persons receiving a flu shot in 2018
-*  for the U.S. civilian non-institutionalized population with standard errors calculated using BRR
+*  This program includes a regression example for persons reporting COVID-related delays in Medical, Dental and Rx Care 
+*  in the last 12 months for the U.S. civilian non-institutionalized population, including:
+*   - Percentage reporting COVID-related delays in care
+*   - Logistic regression: to identify demographic factors associated with COVID-related delays in care
 * 
-*  Input files: 
-*   - C:/MEPS/h209.dta (2018 Full-year file)
-*   - 
+*  Input file: 
+*   - C:/MEPS/h224.dta (2020 Full-year file)
 * 
 *  This program is available at:
 *  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
-*****************************************************************************************************
+****************************************************************************************************************************
 clear
 set more off
 capture log close
@@ -17,31 +18,40 @@ cd c:\MEPS
 
 log using Ex4.log, replace
 
-use h209, clear
+/* Get data from web */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
+unzipfile "h224dta.zip", replace 
 
-// create variable identifying individuals who received flu shot in last year
-gen flushot=(adflst42==1)
-replace flushot=. if adflst42<0
-tab adflst42 flushot, m
+/* Read in 2020 Full-year consolidated file */ 
+use h224, clear
+rename *, lower
 
-// create variable to identify subpopulation
-gen sub1=~missing(flushot, povcat18, inscov18, sex, racethx)
+// create variables identifying individuals who report delays in care
+gen cvdlay_medical=cvdlayca53
+recode cvdlay_medical (1=1) (2=0) (*=.)
+gen cvdlay_dental=cvdlaydn53
+recode cvdlay_dental (1=1) (2=0) (*=.)
+gen cvdlay_rx=cvdlaypm53
+recode cvdlay_rx (1=1) (2=0) (*=.)
 
-// merge on brr weights 
-merge 1:m dupersid using h36brr19
-drop if _merge ~= 3
+recode sex 1=1 2=0 *=.
+// treat missing values in RHS variables 
+foreach var of varlist agelast sex racethx inscov20 region53 {
+	replace `var'=. if `var'<0
+}
 
-// set survey parameters for linearized standard errors 
-svyset varpsu [pw = saqwt18f], strata(varstr) vce(linearized) singleunit(missing)
+// set survey variables 
+svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(missing)
+
+// bivariate descriptive statistics: proportion with flushot by other variables
+svy: mean cvdlay_medical
+svy: mean cvdlay_dental
+svy: mean cvdlay_rx
+svy: mean cvdlay_medical cvdlay_dental cvdlay_rx
+ 
 // regression analysis
-svy, sub(sub1): reg flushot i.sex i.racethx i.inscov18
-svy, sub(sub1): logit flushot i.sex i.racethx i.inscov18 
+svy: logit cvdlay_medical agelast i.sex i.racethx i.inscov20 i.region53
 
-// set survey parameters for BRR standard errors 
-svyset varpsu [pw=saqwt18f], str(varstr) brrweight(brr1-brr128) vce(brr)
-// regression analysis
-svy, sub(sub1): reg flushot agelast i.sex i.racethx i.inscov18
-svy, sub(sub1): logit flushot agelast i.sex i.racethx i.inscov18 
+svy: logit cvdlay_dental agelast i.sex i.racethx i.inscov20 i.region53
 
-log close
-
+svy: logit cvdlay_rx agelast i.sex i.racethx i.inscov20 i.region53

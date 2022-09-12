@@ -1,24 +1,22 @@
 **********************************************************************************************
 * Exercise 3
-*  This program illustrates how to pool MEPS data files from different years. It
-*  highlights one example of a discontinuity that may be encountered when 
-*  working with data from before and after the 2018 CAPI re-design.
+*  This program illustrates how to pool MEPS data files from multiple years to enable 
+*  the analysis of a small sub-sample (people with bladder cancer)
 *  
-*  The program pools 2017, 2018 and 2019 data and calculates:
-*   - Percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
-*   - Average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
+*  The program pools 2018-2020 data and calculates:
+*   - Percentage of people with bladder cancer 
+*   - Average expenditures per person, with and without bladder cancer
 * 
 *  Notes:
+*   - strata and psu variables must be taken from the pooled-linkage file
 *   - Variables with year-specific names must be renamed before combining files
-*     (e.g. 'TOTEXP17' and 'TOTEXP18' renamed to 'totexp')
-* 
-*   - HC-36 must be merged to get strata and psu variables when pooling years
+*     (e.g. 'TOTEXP18' renamed to 'totexp')
 * 
 *  Input files: 
-*   - C:/MEPS/h216.dta (2019 Full-year file)
+*   - C:/MEPS/H36u20.dta (pooled linkage file)
 *   - C:/MEPS/h209.dta (2018 Full-year file)
-*   - C:/MEPS/h201.dta (2017 Full-year file)
-*	- C:/MEPS/h36u19.dta (pooled linkage file)
+*   - C:/MEPS/h216.dta (2019 Full-year file)
+*   - C:/MEPS/h224.dta (2020 Full-year file)
 * 
 *  This program is available at:
 *  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
@@ -29,32 +27,80 @@ capture log close
 cd C:\MEPS
 log using Ex3.log, replace
 
-/* 2017 */
-// rename 2017 variables, create joint pain indicator
+/* Get Data */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
+unzipfile "h209dta.zip", replace 
 
-// merge pooled linkage file
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h216/h216dta.zip" "h216dta.zip", replace
+unzipfile "h216dta.zip", replace 
 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
+unzipfile "h224dta.zip", replace 
 
-/* 2018 */
-// rename 2018 variables, create joint pain indicator 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h036/h36u20dta.zip" "h36u20dta.zip", replace
+unzipfile "h36u20dta.zip", replace 
 
-// merge pooled linkage file
-
-
-/* 2019 */
-// rename 2019 variables, create joint pain indicator 
-
-// merge pooled linkage file 
+/* prepare pooled linkage file */
 
 
-/* append 2018 to 2017, erase temp file */
+
+
+
+
+
+/* rename 2018 variables, merge on pooled-linkage variables */
+
+
+
+
+
+
+/* rename 2019 variables, merge on pooled-linkage variables */
+
+
+
+
+
+
+/* rename 2020 variables, merge on pooled-linkage variables */
+
+
+
+
+
+
+
+/* append years together, erase temp files */
+
+
+
+
+
+
+/* create common bladder cancer variable */ 
+
+
+
+
+
 
 /* create pooled person-level weight and subpop */
 
+
+
+
+
 /* set up survey parameters */
 
-/* estimate percent with any joint pain (any_jtpain) */
+/* estimate percent with any bladder cancer */
 
-/* estimate mean expenditures per person by whether they have joint pain*/
 
-log close
+
+
+
+/* estimate mean expenditures per person by whether they have bladder cancer*/
+
+
+
+
+

@@ -1,6 +1,6 @@
 *****************************************************************************************************************************************
 * Exercise 1: 
-* This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2019:
+* This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2020:
 *  - Overall expenses (National totals)
 *  - Percentage of persons with an expense
 *  - Mean expense per person
@@ -10,62 +10,73 @@
 *    - Median expense per person with an expense, by age group
 *
 * Input file:
-*  - C:/MEPS/h216.dta (2019 Full-year file)
+*  - C:/MEPS/h224.dta (2020 Full-year file)
 *
 * This program is available at:
 * https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
 *****************************************************************************************************************************************
+
+
 clear
 set more off
 capture log close
 cd C:\MEPS
 log using Ex1.log, replace 
 
-use h216, clear
+/* Get data from web (you can also download manually) */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
+unzipfile "h224dta.zip", replace 
+
+/* Read in 2020 Full-year consolidated file */ 
+use h224, clear
+rename *, lower
 
 /* define expenditure variables  */
-gen totalx=totexp19
+gen total_exp=totexp20
 
 /* create flag (1/0) variables for persons with an expense  */
-gen any_expenditure=(totalx>0)
+gen any_expenditure=(total_exp>0)
 
 /* create age categorical variable */
-gen agecat=1 if agelast>=0 & agelast<=64
-replace agecat=2 if agelast>64
+gen agecat=.
+replace agecat=1 if agelast>=0 & agelast<65
+replace agecat=2 if agelast>=65
+/* here's an alternative way to create a categorical variable */
+egen agecat2=cut(agelast), at(0 65 100)
+
 label define agecat 1 "<65" 2 "65+"
 label values agecat agecat
+label values agecat2 agecat
 
 /* qc check on new variables*/
-list totalx any_expenditure agecat agelast in 1/20, table
+list total_exp any_expenditure agecat age20x in 1/20, table
 
 tab1 any_expenditure agecat, m
  
-summarize total, d
-summarize total if any_expenditure==1, d
+summarize total_exp, d
+summarize total_exp if any_expenditure==1, d
 
-/* specify the survey design parameters */
-svyset varpsu [pw = perwt19f], strata(varstr) vce(linearized) singleunit(missing)
+/* identify the survey design characteristics */
+svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(missing)
+// overall expenses
+svy: mean total_exp
+svy: total total_exp
 
-// Total overall health are expenditures 
-svy: total totalx
 di %15.0f r(table)[1,1]
-estimates table, b(%15.0f) se(%11.0f)
+di %15.0f r(table)[2,1]
 
-// Percentage of persons with an expense
-svy: mean any_expenditure		   
-
-// Mean overall expenditures per person
-svy: mean totalx
-
-// mean expenditures per person with an expense
-svy, subpop(if any_expenditure==1): mean totalx
-
-// Mean and median expenditures per person with an expense, by age group
-svy, subpop(if any_expenditure==1): mean totalx, over(agecat)
-
-summ totalx [aw=perwt19f] if any_expenditure==1, d
-table agecat [pw=perwt19f] if any_expenditure==1, stat(mean totalx) stat(median totalx)
           
-log close
+// percentage of persons with an expense
+svy: mean any_expenditure		   
+		   
+// mean expense per person with an expense
+svy, subpop(if any_expenditure==1): mean total_exp
+
+// mean expenditures, median expenditures, percent with any expenditures, mean expenditures conditional on having any, all by age category
+svy: mean total_exp, over(agecat)
+svy: mean any_expenditure, over(agecat)
+svy, sub(if any_expenditure==1): mean total_exp, over(agecat)
+
+table agecat [pw=perwt] if total_exp>0, stat(median total_exp)
 
 
