@@ -32,11 +32,11 @@ Purchases and expenses for **narcotic analgesics or narcotic analgesic combos** 
 
 #### Exercise 3
 This program illustrates how to **pool MEPS data files** from different years. The example calculates:
-1. Percentage of people with Joint Pain / Arthritis (JTPAIN**, ARTHDX)
-2. Average expenditures per person, by Joint Pain status (TOTEXP, TOTSLF)
+1. Percentage of people with bladder cancer (CABLADDR)
+2. Average expenditures per person, among adults with and without bladder cancer (TOTEXP, TOTSLF)
 
 
 #### Exercise 4
-This program includes a **regression example** for persons receiving a flu shot in the last 12 months, including:
-1. Percentage of people with a flu shot
-2. Logistic regression: to identify demographic factors associated with receiving a flu shot
+This program includes a **regression example** for persons who delayed receiving care due to the COVID-19 pandemic:
+1. Percentage of people delaying medical care, dental care, or prescribed medicine puchases
+2. Logistic regression: to identify demographic factors associated with delayed care
