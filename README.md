@@ -37,6 +37,6 @@ This program illustrates how to **pool MEPS data files** from different years. T
 
 
 #### Exercise 4
-This program includes a **regression example** for persons who delayed receiving care due to the COVID-19 pandemic:
-1. Percentage of people delaying medical care, dental care, or prescribed medicine puchases
+This program includes a **regression example** for persons who delayed care due to the COVID-19 pandemic:
+1. Percentage of people delaying medical care, dental care, or prescribed medicine purchases
 2. Logistic regression: to identify demographic factors associated with delayed care
