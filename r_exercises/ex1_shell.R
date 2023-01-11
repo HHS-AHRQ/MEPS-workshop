@@ -38,7 +38,7 @@
 
 
 
-# Option 2: Use Stata format (recommended for Data Year 2020 and later)
+# Option 2: Use Stata format (recommended for Data Year 2017 and later)
 
 
 

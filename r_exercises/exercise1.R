@@ -43,7 +43,7 @@
 # Option 1: use 'MEPS' package
   fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
 
-# Option 2: Use Stata format (recommended for Data Year 2020 and later)
+# Option 2: Use Stata format (recommended for Data Year 2017 and later)
   fyc20_opt2 = read_dta("C:/MEPS/h224.dta")
 
 # View data
