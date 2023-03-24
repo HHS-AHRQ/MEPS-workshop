@@ -1,63 +1,122 @@
-******************************************************************************************************************
-*  Exercise 2: 
-*  This program generates National Totals and Per-person Averages for Narcotic
-*  analgesics and Narcotic analgesic combos for the U.S. civilian non-institutionalized population, including:
-*   - Number of purchases (fills)  
-*   - Total expenditures          
-*   - Out-of-pocket payments       
-*   - Third-party payments        
+**********************************************************************************************
+* Exercise 2
+*  This program illustrates how to pool MEPS data files from multiple years to enable 
+*  the analysis of a small sub-sample (people with bladder cancer)
+*  
+*  The program pools 2018-2020 data and calculates:
+*   - Percentage of people with bladder cancer 
+*   - Average expenditures per person, with and without bladder cancer
 * 
-*  Input files:
-*   - C:/MEPS/h224.dta  (2020 Full-year file)
-*   - C:/MEPS/h220a.dta (2020 Prescribed medicines file)
+*  Notes:
+*   - strata and psu variables must be taken from the pooled-linkage file
+*   - Variables with year-specific names must be renamed before combining files
+*     (e.g. 'TOTEXP18' renamed to 'totexp')
+* 
+*  Input files: 
+*   - C:/MEPS/H36u20.dta (pooled linkage file)
+*   - C:/MEPS/h209.dta (2018 Full-year file)
+*   - C:/MEPS/h216.dta (2019 Full-year file)
+*   - C:/MEPS/h224.dta (2020 Full-year file)
 * 
 *  This program is available at:
 *  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
-******************************************************************************************************************
-
+**********************************************************************************************
 clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex2.log, replace
+log using Ex3.log, replace
 
-/* Get data */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
-unzipfile "h220adta.zip", replace
+/* Get Data */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
+unzipfile "h209dta.zip", replace 
+
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h216/h216dta.zip" "h216dta.zip", replace
+unzipfile "h216dta.zip", replace 
 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
 unzipfile "h224dta.zip", replace 
 
-use C:\MEPS\h220astata, clear
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h036/h36u20dta.zip" "h36u20dta.zip", replace
+unzipfile "h36u20dta.zip", replace 
+
+
+/* prepare pooled linkage file */
+use h36u20.dta, clear
 rename *, lower
-// 1) identify Narcotic analgesics or Narcotic analgesic combos using therapeutic classification (tc) codes, keep only narcotic Rx
-keep if (tc1s1_1==60 | tc1s1_1==191)
-list dupersid rxrecidx linkidx rxxp20x rxsf20x in 1/30, table
-tab1 tc1s1_1
+keep if inh209==1|inh216==1|inh224==1
+save h36, replace
 
-// 2) sum data to person-level
-collapse (count) n_purchase=tc1s1_1 (sum) total_exp=rxxp20x (sum) oop_exp=rxsf20x, by(dupersid)
-gen third_payer_exp = total_exp - oop_exp
-list dupersid n_purchase total_exp oop_exp third_payer_exp in 1/20
-save person_Rx, replace
+/* rename 2018 variables, merge on pooled-linkage variables */
+use C:\MEPS\h209, clear
+rename *, lower
+keep dupersid panel varpsu varstr perwt18f inscov18 povcat18 totexp18 totslf18 cancerdx cabladdr agelast
+rename (perwt18f inscov18 povcat18 totexp18 totslf18) (perwtf inscov povcat totexp totslf) 
+gen year=2018
 
-// 3) merge the person-level expenditures to the FY PUF, identify subpopulation 
+merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
+drop if _merge~=3
+drop _merge
+save ex3_2018.dta, replace
+
+/* rename 2019 variables, merge on pooled-linkage variables */
+use C:\MEPS\h216, clear
+rename *, lower
+keep dupersid panel varpsu varstr perwt19f inscov19 povcat19 totexp19 totslf19 cancerdx cabladdr agelast
+rename (perwt19f inscov19 povcat19 totexp19 totslf19) (perwtf inscov povcat totexp totslf) 
+gen year=2019
+
+merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
+drop if _merge~=3
+drop _merge
+save ex3_2019.dta, replace
+
+/* rename 2020 variables, merge on pooled-linkage variables */
 use C:\MEPS\h224, clear
 rename *, lower
-merge 1:1 dupersid using person_Rx, gen(merge1)
-recode n_purchase total_exp oop_exp third_payer_exp (.=0) if merge1==1
+keep dupersid panel varpsu varstr perwt20f inscov20 povcat20 totexp20 totslf20 cancerdx cabladdr agelast
+rename (perwt20f inscov20 povcat20 totexp20 totslf20) (perwtf inscov povcat totexp totslf) 
+gen year=2020
 
-save merge_h224_h230a, replace
+merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
+drop if _merge~=3
+drop _merge
+save ex3_2020.dta, replace
 
-// 4) calculate estimates on expenditures and use
-svyset [pweight= perwt20f], strata( varstr) psu(varpsu) vce(linearized) singleunit(missing)
+/* append years together, erase temp files */
+append using ex3_2019 ex3_2018
+erase ex3_2018.dta
+erase ex3_2019.dta
+erase ex3_2020.dta
 
-svy: total n_purchase total_exp oop_exp third_payer_exp, cformat(%13.3g)
-estimates table, b(%13.0f) se(%11.0f)
+/* create common bladder cancer variable */ 
+recode cabladdr (1=1) (2=0) (*=.), gen(bladder_cancer)
+replace bladder_cancer=0 if cancerdx==2
+tab bladder_cancer, m
+// here is an alternative way to create bladder cancer variable 
+//gen bladder_cancer=.
+//replace bladder_cancer=0 if cancerdx==2 | cabladdr==2
+//replace bladder_cancer=1 if cabladdr==1 
 
-svy: mean n_purchase total_exp oop_exp third_payer_exp
-svy, subpop(if n_purchase>0): mean n_purchase total_exp oop_exp third_payer_exp
+/* create pooled person-level weight and subpop */
+gen poolwt=perwt/3
 
+/* set up survey parameters */
+svyset psu9620 [pw=poolwt], str(stra9620) vce(linearized) singleunit(centered) 
+/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
+putexcel set Results.xlsx, modify sheet(Ex2) 
 
+/* estimate percent with any bladder cancer */
+svy, sub(if cancerdx>0): mean bladder_cancer
+putexcel B2=matrix(r(table)[1,1]) C2=matrix(r(table)[2,1])
 
+/* estimate mean expenditures per person by whether they have bladder cancer*/
+// Total expenditures
+svy, sub(if cancerdx>0): mean totexp, over(bladder_cancer)
+putexcel B5=matrix(r(table)[1,1]) C5=matrix(r(table)[2,1])
+putexcel B6=matrix(r(table)[1,2]) C6=matrix(r(table)[2,2])
+// OOP expenditures
+svy, sub(if cancerdx>0): mean totslf, over(bladder_cancer)
+putexcel B9=matrix(r(table)[1,1]) C9=matrix(r(table)[2,1])
+putexcel B10=matrix(r(table)[1,2]) C10=matrix(r(table)[2,2])
 

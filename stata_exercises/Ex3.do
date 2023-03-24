@@ -1,115 +1,130 @@
-**********************************************************************************************
-* Exercise 3
-*  This program illustrates how to pool MEPS data files from multiple years to enable 
-*  the analysis of a small sub-sample (people with bladder cancer)
-*  
-*  The program pools 2018-2020 data and calculates:
-*   - Percentage of people with bladder cancer 
-*   - Average expenditures per person, with and without bladder cancer
+* MEPS-HC: Prescribed medicine utilization and expenditures for 
+* the treatment of hyperlipidemia
 * 
-*  Notes:
-*   - strata and psu variables must be taken from the pooled-linkage file
-*   - Variables with year-specific names must be renamed before combining files
-*     (e.g. 'TOTEXP18' renamed to 'totexp')
+* This example code shows how to link the MEPS-HC Medical Conditions file 
+* to the Prescribed Medicines file for data year 2020 in order to estimate
+* the following:
+*
+*   - Total number of people with one or more rx fills for hyperlipidemia
+*   - Total rx fills for the treatment of hyperlipidemia
+*   - Total rx expenditures for the treatment of hyperlipidemia 
+*   - Mean number of Rx fills for hyperlipidemia per person, among those with any
+*   - Mean expenditures on Rx fills for hyperlipidemia per person, among those with any
 * 
-*  Input files: 
-*   - C:/MEPS/H36u20.dta (pooled linkage file)
-*   - C:/MEPS/h209.dta (2018 Full-year file)
-*   - C:/MEPS/h216.dta (2019 Full-year file)
-*   - C:/MEPS/h224.dta (2020 Full-year file)
+* Input files:
+*   - h220a.dta        (2020 Prescribed Medicines file)
+*   - h222.dta         (2020 Conditions file)
+*   - h220if1.dta      (2020 CLNK: Condition-Event Link file)
+*   - h224.dta         (2020 Full-Year Consolidated file)
 * 
-*  This program is available at:
-*  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
-**********************************************************************************************
+* Resources:
+*   - CCSR codes: 
+*   https://github.com/HHS-AHRQ/MEPS/blob/master/Quick_Reference_Guides/meps_ccsr_conditions.csv
+* 
+*   - MEPS-HC Public Use Files: 
+*   https://meps.ahrq.gov/mepsweb/data_stats/download_data_files.jsp
+* 
+*   - MEPS-HC online data tools: 
+*   https://datatools.ahrq.gov/meps-hc
+*
+* -----------------------------------------------------------------------------
+
 clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex3.log, replace
+log using Ex1.log, replace 
 
-/* Get Data */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
-unzipfile "h209dta.zip", replace 
-
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h216/h216dta.zip" "h216dta.zip", replace
-unzipfile "h216dta.zip", replace 
-
+/* Get data from web (you can also download manually) */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
+unzipfile "h220adta.zip", replace 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h222/h222dta.zip" "h222dta.zip", replace
+unzipfile "h222dta.zip", replace 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220i/h220if1dta.zip" "h220if1dta.zip", replace
+unzipfile "h220if1dta.zip", replace 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
 unzipfile "h224dta.zip", replace 
 
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h036/h36u20dta.zip" "h36u20dta.zip", replace
-unzipfile "h36u20dta.zip", replace 
-
-
-/* prepare pooled linkage file */
-use h36u20.dta, clear
+/* linkage file */
+use h220if1, clear
 rename *, lower
-keep if inh209==1|inh216==1|inh224==1
-save h36, replace
+save CLNK_2020, replace
 
-/* rename 2018 variables, merge on pooled-linkage variables */
-use C:\MEPS\h209, clear
+/* PMED file, person-Rx-level */
+use DUPERSID DRUGIDX RXRECIDX LINKIDX RXDRGNAM RXXP20X using h220a, clear
 rename *, lower
-keep dupersid panel varpsu varstr perwt18f inscov18 povcat18 totexp18 totslf18 cancerdx cabladdr agelast
-rename (perwt18f inscov18 povcat18 totexp18 totslf18) (perwtf inscov povcat totexp totslf) 
-gen year=2018
+rename linkidx evntidx
+save PM_2020, replace
 
-merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
+/* FY condolidated file, person-level */
+use DUPERSID SEX CHOLDX VARSTR VARPSU PERWT20F using h224, clear
+rename *, lower
+save FY_2020, replace
+
+/* Conditions file, person-condition-level, subset to hyperlipidemia */
+use DUPERSID CONDIDX ICD10CDX CCSR1X-CCSR3X using h222, clear
+rename *, lower
+keep if ccsr1x == "END010" | ccsr2x == "END010" | ccsr3x == "END010"
+// inspect conditions file
+sort dupersid condidx
+list dupersid condidx icd10cdx if _n<20
+list if dupersid=="2320134102"
+
+/* merge to CLNK file by dupersid and condidx, drop unmatched */
+merge m:m dupersid condidx using CLNK_2020
+// inspect file
+sort dupersid condidx
+list dupersid condidx icd10cdx if _n<20
+list dupersid condidx icd10cdx if dupersid=="2320134102"
+// drop observations for that do not match
 drop if _merge~=3
 drop _merge
-save ex3_2018.dta, replace
+list dupersid condidx icd10cdx if dupersid=="2320134102"
 
-/* rename 2019 variables, merge on pooled-linkage variables */
-use C:\MEPS\h216, clear
-rename *, lower
-keep dupersid panel varpsu varstr perwt19f inscov19 povcat19 totexp19 totslf19 cancerdx cabladdr agelast
-rename (perwt19f inscov19 povcat19 totexp19 totslf19) (perwtf inscov povcat totexp totslf) 
-gen year=2019
-
-merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
+/* merge to prescribed meds file by dupersid and evntidx, drop unmatched */
+merge m:m dupersid evntidx using PM_2020
+// inspect file
+sort dupersid condidx evntidx
+list dupersid condidx icd10cdx evntidx rxrecidx if _n<20
+list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
+// drop observations for that do not match
 drop if _merge~=3
 drop _merge
-save ex3_2019.dta, replace
+list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
 
-/* rename 2020 variables, merge on pooled-linkage variables */
-use C:\MEPS\h224, clear
-rename *, lower
-keep dupersid panel varpsu varstr perwt20f inscov20 povcat20 totexp20 totslf20 cancerdx cabladdr agelast
-rename (perwt20f inscov20 povcat20 totexp20 totslf20) (perwtf inscov povcat totexp totslf) 
-gen year=2020
+/* drop duplicates */
+duplicates drop dupersid rxrecidx, force
+gen one=1
+// inspect file 
+list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
 
-merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
-drop if _merge~=3
-drop _merge
-save ex3_2020.dta, replace
+/* collapse to person-level (DUPERSID), sum to get number of fills and expenditures */
+collapse (sum) num_rx=one (sum) exp_rx=rxxp20x, by(dupersid)
+/* merge to FY file, create flag for any Rx fill for HL */
+merge 1:1 dupersid using FY_2020
+replace exp_rx=0 if _merge==2
+replace num_rx=0 if _merge==2
+gen any_rx=(num_rx>0)
 
-/* append years together, erase temp files */
-append using ex3_2019 ex3_2018
-erase ex3_2018.dta
-erase ex3_2019.dta
-erase ex3_2020.dta
+/* Set survey options */
+svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(centered)
+/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
+putexcel set Results.xlsx, modify sheet(Ex3) 
 
-/* create common bladder cancer variable */ 
-recode cabladdr (1=1) (2=0) (*=.), gen(bladder_cancer)
-replace bladder_cancer=0 if cancerdx==2
-tab bladder_cancer, m
-/* created like this yields identical results 
-gen bladder_cancer=.
-replace bladder_cancer=0 if cancerdx==2 | cabladdr==2
-replace bladder_cancer=1 if cabladdr==1 
-*/
+/* total number of people with 1+ Rx fills for HL */
+svy: total any_rx
+putexcel B3=matrix(r(table)[1,1]) C3=matrix(r(table)[2,1])
+/* Total rx fills for the treatment of hyperlipidemia */
+svy: total num_rx
+putexcel B4=matrix(r(table)[1,1]) C4=matrix(r(table)[2,1])
+/* Total rx expenditures for the treatment of hyperlipidemia */
+svy: total exp_rx
+putexcel B5=matrix(r(table)[1,1]) C5=matrix(r(table)[2,1])
+/* mean number of Rx fills for hyperlipidemia per person, among those with any */
+svy, sub(any_rx): mean num_rx
+putexcel B7=matrix(r(table)[1,1]) C7=matrix(r(table)[2,1])
+/* mean expenditures on Rx fills for hyperlipidemia per person, among those with any */
+svy, sub(any_rx): mean exp_rx
+putexcel B8=matrix(r(table)[1,1]) C8=matrix(r(table)[2,1])
 
-/* create pooled person-level weight and subpop */
-gen poolwt=perwt/3
-
-/* set up survey parameters */
-svyset psu9620 [pw=poolwt], str(stra9620) vce(linearized) singleunit(centered) 
-
-/* estimate percent with any bladder cancer */
-svy, sub(if cancerdx>0): mean bladder_cancer
-
-/* estimate mean expenditures per person by whether they have bladder cancer*/
-svy, sub(if cancerdx>0): mean totexp, over(bladder_cancer)
-
-svy, sub(if cancerdx>0): mean totslf, over(bladder_cancer)
 

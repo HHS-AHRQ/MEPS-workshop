@@ -16,6 +16,7 @@
 * https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
 *****************************************************************************************************************************************
 
+
 clear
 set more off
 capture log close
@@ -31,54 +32,76 @@ unzipfile "h224dta.zip", replace
 
 
 
-
-/* define expenditure variables  */
-
-
-
-
-
-
-/* create flag (1/0) variables for persons with an expense  */
-
-
+/* define expenditure variables (transformations, etc.)  */
 
 
 
 
 /* create age categorical variable */
 
+// alternative way to create a categorical variable 
+
+// create and assign value labels to the categorical age variable just created 
 
 
 
 
 
-/* qc check on new variables*/
+/* QC check new variables*/
+
+
+
+
+
+/* specify survey design characteristics */
+
+
+
+
+
+/* total expenses */
+
+// list output stored in r()
+
+// display results without scientific notation 
+
+// output results to Excel file
+
+
+
+
+
+/* percent of people with any expense */
 
 
 
 
 
 
-/* identify the survey design characteristics */
-svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(missing)
-
-// Estimate overall expenses
-          
-
-		  
-		  
-// Estimate percentage of persons with an expense
-		   
-
-		   
-		   
-// Estimate mean expense per person with an expense
+/* mean expense per person */
 
 
 
 
 
-// mean expenditures, median expenditures, percent with any expenditures, mean expenditures conditional on having any, all by age category
+
+/* mean expense per person with an expense */
+
+
+
+
+
+
+/* mean expense per person with an expense, by age */
+
+
+
+
+
+/* median expense per person with an expense, by age */
+
+// alternative way to calculate median 
+
+
 
 
