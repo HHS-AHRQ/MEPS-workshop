@@ -14,7 +14,7 @@
 #
 # -----------------------------------------------------------------------------
 
-# Install and load packages ---------------------------------------------------
+# Install/load packages and set global options --------------------------------
 
 # Can skip this part if already installed
   install.packages("survey")   # for survey analysis
@@ -26,7 +26,7 @@
   devtools::install_github("e-mitchell/meps_r_pkg/MEPS") # easier file import
   
   
-# Run this part each time you re-start R
+# Load libraries (run this part each time you re-start R)
   library(survey)
   library(foreign)
   library(haven)
@@ -34,18 +34,21 @@
   library(MEPS)
 
 
-# Set options to deal with lonely psu
-  options(survey.lonely.psu='adjust');
+# Set survey option for lonely PSUs
+  options(survey.lonely.psu='adjust')
 
 
-# Read in data from FYC file --------------------------------------------------
+# Load datasets ---------------------------------------------------------------
  
-# Option 1: use 'MEPS' package
+# Option 1 - load data files using read_MEPS from the MEPS package
   fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
 
-# Option 2: Use Stata format (recommended for Data Year 2017 and later)
+# Option 2 - load Stata data files using read_dta from the haven package 
+#  >> Replace "C:/MEPS" below with the directory you saved the files to.
+  
   fyc20_opt2 = read_dta("C:/MEPS/h224.dta")
 
+  
 # View data
   head(fyc20) 
   head(fyc20_opt2)

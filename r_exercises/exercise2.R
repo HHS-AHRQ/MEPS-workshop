@@ -1,20 +1,31 @@
 # -----------------------------------------------------------------------------
-# This program generates National Totals and Per-person Averages for Narcotic
-# analgesics and Narcotic analgesic combos for the U.S. civilian 
-# non-institutionalized population, including:
-#  - Number of purchases (fills)  
-#  - Total expenditures          
-#  - Out-of-pocket payments       
-#  - Third-party payments        
+# This program illustrates how to pool MEPS data files from different years. 
+# It  demonstrates use of the Pooled Variance file (h36u19) to pool data years 
+# before and after 2019.
+# 
 #
-# Input files:
-#  - C:/MEPS/h224.dta  (2020 Full-year file)
-#  - C:/MEPS/h220a.dta (2020 Prescribed medicines file)
+# The program pools 2018, 2019, and 2020 data and calculates:
+#  - Percentage of people with Bladder Cancer (CABLADDR)
+#  - Average expenditures per person with Bladder Cancer (TOTEXP, TOTSLF)
+#
+# Notes:
+#  - Variables with year-specific names must be renamed before combining files
+#    (e.g. 'TOTEXP19' and 'TOTEXP20' renamed to 'totexp')
+#
+#  - When pooling data years before and after 2002 or 2019, the Pooled Variance 
+#    file (h36u20) must be used for correct variance estimation 
+#
+# 
+# Input files: 
+#  - C:/MEPS/h224.dta (2020 Full-year file)
+#  - C:/MEPS/h216.dta (2019 Full-year file)
+#  - C:/MEPS/h209.dta (2018 Full-year file)
+#  - C:/MEPS/h36u20.dta (Pooled Variance Linkage file)
 #
 # -----------------------------------------------------------------------------
 
-# Install and load packages ---------------------------------------------------
-# 
+# Install/load packages and set global options --------------------------------
+
 # Can skip this part if already installed
 # install.packages("survey")   # for survey analysis
 # install.packages("foreign")  # for loading SAS transport (.ssp) files
@@ -25,100 +36,172 @@
 # devtools::install_github("e-mitchell/meps_r_pkg/MEPS") # easier file import
 
 
-# Run this part each time you re-start R
+# Load libraries (run this part each time you re-start R)
   library(survey)
   library(foreign)
   library(haven)
   library(dplyr)
   library(MEPS)
 
-# Set options to deal with lonely psu
-  options(survey.lonely.psu='adjust');
+# Set survey option for lonely PSUs
+  options(survey.lonely.psu='adjust')
 
-# Read in data from FYC file --------------------------------------------------
 
+# Load datasets ---------------------------------------------------------------
+
+# Option 1 - load data files using read_MEPS from the MEPS package
   fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
-  rx20  = read_MEPS(year = 2020, type = "RX")  # 2020 RX
+  fyc19 = read_MEPS(year = 2019, type = "FYC") # 2019 FYC
+  fyc18 = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
   
-  # # Alternative:
-  # fyc20 = read_dta("C:/MEPS/h224.dta")   # 2020 FYC
-  # rx20  = read_dta("C:/MEPS/h220astata.dta")  # 2020 RX
+  linkage = read_MEPS(type = "Pooled linkage") # Pooled Linkage file
+  
+# Option 2 - load Stata data files using read_dta from the haven package 
+#  >> Replace "C:/MEPS" below with the directory you saved the files to.
+  
+  # fyc20 = read_dta("C:/MEPS/h224.dta") # 2020 FYC
+  # fyc19 = read_dta("C:/MEPS/h216.dta") # 2019 FYC
+  # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
+
+  # >> Note: File name for linkage file will change every year!!
+  # linkage = read_dta("C:/MEPS/h36u20.dta") # Pooled Linkage file
+
+# View data -------------------------------------------------------------------
+
+# From the documentation: 
+#  - Questions about cancer were asked only of persons aged 18 or older. 
+#  - CANCERDX asks whether person ever diagnosed with cancer 
+#  - If YES, then asked what type (CABLADDR, CABLOOD, CABREAST...)
+  
+  
+  fyc20 %>% count(CABLADDR)
+  
+  fyc20 %>% 
+    mutate(AGEgt18 = ifelse(AGELAST >= 18, "18+", "AGE < 18"))  %>% 
+    count(AGEgt18, CANCERDX, CABLADDR)
   
 
-# Keep only needed variables --------------------------------------------------
-  
-  fyc20_sub = fyc20 %>%
-    select(DUPERSID, VARSTR, VARPSU, PERWT20F) # needed for survey design
+
+# Create variables ------------------------------------------------------------
+#  - bladder_cancer = "1 Yes" if CABLADDR = 1
+#  - bladder_cancer = "2 No" if CABLADDR = 2 or CANCERDX = 2
+
+
+fyc20x = fyc20 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing")) 
     
+fyc19x = fyc19 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing")) 
 
-# Identify Narcotic analgesics or Narcotic analgesic combos -------------------
-#  Use therapeutic classification codes (TC1S1_1)
-#
-# DUPERSID: PERSON ID (DUID + PID)
-# RXRECIDX: UNIQUE RX/PRESCRIBED MEDICINE IDENTIFIER
-# LINKIDX:  ID FOR LINKAGE TO COND/OTH EVENT FILES
-# TC1S1_1:  MULTUM THERAPEUT SUB-SUB-CLASS FOR TC1S1
-#
-# RXXP20X:  SUM OF PAYMENTS RXSF20X-RXOU20X(IMPUTED)
-# RXSF20X:  AMOUNT PAID, SELF OR FAMILY (IMPUTED)
+fyc18x = fyc18 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing"))  
 
 
-  narc = rx20 %>%
-    filter(TC1S1_1 %in% c(60, 191)) %>%
-    select(DUPERSID, RXRECIDX, LINKIDX, TC1S1_1, RXXP20X, RXSF20X)
+# QC variables:
+  fyc20x %>% count(CANCERDX, CABLADDR, bladder_cancer)
+  fyc19x %>% count(CANCERDX, CABLADDR, bladder_cancer)
+  fyc18x %>% count(CANCERDX, CABLADDR, bladder_cancer)
   
-  head(narc)
-  narc %>% count(TC1S1_1)
+    
+  
+# Rename year-specific variables prior to combining --------------------------- 
+  
+fyc20p = fyc20x %>%
+  rename(
+    perwt  = PERWT20F,
+    totslf = TOTSLF20,
+    totexp = TOTEXP20) %>%
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
 
-# Sum data to person-level ----------------------------------------------------
 
-  narc_pers = narc %>%
-    group_by(DUPERSID) %>%
-    summarise(
-      tot = sum(RXXP20X),
-      oop = sum(RXSF20X),
-      n_purchase = n()) %>%
-    mutate(
-      third_payer = tot - oop,
-      any_narc = 1) 
-  
-  head(narc_pers)
-  
-  
-# Merge the person-level expenditures to the FY PUF to get complete PSUs, Strata
-  
-  narc_fyc = full_join(narc_pers, fyc20_sub, by = "DUPERSID")
-  
-  head(narc_fyc)
+fyc19p = fyc19x %>%
+  rename(
+    perwt  = PERWT19F,
+    totslf = TOTSLF19,
+    totexp = TOTEXP19) %>%
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
+   
+ 
+fyc18p = fyc18x %>%
+  rename(
+    perwt  = PERWT18F,
+    totslf = TOTSLF18,
+    totexp = TOTEXP18) %>%
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
 
-  narc_fyc %>% count(any_narc)
-  narc_fyc %>% filter(is.na(any_narc))
+head(fyc20p)
+head(fyc19p)
+head(fyc18p)
+
+
+# Stack data and define pooled weight variable ---------------------------------
+#  - for poolwt, divide perwt by number of years (3):
+
+pool = bind_rows(fyc20p, fyc19p, fyc18p) %>%
+  mutate(poolwt = perwt / 3)
+
+
+# Merge the Pooled Linkage Variance file (since pooling before and after 2019 data)
+#  Notes: 
+#   - DUPERSIDs are recycled, so must join by DUPERSID AND PANEL
+#   - File name will change every year!! (e.g. 'h36u21' once 2021 data is added)
+
+head(pool)
+head(linkage)
+
+
+linkage_sub = linkage %>% 
+  select(DUPERSID, PANEL, STRA9620, PSU9620)
+
+pool_linked =  left_join(pool, linkage_sub, by = c("DUPERSID", "PANEL"))
+
+
+# QC:
+pool %>% count(PANEL)
+pool_linked %>% count(PANEL)
+
 
 
 # Define the survey design ----------------------------------------------------
-  
-  mepsdsgn = svydesign(
-    id = ~VARPSU,
-    strata = ~VARSTR,
-    weights = ~PERWT20F,
-    data = narc_fyc,
-    nest = TRUE)
+#  - Use PSU9620 and STRA9620 variables, since pooling before and after 2019
 
-# Calculate estimates ---------------------------------------------------------
-#  National totals and Per-person Averages for:
-#   - Number of purchases (fills)  -- n_purchase
-#   - Total expenditures           -- tot
-#   - Out-of-pocket payments       -- oop
-#   - Third-party payments         -- third_payer
-  
-# National totals 
-  svytotal(~n_purchase + tot + oop + third_payer, 
-           design = subset(mepsdsgn, any_narc == 1))
-  
-  
-# Average per person
-  svymean(~n_purchase + tot + oop + third_payer,
-          design = subset(mepsdsgn, any_narc == 1))
+pool_dsgn = svydesign(
+  id = ~PSU9620,
+  strata = ~STRA9620,
+  weights = ~poolwt,
+  data = pool_linked,
+  nest = TRUE)
 
 
-  
+
+# Calculate survey estimates ---------------------------------------------------
+#  - Percentage of adults with Bladder Cancer
+#  - Average expenditures per person, by Joint Pain status (totexp, totslf)
+
+# Percent with bladder cancer
+svymean(~bladder_cancer, design = subset(pool_dsgn, bladder_cancer != "Missing"))
+
+# Avg. expenditures per person
+svyby(~totslf + totexp, by = ~bladder_cancer, FUN = svymean, 
+      design = subset(pool_dsgn, bladder_cancer != "Missing"))
+
+
+
