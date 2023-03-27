@@ -45,8 +45,9 @@
 
 # Set survey option for lonely PSUs
   options(survey.lonely.psu='adjust')
-
-
+  options(survey.adjust.domain.lonely = TRUE)
+  
+  
 # Load datasets ---------------------------------------------------------------
 
 # Option 1 - load data files using read_MEPS from the MEPS package

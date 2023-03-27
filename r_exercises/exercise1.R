@@ -36,7 +36,8 @@
 
 # Set survey option for lonely PSUs
   options(survey.lonely.psu='adjust')
-
+  options(survey.adjust.domain.lonely = TRUE)
+  
 
 # Load datasets ---------------------------------------------------------------
  
