@@ -1,4 +1,5 @@
-********************************************************************************************************************************** Exercise 1: 
+********************************************************************************************************************************** 
+* Exercise 1: 
 * This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2020:
 *  - Overall expenses (National totals)
 *  - Percentage of persons with an expense
