@@ -28,11 +28,12 @@
 *   https://datatools.ahrq.gov/meps-hc
 *
 * -----------------------------------------------------------------------------
+
 clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex1.log, replace 
+log using Ex3.log, replace 
 
 /* Get data from web (you can also download manually) */
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
@@ -46,74 +47,37 @@ unzipfile "h224dta.zip", replace
 
 /* linkage file */
 
-
-
-
 /* PMED file, person-Rx-level */
 
-
-
-
 /* FY condolidated file, person-level */
-
-
-
 
 /* Conditions file, person-condition-level, subset to hyperlipidemia */
 // inspect conditions file
 
-
-
-
 /* merge to CLNK file by dupersid and condidx, drop unmatched */
-// inspect file
-// drop observations for that do not match
-
-
+// inspect file 
 
 /* merge to prescribed meds file by dupersid and evntidx, drop unmatched */
-// inspect file
-// drop observations for that do not match
-
-
+// inspect file 
 
 /* drop duplicates */
 // inspect file 
 
-
-
-
 /* collapse to person-level (DUPERSID), sum to get number of fills and expenditures */
-
 
 /* merge to FY file, create flag for any Rx fill for HL */
 
-
-
-
 /* Set survey options */
-
-/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
-
-
+svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(centered)
 
 /* total number of people with 1+ Rx fills for HL */
 
-
-
 /* Total rx fills for the treatment of hyperlipidemia */
-
-
 
 /* Total rx expenditures for the treatment of hyperlipidemia */
 
-
-
 /* mean number of Rx fills for hyperlipidemia per person, among those with any */
 
-
-
 /* mean expenditures on Rx fills for hyperlipidemia per person, among those with any */
-
 
 

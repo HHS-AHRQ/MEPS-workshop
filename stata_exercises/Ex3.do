@@ -33,7 +33,7 @@ clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex1.log, replace 
+log using Ex3.log, replace 
 
 /* Get data from web (you can also download manually) */
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
@@ -72,33 +72,27 @@ list if dupersid=="2320134102"
 
 /* merge to CLNK file by dupersid and condidx, drop unmatched */
 merge m:m dupersid condidx using CLNK_2020
-// inspect file
-sort dupersid condidx
-list dupersid condidx icd10cdx if _n<20
-list dupersid condidx icd10cdx if dupersid=="2320134102"
 // drop observations for that do not match
 drop if _merge~=3
 drop _merge
+// inspect file 
 list dupersid condidx icd10cdx if dupersid=="2320134102"
 
 /* merge to prescribed meds file by dupersid and evntidx, drop unmatched */
 merge m:m dupersid evntidx using PM_2020
-// inspect file
-sort dupersid condidx evntidx
-list dupersid condidx icd10cdx evntidx rxrecidx if _n<20
-list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
 // drop observations for that do not match
 drop if _merge~=3
 drop _merge
+// inspect file 
 list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
 
 /* drop duplicates */
 duplicates drop dupersid rxrecidx, force
-gen one=1
 // inspect file 
 list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
 
 /* collapse to person-level (DUPERSID), sum to get number of fills and expenditures */
+gen one=1
 collapse (sum) num_rx=one (sum) exp_rx=rxxp20x, by(dupersid)
 /* merge to FY file, create flag for any Rx fill for HL */
 merge 1:1 dupersid using FY_2020
@@ -108,23 +102,16 @@ gen any_rx=(num_rx>0)
 
 /* Set survey options */
 svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(centered)
-/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
-putexcel set Results.xlsx, modify sheet(Ex3) 
 
 /* total number of people with 1+ Rx fills for HL */
 svy: total any_rx
-putexcel B3=matrix(r(table)[1,1]) C3=matrix(r(table)[2,1])
 /* Total rx fills for the treatment of hyperlipidemia */
 svy: total num_rx
-putexcel B4=matrix(r(table)[1,1]) C4=matrix(r(table)[2,1])
 /* Total rx expenditures for the treatment of hyperlipidemia */
 svy: total exp_rx
-putexcel B5=matrix(r(table)[1,1]) C5=matrix(r(table)[2,1])
 /* mean number of Rx fills for hyperlipidemia per person, among those with any */
 svy, sub(any_rx): mean num_rx
-putexcel B7=matrix(r(table)[1,1]) C7=matrix(r(table)[2,1])
 /* mean expenditures on Rx fills for hyperlipidemia per person, among those with any */
 svy, sub(any_rx): mean exp_rx
-putexcel B8=matrix(r(table)[1,1]) C8=matrix(r(table)[2,1])
 
 

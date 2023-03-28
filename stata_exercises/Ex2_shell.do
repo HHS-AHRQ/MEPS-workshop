@@ -25,7 +25,7 @@ clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex3.log, replace
+log using Ex2.log, replace
 
 /* Get Data */
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
@@ -43,47 +43,21 @@ unzipfile "h36u20dta.zip", replace
 
 /* prepare pooled linkage file */
 
-
-
 /* rename 2018 variables, merge on pooled-linkage variables */
-
-
-
 
 /* rename 2019 variables, merge on pooled-linkage variables */
 
-
-
-
 /* rename 2020 variables, merge on pooled-linkage variables */
-
-
-
 
 /* append years together, erase temp files */
 
-
-
-
 /* create common bladder cancer variable */ 
-
-
 
 /* create pooled person-level weight and subpop */
 
-
-
 /* set up survey parameters */
 
-
-
-/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
-
-
-
 /* estimate percent with any bladder cancer */
-
-
 
 /* estimate mean expenditures per person by whether they have bladder cancer*/
 // Total expenditures

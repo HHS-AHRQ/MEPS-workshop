@@ -25,7 +25,7 @@ clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex3.log, replace
+log using Ex2.log, replace
 
 /* Get Data */
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
@@ -50,73 +50,62 @@ save h36, replace
 /* rename 2018 variables, merge on pooled-linkage variables */
 use C:\MEPS\h209, clear
 rename *, lower
-keep dupersid panel varpsu varstr perwt18f inscov18 povcat18 totexp18 totslf18 cancerdx cabladdr agelast
-rename (perwt18f inscov18 povcat18 totexp18 totslf18) (perwtf inscov povcat totexp totslf) 
+keep dupersid perwt18f totexp18 totslf18 cancerdx cabladdr agelast
+rename (perwt18f totexp18 totslf18) (perwtf totexp totslf) 
 gen year=2018
 
 merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
 drop if _merge~=3
 drop _merge
-save ex3_2018.dta, replace
+save ex2_2018.dta, replace
 
 /* rename 2019 variables, merge on pooled-linkage variables */
 use C:\MEPS\h216, clear
 rename *, lower
-keep dupersid panel varpsu varstr perwt19f inscov19 povcat19 totexp19 totslf19 cancerdx cabladdr agelast
-rename (perwt19f inscov19 povcat19 totexp19 totslf19) (perwtf inscov povcat totexp totslf) 
+keep dupersid perwt19f totexp19 totslf19 cancerdx cabladdr
+rename (perwt19f totexp19 totslf19) (perwtf totexp totslf) 
 gen year=2019
 
 merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
 drop if _merge~=3
 drop _merge
-save ex3_2019.dta, replace
+save ex2_2019.dta, replace
 
 /* rename 2020 variables, merge on pooled-linkage variables */
 use C:\MEPS\h224, clear
 rename *, lower
-keep dupersid panel varpsu varstr perwt20f inscov20 povcat20 totexp20 totslf20 cancerdx cabladdr agelast
-rename (perwt20f inscov20 povcat20 totexp20 totslf20) (perwtf inscov povcat totexp totslf) 
+keep dupersid perwt20f totexp20 totslf20 cancerdx cabladdr
+rename (perwt20f totexp20 totslf20) (perwtf totexp totslf) 
 gen year=2020
 
 merge 1:1 dupersid using h36, keepusing(stra9620 psu9620)
 drop if _merge~=3
 drop _merge
-save ex3_2020.dta, replace
+save ex2_2020.dta, replace
 
 /* append years together, erase temp files */
-append using ex3_2019 ex3_2018
-erase ex3_2018.dta
-erase ex3_2019.dta
-erase ex3_2020.dta
+append using ex2_2019 ex2_2018
+erase ex2_2018.dta
+erase ex2_2019.dta
+erase ex2_2020.dta
 
 /* create common bladder cancer variable */ 
 recode cabladdr (1=1) (2=0) (*=.), gen(bladder_cancer)
 replace bladder_cancer=0 if cancerdx==2
 tab bladder_cancer, m
-// here is an alternative way to create bladder cancer variable 
-//gen bladder_cancer=.
-//replace bladder_cancer=0 if cancerdx==2 | cabladdr==2
-//replace bladder_cancer=1 if cabladdr==1 
 
 /* create pooled person-level weight and subpop */
 gen poolwt=perwt/3
 
 /* set up survey parameters */
 svyset psu9620 [pw=poolwt], str(stra9620) vce(linearized) singleunit(centered) 
-/* open Excel file for output--- this is already created with 3 tabs, row and column labels */
-putexcel set Results.xlsx, modify sheet(Ex2) 
 
 /* estimate percent with any bladder cancer */
 svy, sub(if cancerdx>0): mean bladder_cancer
-putexcel B2=matrix(r(table)[1,1]) C2=matrix(r(table)[2,1])
 
 /* estimate mean expenditures per person by whether they have bladder cancer*/
 // Total expenditures
 svy, sub(if cancerdx>0): mean totexp, over(bladder_cancer)
-putexcel B5=matrix(r(table)[1,1]) C5=matrix(r(table)[2,1])
-putexcel B6=matrix(r(table)[1,2]) C6=matrix(r(table)[2,2])
 // OOP expenditures
 svy, sub(if cancerdx>0): mean totslf, over(bladder_cancer)
-putexcel B9=matrix(r(table)[1,1]) C9=matrix(r(table)[2,1])
-putexcel B10=matrix(r(table)[1,2]) C10=matrix(r(table)[2,2])
 

@@ -1,5 +1,4 @@
-*****************************************************************************************************************************************
-* Exercise 1: 
+********************************************************************************************************************************** Exercise 1: 
 * This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2020:
 *  - Overall expenses (National totals)
 *  - Percentage of persons with an expense
@@ -14,8 +13,7 @@
 *
 * This program is available at:
 * https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
-*****************************************************************************************************************************************
-
+*********************************************************************************************************************************
 
 clear
 set more off
@@ -29,35 +27,13 @@ unzipfile "h224dta.zip", replace
 
 /* Read in 2020 Full-year consolidated file */ 
 
-
-
-
 /* define expenditure variables (transformations, etc.)  */
-
-
-
 
 /* create age categorical variable */
 
-// alternative way to create a categorical variable 
-
-// create and assign value labels to the categorical age variable just created 
-
-
-
-
-
 /* QC check new variables*/
-
-
-
-
-
+ 
 /* specify survey design characteristics */
-
-
-
-
 
 /* total expenses */
 
@@ -65,42 +41,15 @@ unzipfile "h224dta.zip", replace
 
 // display results without scientific notation 
 
-// output results to Excel file
-
-
-
-
-
 /* percent of people with any expense */
-
-
-
-
-
 
 /* mean expense per person */
 
-
-
-
-
-
 /* mean expense per person with an expense */
-
-
-
-
-
 
 /* mean expense per person with an expense, by age */
 
-
-
-
-
 /* median expense per person with an expense, by age */
-
-// alternative way to calculate median 
 
 
 
