@@ -13,14 +13,14 @@
 #    (e.g. 'TOTEXP19' and 'TOTEXP20' renamed to 'totexp')
 #
 #  - When pooling data years before and after 2002 or 2019, the Pooled Variance 
-#    file (h36u20) must be used for correct variance estimation 
+#    file (h36u21) must be used for correct variance estimation 
 #
 # 
 # Input files: 
 #  - C:/MEPS/h224.dta (2020 Full-year file)
 #  - C:/MEPS/h216.dta (2019 Full-year file)
 #  - C:/MEPS/h209.dta (2018 Full-year file)
-#  - C:/MEPS/h36u20.dta (Pooled Variance Linkage file)
+#  - C:/MEPS/h36u21.dta (Pooled Variance Linkage file)
 #
 # -----------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@
   # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
 
   # >> Note: File name for linkage file will change every year!!
-  # linkage = read_dta("C:/MEPS/h36u20.dta") # Pooled Linkage file
+  # linkage = read_dta("C:/MEPS/h36u21.dta") # Pooled Linkage file
 
 # View data -------------------------------------------------------------------
 
@@ -163,14 +163,14 @@ pool = bind_rows(fyc20p, fyc19p, fyc18p) %>%
 # Merge the Pooled Linkage Variance file (since pooling before and after 2019 data)
 #  Notes: 
 #   - DUPERSIDs are recycled, so must join by DUPERSID AND PANEL
-#   - File name will change every year!! (e.g. 'h36u21' once 2021 data is added)
+#   - File name will change every year!! (e.g. 'h36u22' once 2022 data is added)
 
 head(pool)
 head(linkage)
 
 
 linkage_sub = linkage %>% 
-  select(DUPERSID, PANEL, STRA9620, PSU9620)
+  select(DUPERSID, PANEL, STRA9621, PSU9621)
 
 pool_linked =  left_join(pool, linkage_sub, by = c("DUPERSID", "PANEL"))
 
@@ -182,11 +182,11 @@ pool_linked %>% count(PANEL)
 
 
 # Define the survey design ----------------------------------------------------
-#  - Use PSU9620 and STRA9620 variables, since pooling before and after 2019
+#  - Use PSU9621 and STRA9621 variables, since pooling before and after 2019
 
 pool_dsgn = svydesign(
-  id = ~PSU9620,
-  strata = ~STRA9620,
+  id = ~PSU9621,
+  strata = ~STRA9621,
   weights = ~poolwt,
   data = pool_linked,
   nest = TRUE)

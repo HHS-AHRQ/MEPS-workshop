@@ -26,16 +26,15 @@
   devtools::install_github("e-mitchell/meps_r_pkg/MEPS") # easier file import
   
   
-  
 # Load libraries (run this part each time you re-start R)
 
   
   
   
 
+
 # Set survey option for lonely PSUs
 
-  
   
   
   
@@ -52,10 +51,13 @@
 
   
   
+  
+  
 # View data
 
   
   
+    
 
 # Keep only needed variables --------------------------------------------------
 # - codebook: https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=h224
@@ -68,12 +70,14 @@
   
   
   
+  
 # Add variables for persons with any expense and persons under 65 -------------
 
 
   
   
   
+
 
 # QC check on new variables
   
@@ -84,11 +88,11 @@
 
 # Define the survey design ----------------------------------------------------
     
+ 
+  
+  
+  
 
-  
-  
-  
-  
   
 # Calculate estimates ---------------------------------------------------------
 #  - Overall expenses (National totals)
@@ -99,13 +103,14 @@
 #    - Mean expense per person with an expense, by age group
 #    - Median expense per person with an expense, by age group
 
+  
 # Overall expenses (National totals)
 
   
   
   
 # Percentage of persons with an expense
-
+ 
   
   
   
@@ -120,7 +125,7 @@
  
   
   
-   
+    
 # Mean expense per person with an expense
 
   
@@ -133,8 +138,7 @@
   
 
 # Median expense per person with an expense, by age category
-
-  
+ 
   
   
   
