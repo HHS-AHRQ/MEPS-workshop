@@ -28,11 +28,11 @@ Pooling multiple years of MEPS data. The example calculates:
 
 
 #### Exercise 3
-Linking medical conditions to prescribed medicine purchases: 
-1. National totals:
-    - Number of people with PMED purchase for hyperlipidemia 
-    - Number of PMED fills for hyperlipidemia
-    - PMED expenditures for hyperlipidemia
-2. Per-person averages
-    - Average PMED fills for hyperlipidemia
-    - Average PMED expendiutures for hyperlipidemia
+Linking medical conditions to office-based visits: 
+1. Overall:
+    - Number of people w office-based visit for COVID
+    - Number of office visits for COVID
+    - Expenditures for office visits for COVID 
+2. By age groups:
+    - Percent of people with office visit for COVID
+    - Average per-person expenditures for office visits for COVID
