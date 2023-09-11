@@ -71,7 +71,8 @@ title 'Percentage of people with an expense, 2020 - method 3 (using surveyfreq)'
 
 
 
-/* Mean expense (overall), mean and median expense among those with an expense (overall and by age group) */
+/* Total expenditures, mean expense (overall), and mean and median expense among those with an expense 
+(overall and by age group) */
 
 title 'Mean and median expenses, overall and by whether person has an expense and by age group';
 
@@ -82,7 +83,7 @@ title 'Mean and median expenses, overall and by whether person has an expense an
 
 title;  /* cancel the TITLE statements */
 
-/* Example to show full precision of estimate where SAS has rounded or used scientific notation */ 
+
 
 
 
