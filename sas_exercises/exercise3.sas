@@ -1,18 +1,18 @@
 /* ----------------------------------------------------------------------------------------------------------------
 
-MEPS-HC: Prescribed medicine utilization and expenditures for the treatment of hyperlipidemia
+MEPS-HC: Office-based medical visits and expenditures for the treatment of COVID-19
 
-This example code shows how to link the MEPS-HC Medical Conditions file to the Prescribed Medicines file for data year 
-2020 in order to estimate the following:
-	- Total rx fills for the treatment of hyperlipidemia
-	- Total rx expenditures for the treatment of hyperlipidemia 
-	- Number of people treated for hyperlipidemia with prescribed medicines
-	- Mean rx expenditures and fills per person for the treatment of hyperlipidemia (among those with any rx fills for 
-	  hyperlipidemia)
+This example code shows how to link the MEPS-HC Medical Conditions file to the Office-based medical visits file for 
+data year 2020 in order to estimate the following:
+	- Total number of people with an office-based visit for the treatment of COVID-19 
+	- Total number of office-based visits for the treatment of COVID-19
+	- Total expenditures on office-based visits for the treatment of COVID-19 
+	- Percent of people with an office-based visit for COVID-19, by age
+	- Mean office-based expenditures per person on COVID-19 among people with an office-based visit for COVID-19, by age
 
 Input files:
-  - h220a.sas7bdat        (2020 Prescribed Medicines file)
-  - h222.sas7bdat         (2020 Conditions file)
+  - h220g.sas7bdat        (2020 Office-Based Medical Visits file)
+  - h222.sas7bdat         (2020 Medical Conditions file)
   - h220if1.sas7bdat      (2020 CLNK: Condition-Event Link file)
   - h224.sas7bdat         (2020 Full-Year Consolidated file)
 
@@ -34,12 +34,11 @@ libname meps 'C:\MEPS';
 
 /**** Read in data files and keep only needed variables ------------------------------------------------------- */ 
 
-/* PMED file (record = rx fill or refill for a person) */
+/* Office-based (OB) medical visits file (record = office-based visit for a person) */
 
-data pmed20;
-	set meps.h220a;
-	evntidx = linkidx; /* rename LINKIDX to EVNTIDX for merging to conditions */ 
-	keep dupersid drugidx rxrecidx evntidx rxdrgnam rxxp20x;
+data ob20;
+	set meps.h220g;
+	keep dupersid evntidx obxp20x telehealthflag obdatemm;
 run;
 
 /* Conditions file (record = medical condition for a person) */
@@ -49,7 +48,7 @@ data cond20;
 	keep dupersid condidx icd10cdx ccsr1x ccsr2x ccsr3x;
 run;
 
-/* Conditions-event link file (crosswalk between conditions and medical events, including PMEDs) */
+/* Conditions-event link file (crosswalk between conditions and medical events) */
 
 data clnk20;
 	set meps.h220if1;
@@ -59,36 +58,34 @@ run;
 
 data fyc20;
 	set meps.h224;
-	keep dupersid sex choldx perwt20f varpsu varstr;
+	keep dupersid agelast perwt20f varpsu varstr;
 run;
 
 
 /**** Prepare data for estimation --------------------------------------------------------------------------------- */
 
-/* Subset to only condition records for hyperlipidemia (any CCSR = "END010") */
+/* Subset to only condition records for COVID-19 (any CCSR = "INF012") */
 /* Note: you can find the CCSRs for collapsed condition categories here: 
 https://github.com/HHS-AHRQ/MEPS/blob/master/Quick_Reference_Guides/meps_ccsr_conditions.csv */ 
 
-data hl;
+data covid;
 	set cond20;  
-	where ccsr1x = 'END010' or ccsr2x = 'END010' or ccsr3x = 'END010';
+	where ccsr1x = 'INF012' or ccsr2x = 'INF012' or ccsr3x = 'INF012';
 run; 
 
-/* Example to show someone with 'duplicate' hyperlipidemia conditions with different CONDIDXs.  This usually happens 
-when the collapsed 3-digit ICD10s are the same but the fully-specified ICD10s are different (e.g., one person has 
-different condition records for both E78.1 and E78.5, which both map to END010 collapse to E78 on the PUF). */
+/* Example to show someone with 'duplicate' COVID-19 conditions with different CONDIDXs. */
 
-proc sort data=hl nodupkey dupout=dup_hl out=temp1; /* duplicate IDs are output to dup_hl */
+proc sort data=covid nodupkey dupout=dup_covid out=temp1; /* duplicate IDs are output to dup_covid */
 	by dupersid;
 run;
 
-proc print data=hl noobs;
-	where dupersid = '2320134102'; /* using the first duplicate DUPERSID from dup_hl as an example */ 
+proc print data=covid noobs;
+	where dupersid = '2326578104'; /* using the first duplicate DUPERSID from dup_covid as an example */ 
 run;
 
-/* Get EVNTIDX values for hyperlipidemia records from CLNK file */
+/* Get EVNTIDX values for COVID-19 records from CLNK file */
 
-proc sort data=hl;
+proc sort data=covid; /* note this file intentionally still contains duplicates! */ 
 	by dupersid condidx;
 run;
 
@@ -96,184 +93,156 @@ proc sort data=clnk20;
 	by dupersid condidx;
 run;
 
-/* Note - this merge can be 1-1 or 1-many */
+/* Note - this merge can be 1-1 or 1-many (e.g., there can be multiple events that treat the same condition */
 
-data clnk_hl;
-	merge hl (in=A) clnk20 (in=B);
+data clnk_covid;
+	merge covid (in=a) clnk20 (in=b);
 	by dupersid condidx;
-	if A and B; /* only keep records that are in both files */ 
+	if a and b; /* only keep records that are in both files */ 
 run;
 
-/* Sort data to prepare for merge between clnk_hl and pmed20 */
+/* Sort data to prepare for merge between clnk_covid and ob20 */
 
-proc sort data=clnk_hl;
+proc sort data=clnk_covid;
 	by dupersid evntidx;
 run;
 
-proc sort data=pmed20;
+proc sort data=ob20;
 	by dupersid evntidx;
 run;
 
-/* !!Note: Our 'duplicate' hyperlipidemia records have created a many-to-many merge between clnk_hl and pmed20, but the
-SAS merge statement does not do 'full' or 'traditional' many to many merges! */ 
 
-/* Example - for EVNTIDX = '2320134102003703' there are 2 records on clnk_hl and 3 records on pmed20 */
+/* Because some people can have multiple CONDIDX values for COVID-19 as shown in the example above, and each of 
+these different CONDIDX IDs can link to the same OB stay, it is necessary to de-duplicate on EVNTIDX before merging. 
+!!Note - we do not have an issue with duplicates in this particular example, but there can be issues with duplicates
+when analyzing another condition/event pair. */
 
-proc print data=clnk_hl noobs;
-	where evntidx='2320134102003703'; 
+proc sort data=clnk_covid nodupkey; 
+	by dupersid evntidx;
 run;
 
-proc print data=pmed20 noobs;
-	where evntidx='2320134102003703'; 
-run;
 
-/* A 'full' many-to-many merge would create 2 x 3 = 6 combinations (rows) in the output, but let's look at what SAS
-merge does for this one example case */
+/* Merge to OB file and only keep records in both files.
+Create dummy variable for each unique OB visit (this will be used for estimating events) */
 
-data clnk_example;
-	set clnk_hl;
-	where evntidx='2320134102003703'; 
-run;
-
-data pmed_example;
-	set pmed20;
-	where evntidx='2320134102003703'; 
-run;
-
-data merge_example;
-	merge clnk_example (in=a) pmed_example (in=b);
-	by evntidx;
+data covid_ob;
+	merge clnk_covid (in=a) ob20 (in=b);
+	by dupersid evntidx;
 	if a and b;
+	ob_covid = 1;
 run;
 
-/* We can see in the above example that we only get 3 records using the merge statement instead of 6. 
-SAS merge statement only keeps the maximum number of records (rows) from either file in the merge.  */ 
+/* Sum number of OB stays and OB expenditures on COVID-19 within each person */
 
-/* Get PMED fills linked to hyperlipidemia.
-Using proc sql to factilitate 'full' many-to-many merge which regular SAS merge statements don't do */
-
-proc sql;
- 	create table hl_merged as
- 	select a.*, b.*
- 	from clnk_hl a inner join pmed20 b
- 	on a.DUPERSID=b.DUPERSID and
- 	a.EVNTIDX=b.EVNTIDX;
- quit;
- run; 
-
-/* Because some people can have multiple CONDIDX values for hyperlipidemia as shown in the example above, and each of 
-these different CONDIDX IDs can link to the same rx fills, it is necessary to de-duplicate on the unique fill identifier
-RXRECIDX within a person who has hyperlipidemia.
-
-For example, the same drug/fill can link to both E78.1 and E78.5, but these are both hyperlipidemia.    
-
-An example below illustrating the above issue.  Note that there are 'duplicate' RXRECIDX (fill IDs) repeated across two 
-different CONDIDX values for the same person because this person has 'duplicate' hyperlipidemia records and some fills 
-are linked to both CONDIDX values for hyperlipidemia. */ 
-
-proc sort data=hl_merged nodupkey dupout=dup_hl_fills out=temp2; /* duplicate fill records are output to dup_hl_fills */
-	by dupersid rxrecidx;
-run;
-
-proc print data=hl_merged noobs;
-	where dupersid = '2320134102'; /* using first duplicate record as an example */ 
-run;
-
-/* De-duplicate unique fills within a person who has hyperlipidemia */
-
-proc sort data=hl_merged nodupkey out=hl_dedup;
-	by dupersid rxrecidx;
-run;
-
-/* Revisit 'duplicate' fill example to see effects of de-duplicating */
-
-proc print data=hl_dedup noobs;
-	where dupersid = '2320134102'; /* same example case as above */ 
-run;
-
-/* QC: Look at top PMEDs for hyperlipidemia to see if they make sense */
-
-proc freq data=hl_dedup order=freq;
-	tables RXDRGNAM / nocum maxlevels=10;
-run;
-
-/* Create dummy variable for each unique fill (this will be summed within each person to get total fills per person) */
-
-data hl_dedup;
-	set hl_dedup;
-	hl_fill = 1;
-run;
-
-/* Sum number of fills, number of drugs, and expenditures linked to hyperlipidemia within each person */
-
-proc means data=hl_dedup noprint nway sum;
+proc means data=covid_ob noprint nway sum;
 	class dupersid; 	/* sum within each person */
-	var hl_fill rxxp20x; 
-	output out=drugs_by_pers (drop = _TYPE_ _FREQ_) sum=n_hl_fills hl_drug_exp;
+	var ob_covid obxp20x; 
+	output out=ob_by_pers (drop = _TYPE_ _FREQ_) sum=tot_ob tot_exp;
 run;
 
-/* Revisiting 'duplicate' example at the person-level to show that fills were only counted once */
 
-proc print data=drugs_by_pers noobs;
-	where dupersid = '2320134102'; 
-run;
+/* Merge person-level totals back to FYC and create flag for whether a person has any OB visits for COVID-19 */
 
-/* Merge person-level totals back to FYC and create flag for whether a person has any pmed fills for hyperlipidemia */
-
-data fyc_hl;
-	merge fyc20 (in=A) drugs_by_pers;
+data fyc_merged;
+	merge fyc20 (in=a) ob_by_pers;
 	by dupersid;
-	if A; 	/* keep all people on the FYC */ 
+	if a; 	/* keep all people on the FYC */ 
 
-	if n_hl_fills > 0 then hl_pmed_flag = '1'; 	/* create flag for anyone who has rx fills for HL */
-	else hl_pmed_flag = '0'; 	/* set flag to 0 for people with no rx fills for HL */ 
+	if tot_ob > 0 then covid_ob_flag = '1'; 	/* create person-level flag for anyone who has OB visit for COVID-19 */
+	else covid_ob_flag = '0'; 	/* set flag to 0 for people with no OB visits for COVID-19 */ 
 
-	if n_hl_fills = . then n_hl_fills = 0; /* replace missings caused by the merge with 0's */
-	if hl_drug_exp = . then hl_drug_exp = 0; 
+	if tot_ob = . then tot_ob = 0; /* replace missings caused by the merge with 0's */
+	if tot_exp = . then tot_exp = 0; 
+
+	/* create age group variable */
+
+	if agelast < 18 then agecat = "Under 18";
+	else if 18 <= agelast <= 64 then agecat = "18-64";
+	else if agelast ge 65 then agecat = "65+";
+	else agecat = "Error!"; /* this is a QC, there should be no records with this value for agecat */ 
 run;
 
-/* QC: check counts of hl_pmed_flag=1 and compare to the number of rows in drugs_by_pers.  
+/* QC creation of agecat and confirm there are no values of 'Error!' or missing values */ 
+
+proc freq data=fyc_merged;
+	tables agecat / missing;
+run;
+
+
+/* QC: check counts of covid_ob_flag=1 and compare to the number of rows in ob_by_pers.  
 Confirm there are no missing values */
 
-proc freq data=fyc_hl;
-	tables hl_pmed_flag;
+proc freq data=fyc_merged;
+	tables covid_ob_flag / missing;
 run;
 
-/* QC: There should be no records where hl_pmed_flag=0 and (hl_drug_exp > 0 or n_hl_fills > 0) */
 
-proc print data=fyc_hl;
-	where hl_pmed_flag = '0' and (hl_drug_exp > 0 or n_hl_fills > 0); 
+/* Check sample sizes in each age group to make sure they are sufficient */ 
+
+proc freq data=fyc_merged;
+	tables covid_ob_flag*agecat;
 run;
+
+
+/* QC: There should be no records where covid_ob_flag=0 and (tot_exp > 0 or tot_ob > 0) */
+
+proc print data=fyc_merged;
+	where covid_ob_flag = '0' and (tot_exp > 0 or tot_ob > 0); 
+run;
+
 
 /*** ESTIMATION -------------------------------------------------------------------------------------------------- */ 
 
 * Suppress graphics;
 
- ods graphics off;
+ods graphics off;
 
 * National Totals; 
 
 /* Estimates for the following:
-	- sum of hl_pmed_flag = total people with any rx fills for HL
-	- sum of n_hl_fills = total number of rx fills for HL
-	- sum of hl_drug_exp = total rx expenditures for HL */
+	- sum of covid_ob_flag = total people with OB visit for COVID-19
+	- sum of tot_ob = total number of OB visits for COVID-19
+	- sum of tot_exp = total OB expenditures for COVID-19 */
 
-proc surveymeans data=fyc_hl sum; 
+proc surveymeans data=fyc_merged sum; 
 	stratum varstr; /* stratum */ 
 	cluster varpsu; /* PSU */ 
 	weight perwt20f; /* person weight */ 
-	var hl_pmed_flag n_hl_fills hl_drug_exp;  /* variables we want to estimate totals for */
+	var covid_ob_flag tot_ob tot_exp;  /* variables we want to estimate totals for */
 run;
 
+/* Proportion of people with an OB visit for COVID-19 by age group */
+/* To convert to percentages, multiply by 100.  See exercise 1 for alternate methods to directly calculate percents */ 
 
-/* Per-person averages for people with at least one PMED fill for hyperlipidemia (hl_pmed_flag = 1) 
-	-mean of hl_drug_exp = avg expenditures per person on rx for HL 
-	-mean of n_hl_fills = avg number of fills per person on rx for HL */
-
-proc surveymeans data=fyc_hl mean;
+proc surveymeans data=fyc_merged mean;
 	stratum varstr; 	/* stratum */
 	cluster varpsu; 	/* PSU */ 
 	weight perwt20f;	 /* person weight */ 
-	domain hl_pmed_flag('1'); 	/*subpop is people with any rx fills for HL */ 
-	var hl_drug_exp n_hl_fills; 
+	var covid_ob_flag;
+	domain agecat;
 run;
+
+
+/* Average expenditures per person on OB visits for COVID-19 among people with at least one OB visit for COVID-19 
+(covid_ob_flag = '1'), by age */ 
+
+proc surveymeans data=fyc_merged mean;
+	stratum varstr; 	/* stratum */
+	cluster varpsu; 	/* PSU */ 
+	weight perwt20f;	 /* person weight */ 
+	var tot_exp; 
+	domain covid_ob_flag('1')*agecat; 	/*subpop is people with any OB visits for COVID-19 by age */ 
+run;
+
+
+/******** Bonus! **********/ 
+
+/* A note about telehealth:
+   - telehealth questions were added to the survey in fall 2020           
+   - TELEHEALTHFLAG = -15 for events reported before telehealth questions were added   
+   - Recommendation: imputation or sensitivity analysis  */ 
+
+proc freq data=covid_ob;
+	tables telehealthflag*obdatemm / missing;
+run;
+

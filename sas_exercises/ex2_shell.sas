@@ -10,16 +10,17 @@ This program pools 2018, 2019, and 2020 MEPS FYC files and calculates annual ave
   - C:\MEPS\h209.sas7bdat (2018 Full-Year Consolidated (FYC) file)
   - C:\MEPS\h216.sas7bdat (2019 Full-Year Consolidated (FYC) file)
   - C:\MEPS\h224.sas7bdat (2020 Full-Year Consolidated (FYC) file)
-  - C:\MEPS\h36u20.sas7bdat (1996-2020 Pooled Linkage File for Common Variance Structure)
+  - C:\MEPS\h36u21.sas7bdat (1996-2021 Pooled Linkage File for Common Variance Structure)
 
-When pooling data years before and after 2002 or 2019, the Pooled Linkage File (h36u20) must be used for correct 
+When pooling data years before and after 2002 or 2019, the Pooled Linkage File (h36u21) must be used for correct 
 variance estimation.  
 
-!!Note: The name of the Pooled Linkage File changes with each new year of data (e.g. 'h36u21' once 2021 data is added).
+!!Note: The name of the Pooled Linkage File changes with each new year of data (e.g. 'h36u22' once 2022 data is added).
 
 **********************************************************************/
 
 /* Set libname for folder with MEPS data */
+
 
 
 
@@ -46,9 +47,11 @@ and keep only needed variables */
 
 /* Look at the variable cabladdr and cancerdx for one year to understand skip pattern */
 /* From the documentation: 
-		 - Questions about cancer were asked only of persons aged 18 or older. 
+		 - Questions about cancer were asked only of persons aged 18 or older 
 		 - CANCERDX asks whether person ever diagnosed with cancer 
 	 	 - Only if YES to CANCERDX, then asked what type (CABLADDR, CABLOOD, CABREAST...) */
+
+
 
 
 
@@ -81,7 +84,9 @@ for bladder cancer diagnosis */
 
 
 
- /* Sort the pooled 2018-2020 meps file for merging */
+
+/* Sort the pooled 2018-2020 meps file for merging */
+
 
 
 
@@ -99,7 +104,14 @@ for bladder cancer diagnosis */
 
 
 
+/* QC - check for missings in merged on pooled variance estimation variables */
+
+
+
+
+
 /* Suppress the graphics for easier viewing */ 
+
 
 
 
@@ -112,10 +124,12 @@ title 'Proportion of people diagnosed with bladder cancer, 2018-2020 annual aver
 
 
 
+
 /* Average expenditures and out of pocket payments per person by bladder cancer status,
 ANNUAL AVERAGES from 2018-2020 */
 
 title 'Average expenditures and out of pocket per person with and without bladder cancer, 2018-2020 annual average';
+
 
 
 

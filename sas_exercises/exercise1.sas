@@ -88,10 +88,10 @@ run;
 title 'Proportion of people with an expense in 2020 - method 2 (2-category character variable)';
 
 proc surveymeans data=fyc20 nobs mean sum;
-    var has_exp_c; 		/* yes/no character variable */
 	stratum varstr;		/* stratum */
 	cluster varpsu;		/* PSU */
     weight perwt20f; 	/* person-level weight */
+	var has_exp_c; 		/* yes/no character variable */
 run;
 
 /* Method 3 for estimating the percent of people with an expense - using surveyfreq to output PERCENT (not proportion) */ 
@@ -99,21 +99,22 @@ run;
 title 'Percentage of people with an expense, 2020 - method 3 (using surveyfreq)';
 
 proc surveyfreq data=fyc20;
-    tables  has_exp_c;	/* yes/no character variable */
 	stratum varstr;		/* stratum */
 	cluster varpsu;		/* PSU */
 	weight perwt20f;	/* person-level weight */
+	tables  has_exp_c;	/* yes/no character variable */
 run;
 
-/* Mean expense (overall), mean and median expense among those with an expense (overall and by age group) */
+/* Total expenditures, mean expense (overall), mean and median expense among those with an expense 
+(overall and by age group) */
 
 title 'Mean and median expenses, overall and by whether person has an expense and by age group';
 
 proc surveymeans data=fyc20 nobs mean median sum;
-    var totexp20;		/* total expenditures for person */
     stratum varstr;		/* stratum */
 	cluster varpsu;		/* psu */ 
 	weight  perwt20f;	/* person-level weight */ 
+	var totexp20;		/* total expenditures for person */
 	domain has_exp_c has_exp_c('Yes')*agecat;  /* the subpopulations/domains we want estimates for */
 	ods output statistics=overall_stats domain=subpop_stats domainquantiles=subpop_median; 
 					/* optional statements to output results to SAS datasets */
