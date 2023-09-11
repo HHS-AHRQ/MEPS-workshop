@@ -1,18 +1,16 @@
-* MEPS-HC: Prescribed medicine utilization and expenditures for 
-* the treatment of hyperlipidemia
-* 
-* This example code shows how to link the MEPS-HC Medical Conditions file 
-* to the Prescribed Medicines file for data year 2020 in order to estimate
-* the following:
+* Exercise 3:
+* This program is an example of how to link the MEPS-HC Medical Conditions file, 
+* the Office Visits Event file, and the Full-Year Consolidated file for 
+* data year 2020 in order to estimate the following:
 *
-*   - Total number of people with one or more rx fills for hyperlipidemia
-*   - Total rx fills for the treatment of hyperlipidemia
-*   - Total rx expenditures for the treatment of hyperlipidemia 
-*   - Mean number of Rx fills for hyperlipidemia per person, among those with any
-*   - Mean expenditures on Rx fills for hyperlipidemia per person, among those with any
+*   - Total number of people with office-based medical visit for COVID
+*   - Total number of office visits for COVID
+*   - Total expenditures on office visits for COVID 
+*   - Percent of people with office visit for COVID, by age
+*   - Average expenditure on office visits for COVID, by age
 * 
 * Input files:
-*   - h220a.dta        (2020 Prescribed Medicines file)
+*   - h220d.dta        (2020 Inpatient Stays file)
 *   - h222.dta         (2020 Conditions file)
 *   - h220if1.dta      (2020 CLNK: Condition-Event Link file)
 *   - h224.dta         (2020 Full-Year Consolidated file)
@@ -36,8 +34,8 @@ cd C:\MEPS
 log using Ex3.log, replace 
 
 /* Get data from web (you can also download manually) */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
-unzipfile "h220adta.zip", replace 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220g/h220gdta.zip" "h220gdta.zip", replace
+unzipfile "h220gdta.zip", replace 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h222/h222dta.zip" "h222dta.zip", replace
 unzipfile "h222dta.zip", replace 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220i/h220if1dta.zip" "h220if1dta.zip", replace
@@ -46,38 +44,52 @@ copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.z
 unzipfile "h224dta.zip", replace 
 
 /* linkage file */
-
-/* PMED file, person-Rx-level */
+// inspect file, save
 
 /* FY condolidated file, person-level */
 
-/* Conditions file, person-condition-level, subset to hyperlipidemia */
-// inspect conditions file
+/* Office-based file, visit-level */
 
-/* merge to CLNK file by dupersid and condidx, drop unmatched */
-// inspect file 
+// inspect file, save
 
-/* merge to prescribed meds file by dupersid and evntidx, drop unmatched */
-// inspect file 
+/* Conditions file, condition-level, subset to COVID */
 
-/* drop duplicates */
-// inspect file 
+// keep only records for COVID
 
-/* collapse to person-level (DUPERSID), sum to get number of fills and expenditures */
+// inspect file, save 
 
-/* merge to FY file, create flag for any Rx fill for HL */
+/* merge conditions to CLNK file by condidx, drop unmatched */
+
+// drop observations that do not match
+
+// inspect file
+
+// drop duplicate fills--- fills that would otherwise be counted twice */
+
+// inspect file after de-duplication
+
+/* merge to inpatient file by evntidx, drop unmatched */
+
+// drop observations for that do not match
+
+// inspect file
+
+/* collapse to person-level (DUPERSID), sum to get number of office visits and expenditures */
+
+/* merge to FY file, create flag for any ipat for COVID */
+
+
 
 /* Set survey options */
-svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(centered)
 
-/* total number of people with 1+ Rx fills for HL */
+/* total people with office visit for COVID */
 
-/* Total rx fills for the treatment of hyperlipidemia */
+/* total number of office visits for COVID */
 
-/* Total rx expenditures for the treatment of hyperlipidemia */
+/* total expenditures for office visits for COVID */
 
-/* mean number of Rx fills for hyperlipidemia per person, among those with any */
+/* percent with office visit for COVID by age */
 
-/* mean expenditures on Rx fills for hyperlipidemia per person, among those with any */
-
-
+/* average number of office visits for COVID per person by age */
+ 
+/* average expenditure on office visits for COVID per person by age */

@@ -1,18 +1,16 @@
-* MEPS-HC: Prescribed medicine utilization and expenditures for 
-* the treatment of hyperlipidemia
-* 
-* This example code shows how to link the MEPS-HC Medical Conditions file 
-* to the Prescribed Medicines file for data year 2020 in order to estimate
-* the following:
+* Exercise 3:
+* This program is an example of how to link the MEPS-HC Medical Conditions file, 
+* the Office Visits Event file, and the Full-Year Consolidated file for 
+* data year 2020 in order to estimate the following:
 *
-*   - Total number of people with one or more rx fills for hyperlipidemia
-*   - Total rx fills for the treatment of hyperlipidemia
-*   - Total rx expenditures for the treatment of hyperlipidemia 
-*   - Mean number of Rx fills for hyperlipidemia per person, among those with any
-*   - Mean expenditures on Rx fills for hyperlipidemia per person, among those with any
+*   - Total number of people with office-based medical visit for COVID
+*   - Total number of office visits for COVID
+*   - Total expenditures on office visits for COVID 
+*   - Percent of people with office visit for COVID, by age
+*   - Average expenditure on office visits for COVID, by age
 * 
 * Input files:
-*   - h220a.dta        (2020 Prescribed Medicines file)
+*   - h220d.dta        (2020 Inpatient Stays file)
 *   - h222.dta         (2020 Conditions file)
 *   - h220if1.dta      (2020 CLNK: Condition-Event Link file)
 *   - h224.dta         (2020 Full-Year Consolidated file)
@@ -36,8 +34,8 @@ cd C:\MEPS
 log using Ex3.log, replace 
 
 /* Get data from web (you can also download manually) */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220a/h220adta.zip" "h220adta.zip", replace
-unzipfile "h220adta.zip", replace 
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220g/h220gdta.zip" "h220gdta.zip", replace
+unzipfile "h220gdta.zip", replace 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h222/h222dta.zip" "h222dta.zip", replace
 unzipfile "h222dta.zip", replace 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220i/h220if1dta.zip" "h220if1dta.zip", replace
@@ -48,70 +46,101 @@ unzipfile "h224dta.zip", replace
 /* linkage file */
 use h220if1, clear
 rename *, lower
+// inspect file, save
+describe
+list dupersid condidx evntidx eventype if _n<20
 save CLNK_2020, replace
 
-/* PMED file, person-Rx-level */
-use DUPERSID DRUGIDX RXRECIDX LINKIDX RXDRGNAM RXXP20X using h220a, clear
-rename *, lower
-rename linkidx evntidx
-save PM_2020, replace
-
 /* FY condolidated file, person-level */
-use DUPERSID SEX CHOLDX VARSTR VARPSU PERWT20F using h224, clear
+use DUPERSID AGELAST VARSTR VARPSU PERWT20F using h224, clear
 rename *, lower
+gen agecat=.
+replace agecat=1 if agelast < 18
+replace agecat=2 if agelast >= 18 & agelast < 65
+replace agecat=3 if agelast >= 65
+
+label define agecat 1 "<18" 2 "18-64" 3 "65+"
+label values agecat agecat
+tab1 agecat, m 
+
 save FY_2020, replace
+describe
 
-/* Conditions file, person-condition-level, subset to hyperlipidemia */
-use DUPERSID CONDIDX ICD10CDX CCSR1X-CCSR3X using h222, clear
+/* Office-based file, visit-level */
+use DUPERSID EVNTIDX OBXP20X using h220g, clear
 rename *, lower
-keep if ccsr1x == "END010" | ccsr2x == "END010" | ccsr3x == "END010"
-// inspect conditions file
-sort dupersid condidx
-list dupersid condidx icd10cdx if _n<20
-list if dupersid=="2320134102"
+// inspect file, save
+list dupersid evntidx obxp20x if _n<21
+save OB_2020, replace
+describe
 
-/* merge to CLNK file by dupersid and condidx, drop unmatched */
-merge m:m dupersid condidx using CLNK_2020
+/* Conditions file, condition-level, subset to COVID */
+use DUPERSID CONDIDX ICD10CDX CCSR1X CCSR2X CCSR3X using h222, clear
+rename *, lower
+// keep only records for COVID
+keep if ccsr1x=="INF012" | ccsr2x=="INF012" | ccsr3x=="INF012" 
+// inspect file, save 
+list dupersid condidx ccsr1x ccsr2x ccsr3x icd10cdx if _n<21
+save COND_2020, replace
+describe
+
+/* merge conditions to CLNK file by condidx, drop unmatched */
+merge m:m condidx using CLNK_2020
+// drop observations that do not match
+drop if _merge~=3
+drop _merge
+// inspect file
+list dupersid condidx evntidx icd10cdx if _n<21
+// drop duplicate fills--- fills that would otherwise be counted twice */
+duplicates drop evntidx, force
+// inspect file after de-duplication
+list dupersid condidx evntidx icd10cdx if _n<21
+describe
+
+/* merge to inpatient file by evntidx, drop unmatched */
+merge 1:m evntidx using OB_2020
 // drop observations for that do not match
 drop if _merge~=3
 drop _merge
-// inspect file 
-list dupersid condidx icd10cdx if dupersid=="2320134102"
+// inspect file
+list dupersid condidx icd10cdx evntidx obxp20x if _n<21
+describe
 
-/* merge to prescribed meds file by dupersid and evntidx, drop unmatched */
-merge m:m dupersid evntidx using PM_2020
-// drop observations for that do not match
-drop if _merge~=3
-drop _merge
-// inspect file 
-list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
-
-/* drop duplicates */
-duplicates drop dupersid rxrecidx, force
-// inspect file 
-list dupersid condidx icd10cdx evntidx rxrecidx if dupersid=="2320134102"
-
-/* collapse to person-level (DUPERSID), sum to get number of fills and expenditures */
+/* collapse to person-level (DUPERSID), sum to get number of office visits and expenditures */
 gen one=1
-collapse (sum) num_rx=one (sum) exp_rx=rxxp20x, by(dupersid)
-/* merge to FY file, create flag for any Rx fill for HL */
+collapse (sum) num_obvis=one (sum) exp_obvis=obxp20x, by(dupersid)
+
+/* merge to FY file, create flag for any ipat for COVID */
 merge 1:1 dupersid using FY_2020
-replace exp_rx=0 if _merge==2
-replace num_rx=0 if _merge==2
-gen any_rx=(num_rx>0)
+replace exp_obvis=0 if _merge==2
+replace num_obvis=0 if _merge==2
+gen any_obvis=(num_obvis>0)
+
+
 
 /* Set survey options */
 svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(centered)
 
-/* total number of people with 1+ Rx fills for HL */
-svy: total any_rx
-/* Total rx fills for the treatment of hyperlipidemia */
-svy: total num_rx
-/* Total rx expenditures for the treatment of hyperlipidemia */
-svy: total exp_rx
-/* mean number of Rx fills for hyperlipidemia per person, among those with any */
-svy, sub(any_rx): mean num_rx
-/* mean expenditures on Rx fills for hyperlipidemia per person, among those with any */
-svy, sub(any_rx): mean exp_rx
+/* total people with office visit for COVID */
+svy: total any_obvis
 
+/* total number of office visits for COVID */
+svy: total num_obvis
+di %15.0f r(table)[1,1]
+di %15.0f r(table)[2,1]
 
+/* total expenditures for office visits for COVID */
+svy: total exp_obvis
+di %15.0f r(table)[1,1]
+di %15.0f r(table)[2,1]
+
+/* percent with office visit for COVID by age */
+svy: mean any_obvis, over(agecat)
+
+/* average number of office visits for COVID per person by age */
+svy: mean num_obvis, over(agecat)
+svy, sub(if any_obvis==1): mean num_obvis, over(agecat)
+ 
+/* average expenditure on office visits for COVID per person by age */
+svy: mean exp_obvis, over(agecat)
+svy, sub(if any_obvis==1): mean exp_obvis, over(agecat)

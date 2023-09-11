@@ -1,4 +1,4 @@
-********************************************************************************************************************************** 
+*****************************************************************************************************************************************
 * Exercise 1: 
 * This program generates the following estimates on national health care for the U.S. civilian non-institutionalized population, 2020:
 *  - Overall expenses (National totals)
@@ -14,7 +14,8 @@
 *
 * This program is available at:
 * https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
-*********************************************************************************************************************************
+*****************************************************************************************************************************************
+
 
 clear
 set more off
@@ -38,22 +39,31 @@ gen any_expenditure=(total_exp>0)
 gen agecat=.
 replace agecat=1 if agelast>=0 & agelast<65
 replace agecat=2 if agelast>=65
+// here's an alternative way to create a categorical variable 
+*egen agecat2=cut(agelast), at(0 65 100)
+
+// create and assign value labels to age 
+label define agecat 1 "<65" 2 "65+"
+label values agecat agecat
 
 /* QC check new variables*/
 list total_exp any_expenditure agecat age20x in 1/20, table
+
 tab1 any_expenditure agecat, m
+
 tab any_expenditure agecat, m
  
-/* specify survey design characteristics */
+summarize total_exp, d
+summarize total_exp if any_expenditure==1, d
+
+/* identify the survey design characteristics */
 svyset varpsu [pw = perwt20f], strata(varstr) vce(linearized) singleunit(missing)
 
 /* total expenses */
 svy: total total_exp
-
 // list output stored in r()
 return list 
 matrix list r(table)
-
 // display results without scientific notation 
 di %15.0f r(table)[1,1]
 di %15.0f r(table)[2,1]
@@ -71,7 +81,22 @@ svy, subpop(if any_expenditure==1): mean total_exp
 svy, subpop(if any_expenditure==1): mean total_exp, over(agecat)
 
 /* median expense per person with an expense, by age */
+epctile total_exp, subpop(if total_exp>0) p(50) svy
+epctile total_exp, subpop(if total_exp>0) p(50) svy over(agecat)
+
+// alternative way 2 
 table agecat [pw=perwt] if total_exp>0, stat(median total_exp)
+
+/* alternative way 2 
+_pctile total_exp [pw=perwt20f] if total_exp>0 & agecat==1
+return list
+putexcel B10=`r(r1)' 
+_pctile total_exp [pw=perwt20f] if total_exp>0 & agecat==2
+return list
+putexcel B11=`r(r1)' 
+
+
+
 
 
 
