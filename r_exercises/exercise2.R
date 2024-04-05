@@ -1,26 +1,18 @@
 # -----------------------------------------------------------------------------
 # This program illustrates how to pool MEPS data files from different years. 
-# It  demonstrates use of the Pooled Variance file (h36u19) to pool data years 
-# before and after 2019.
-# 
 #
-# The program pools 2018, 2019, and 2020 data and calculates:
+# The program pools 2019, 2020, and 2021 data and calculates:
 #  - Percentage of people with Bladder Cancer (CABLADDR)
 #  - Average expenditures per person with Bladder Cancer (TOTEXP, TOTSLF)
 #
 # Notes:
 #  - Variables with year-specific names must be renamed before combining files
-#    (e.g. 'TOTEXP19' and 'TOTEXP20' renamed to 'totexp')
-#
-#  - When pooling data years before and after 2002 or 2019, the Pooled Variance 
-#    file (h36u21) must be used for correct variance estimation 
-#
+#    (e.g. 'TOTEXP21' and 'TOTEXP20' renamed to 'totexp')
 # 
-# Input files: 
+# Input files:
+#  - C:/MEPS/h233.dta (2021 Full-year file)
 #  - C:/MEPS/h224.dta (2020 Full-year file)
 #  - C:/MEPS/h216.dta (2019 Full-year file)
-#  - C:/MEPS/h209.dta (2018 Full-year file)
-#  - C:/MEPS/h36u21.dta (Pooled Variance Linkage file)
 #
 # -----------------------------------------------------------------------------
 
@@ -45,27 +37,29 @@
 
 # Set survey option for lonely PSUs
   options(survey.lonely.psu='adjust')
-  options(survey.adjust.domain.lonely = TRUE)
+
+  # Additional option for adjusting variance for lonely PSUs within a domain
+  #  - More info at https://r-survey.r-forge.r-project.org/survey/html/surveyoptions.html
+  #  - Not running in these exercises, so SEs will match SAS, Stata
+  #
+  # options(survey.adjust.domain.lonely = TRUE) 
   
   
 # Load datasets ---------------------------------------------------------------
 
 # Option 1 - load data files using read_MEPS from the MEPS package
+  fyc21 = read_MEPS(year = 2021, type = "FYC") # 2021 FYC
   fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
   fyc19 = read_MEPS(year = 2019, type = "FYC") # 2019 FYC
-  fyc18 = read_MEPS(year = 2018, type = "FYC") # 2018 FYC
   
-  linkage = read_MEPS(type = "Pooled linkage") # Pooled Linkage file
-  
+
 # Option 2 - load Stata data files using read_dta from the haven package 
 #  >> Replace "C:/MEPS" below with the directory you saved the files to.
   
+  # fyc21 = read_dta("C:/MEPS/h233.dta") # 2021 FYC
   # fyc20 = read_dta("C:/MEPS/h224.dta") # 2020 FYC
   # fyc19 = read_dta("C:/MEPS/h216.dta") # 2019 FYC
-  # fyc18 = read_dta("C:/MEPS/h209.dta") # 2018 FYC
-
-  # >> Note: File name for linkage file will change every year!!
-  # linkage = read_dta("C:/MEPS/h36u21.dta") # Pooled Linkage file
+  
 
 # View data -------------------------------------------------------------------
 
@@ -75,9 +69,9 @@
 #  - If YES, then asked what type (CABLADDR, CABLOOD, CABREAST...)
   
   
-  fyc20 %>% count(CABLADDR)
+  fyc21 %>% count(CABLADDR)
   
-  fyc20 %>% 
+  fyc21 %>% 
     mutate(AGEgt18 = ifelse(AGELAST >= 18, "18+", "AGE < 18"))  %>% 
     count(AGEgt18, CANCERDX, CABLADDR)
   
@@ -87,6 +81,12 @@
 #  - bladder_cancer = "1 Yes" if CABLADDR = 1
 #  - bladder_cancer = "2 No" if CABLADDR = 2 or CANCERDX = 2
 
+fyc21x = fyc21 %>% 
+  mutate(bladder_cancer = case_when(
+    CABLADDR == 1 ~ "1 Yes",
+    CABLADDR == 2 ~ "2 No",
+    CANCERDX == 2 ~ "2 No",
+    TRUE ~ "Missing")) 
 
 fyc20x = fyc20 %>% 
   mutate(bladder_cancer = case_when(
@@ -102,23 +102,26 @@ fyc19x = fyc19 %>%
     CANCERDX == 2 ~ "2 No",
     TRUE ~ "Missing")) 
 
-fyc18x = fyc18 %>% 
-  mutate(bladder_cancer = case_when(
-    CABLADDR == 1 ~ "1 Yes",
-    CABLADDR == 2 ~ "2 No",
-    CANCERDX == 2 ~ "2 No",
-    TRUE ~ "Missing"))  
-
 
 # QC variables:
+  fyc21x %>% count(CANCERDX, CABLADDR, bladder_cancer)
   fyc20x %>% count(CANCERDX, CABLADDR, bladder_cancer)
   fyc19x %>% count(CANCERDX, CABLADDR, bladder_cancer)
-  fyc18x %>% count(CANCERDX, CABLADDR, bladder_cancer)
-  
+ 
     
   
 # Rename year-specific variables prior to combining --------------------------- 
-  
+
+fyc21p = fyc21x %>%
+  rename(
+    perwt  = PERWT21F,
+    totslf = TOTSLF21,
+    totexp = TOTEXP21) %>%
+  select(
+    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
+    CANCERDX, CABLADDR, bladder_cancer)
+
+
 fyc20p = fyc20x %>%
   rename(
     perwt  = PERWT20F,
@@ -139,56 +142,28 @@ fyc19p = fyc19x %>%
     CANCERDX, CABLADDR, bladder_cancer)
    
  
-fyc18p = fyc18x %>%
-  rename(
-    perwt  = PERWT18F,
-    totslf = TOTSLF18,
-    totexp = TOTEXP18) %>%
-  select(
-    DUPERSID, PANEL, VARSTR, VARPSU, perwt, totslf, totexp, AGELAST,
-    CANCERDX, CABLADDR, bladder_cancer)
 
+head(fyc21p)
 head(fyc20p)
 head(fyc19p)
-head(fyc18p)
+
 
 
 # Stack data and define pooled weight variable ---------------------------------
 #  - for poolwt, divide perwt by number of years (3):
 
-pool = bind_rows(fyc20p, fyc19p, fyc18p) %>%
+pool = bind_rows(fyc21p, fyc20p, fyc19p) %>%
   mutate(poolwt = perwt / 3)
-
-
-# Merge the Pooled Linkage Variance file (since pooling before and after 2019 data)
-#  Notes: 
-#   - DUPERSIDs are recycled, so must join by DUPERSID AND PANEL
-#   - File name will change every year!! (e.g. 'h36u22' once 2022 data is added)
-
-head(pool)
-head(linkage)
-
-
-linkage_sub = linkage %>% 
-  select(DUPERSID, PANEL, STRA9621, PSU9621)
-
-pool_linked =  left_join(pool, linkage_sub, by = c("DUPERSID", "PANEL"))
-
-
-# QC:
-pool %>% count(PANEL)
-pool_linked %>% count(PANEL)
 
 
 
 # Define the survey design ----------------------------------------------------
-#  - Use PSU9621 and STRA9621 variables, since pooling before and after 2019
 
 pool_dsgn = svydesign(
-  id = ~PSU9621,
-  strata = ~STRA9621,
+  id = ~VARPSU,
+  strata = ~VARSTR,
   weights = ~poolwt,
-  data = pool_linked,
+  data = pool,
   nest = TRUE)
 
 

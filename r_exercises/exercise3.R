@@ -1,23 +1,23 @@
 # -----------------------------------------------------------------------------
 # This program shows how to link the MEPS-HC Medical Conditions file 
-# to the Office-based medical visits file for data year 2020 to estimate:
+# to the Office-based medical visits file for data year 2021 to estimate:
 #
 #
 # Overall:
-#   - Total number of people w office-based visit for COVID
-#   - Total number of office visits for COVID
-#   - Total expenditures for office visits for COVID 
+#   - Total number of people w office-based visit for cancer
+#   - Total number of office visits for cancer
+#   - Total expenditures for office visits for cancer 
 #
 # By Age groups:
-#   - Percent of people with office visit for COVID
-#   - Avg per-person expenditures for office visits for COVID
+#   - Percent of people with office visit for cancer
+#   - Avg per-person expenditures for office visits for cancer
 #
 #
 # Input files:
-#   - h220g.dta        (2020 Office-based medical visits file)
-#   - h222.dta         (2020 Conditions file)
-#   - h220if1.dta      (2020 CLNK: Condition-Event Link file)
-#   - h224.dta         (2020 Full-Year Consolidated file)
+#   - h229g.dta        (2021 Office-based medical visits file)
+#   - h231.dta         (2021 Conditions file)
+#   - h229if1.dta      (2021 CLNK: Condition-Event Link file)
+#   - h233.dta         (2021 Full-Year Consolidated file)
 # 
 # Resources:
 #   - CCSR codes: 
@@ -56,8 +56,13 @@
 
 # Set survey option for lonely PSUs
   options(survey.lonely.psu='adjust')
-  options(survey.adjust.domain.lonely = TRUE)
 
+  # Additional option for adjusting variance for lonely PSUs within a domain
+  #  - More info at https://r-survey.r-forge.r-project.org/survey/html/surveyoptions.html
+  #  - Not running in these exercises, so SEs will match SAS, Stata
+  #
+  # options(survey.adjust.domain.lonely = TRUE) 
+  
 
 # Load datasets ---------------------------------------------------------------
   
@@ -70,18 +75,18 @@
   
 # Option 1 - load data files using read_MEPS from the MEPS package
  
-ob20   = read_MEPS(year = 2020, type = "OB")
-cond20 = read_MEPS(year = 2020, type = "COND")
-clnk20 = read_MEPS(year = 2020, type = "CLNK")
-fyc20  = read_MEPS(year = 2020, type = "FYC")
+ob21   = read_MEPS(year = 2021, type = "OB")
+cond21 = read_MEPS(year = 2021, type = "COND")
+clnk21 = read_MEPS(year = 2021, type = "CLNK")
+fyc21  = read_MEPS(year = 2021, type = "FYC")
 
 
 # Option 2 - load Stata data files using read_dta from the haven package 
 
-# ob20   <- read_dta("C:/MEPS/h220g.dta") 
-# cond20 <- read_dta("C:/MEPS/h222.dta")
-# clnk20 <- read_dta("C:/MEPS/h220if1.dta")
-# fyc20  <- read_dta("C:/MEPS/h224.dta")
+# ob21   <- read_dta("C:/MEPS/h229g.dta") 
+# cond21 <- read_dta("C:/MEPS/h231.dta")
+# clnk21 <- read_dta("C:/MEPS/h229if1.dta")
+# fyc21  <- read_dta("C:/MEPS/h233.dta")
 
 
 # Keep only needed variables ------------------------------------------------
@@ -89,72 +94,99 @@ fyc20  = read_MEPS(year = 2020, type = "FYC")
 #  Browse variables using MEPS-HC data tools variable explorer: 
 #  -> http://datatools.ahrq.gov/meps-hc#varExp
 
-ob20x   = ob20 %>% 
-  select(PANEL, DUPERSID, EVNTIDX, EVENTRN, OBDATEYR, OBDATEMM, 
-         TELEHEALTHFLAG, OBXP20X)
+ob21x   = ob21 %>% 
+  select(PANEL, DUPERSID, EVNTIDX, EVENTRN, OBDATEYR, OBDATEMM, OBXP21X)
 
-cond20x = cond20 %>% 
+cond21x = cond21 %>% 
   select(PANEL, DUPERSID, CONDIDX, ICD10CDX, CCSR1X:CCSR3X)
 
-fyc20x  = fyc20 %>% 
-  select(PANEL, DUPERSID, AGELAST, PERWT20F, VARSTR, VARPSU)
+fyc21x  = fyc21 %>% 
+  select(PANEL, DUPERSID, AGELAST, PERWT21F, VARSTR, VARPSU)
 
 
 
 # Prepare data for estimation -------------------------------------------------
 
-# Subset condition records to COVID (any CCSR = "INF012") 
+# Subset condition records to CANCER (any CCSR = "NEO...") 
+#  + FAC006 (Encounters for antineoplastic therapies)
+#  - NEO073 (Benign neoplasms)
 
-covid <- cond20x %>% 
-  filter(CCSR1X == "INF012" | CCSR2X == "INF012" | CCSR3X == "INF012")
+
+view_conditions = cond21 %>% 
+  count(CCSR1X, CCSR2X, CCSR3X)
+
+View(view_conditions)
 
 
-# >> Note that same person can have 'duplicate' conditions. This can happen 
-#    when the full ICD10s are different but the collapsed 3-digit ICD10CDX is 
-#    the same
+cancer <- cond21x %>% 
+  filter(
+    grepl("NEO", CCSR1X) |
+      grepl("NEO", CCSR2X) |
+      grepl("NEO", CCSR3X) |
+      
+      CCSR1X == "FAC006" |
+      CCSR2X == "FAC006" |
+      CCSR3X == "FAC006" ) %>% 
+  
+  filter(! (CCSR1X == "NEO073" |
+              CCSR2X == "NEO073" |
+              CCSR3X == "NEO073" ) )
+
+
+# view ICD10-CCSR combinations for cancer
+cancer %>% 
+  count(ICD10CDX, CCSR1X, CCSR2X, CCSR3X)
+
+
+# >> Note that same person can multiple cancers, and can even have multiple
+#    conditions with the same ICD10CDX and CCSR values
 
 # >> Example:
-covid %>% filter(DUPERSID == '2326578104')
-
-
-# view ICD10-CCSR combinations for COVID
-covid %>% 
-  count(ICD10CDX, CCSR1X, CCSR2X, CCSR3X) %>% 
-  print(n = 100)
+     cancer %>% filter(DUPERSID == '2320589102')
 
 
 
-# Merge COVID conditions with OB event file, using CLNK as crosswalk
-#  >> multiple = "all" option new in dplyr 1.1
+# Merge cancer conditions with OB event file, using CLNK as crosswalk
+#  >> use multiple = "all" option for many-to-many merge
 
-covid_merged <- covid %>%
-  inner_join(clnk20, by = c("PANEL", "DUPERSID", "CONDIDX"), multiple = "all") %>% 
-  inner_join(ob20x, by = c("PANEL", "DUPERSID", "EVNTIDX"), multiple = "all") %>% 
+cancer_merged <- cancer %>%
+  inner_join(clnk21, by = c("PANEL", "DUPERSID", "CONDIDX"), multiple = "all") %>% 
+  inner_join(ob21x, by = c("PANEL", "DUPERSID", "EVNTIDX"), multiple = "all") %>% 
   mutate(ob_visit = 1)
 
 
 # QC: check that EVENTYPE = 1 for all rows
-clnk20 %>% count(EVENTYPE)
-covid_merged %>% count(EVENTYPE)
+clnk21 %>% count(EVENTYPE)
+cancer_merged %>% count(EVENTYPE)
 
 
-# Check events for example person:
-covid_merged %>% filter(DUPERSID == '2326578104')
+# >> Check events for example person:
+     cancer_merged %>% filter(DUPERSID == '2320589102')
 
 
 
-# Check if any duplicate EVNTIDX
-# - if so, would need to de-duplicate so we don't count the same event twice
-covid_merged %>% pull(EVNTIDX) %>% duplicated %>% sum
+# De-duplicate on EVNTIDX so we don't count the same event twice
+
+     
+# >> Example of same event (EVNTIDX) for treating multiple cancer
+     cancer_merged %>% filter(DUPERSID == '2326533101')
+
+
+cancer_unique = cancer_merged %>% 
+  distinct(PANEL, DUPERSID, EVNTIDX, OBXP21X, ob_visit)
+
+
+# >> Check example person:
+     cancer_unique %>% filter(DUPERSID == '2326533101')
 
 
 
 # Aggregate to person-level --------------------------------------------------
-pers = covid_merged %>% 
+pers = cancer_unique %>% 
   group_by(DUPERSID) %>% 
   summarize(
-    pers_XP      = sum(OBXP20X),   # total person exp. for COVID office visits
-    pers_nvisits = sum(ob_visit))  # total number of COVID office visits
+    pers_XP      = sum(OBXP21X),   # total person exp. for cancer office visits
+    pers_nvisits = sum(ob_visit))  # total number of cancer office visits
   
 # Add indicator variable
 pers = pers %>% 
@@ -166,7 +198,7 @@ pers = pers %>%
 #  >> Need to capture all Strata (VARSTR) and PSUs (VARPSU) for all MEPS sample 
 #     persons for correct variance estimation
 
-fyc_covid <- fyc20x %>% 
+fyc_cancer <- fyc21x %>% 
   full_join(pers, by = "DUPERSID")  %>% 
   
   # replace NA with 0
@@ -182,10 +214,10 @@ fyc_covid <- fyc20x %>%
 
 
 # QC: should have same number of rows as FYC file
-  nrow(fyc20x) == nrow(fyc_covid)
+  nrow(fyc21x) == nrow(fyc_cancer)
   
 # QC: age groups created correctly
-  fyc_covid %>% 
+  fyc_cancer %>% 
     group_by(agegrps) %>% 
     summarize(
       min_age = min(AGELAST),
@@ -193,7 +225,7 @@ fyc_covid <- fyc20x %>%
     
   
 # Check number of people with office visit, by age
-  fyc_covid %>% 
+  fyc_cancer %>% 
     count(any_OB, agegrps)
   
   
@@ -203,11 +235,11 @@ fyc_covid <- fyc20x %>%
 meps_dsgn <- svydesign(
   id = ~VARPSU,
   strata = ~VARSTR,
-  weights = ~PERWT20F,
-  data = fyc_covid,
+  weights = ~PERWT21F,
+  data = fyc_cancer,
   nest = TRUE) 
 
-covid_dsgn = subset(meps_dsgn, any_OB == 1)
+cancer_dsgn = subset(meps_dsgn, any_OB == 1)
 
 
 # Calculate estimates ---------------------------------------------------------
@@ -215,41 +247,31 @@ covid_dsgn = subset(meps_dsgn, any_OB == 1)
 
 # Overall:
 
-svytotal(~ any_OB +       # Total people w/ office visit for COVID 
-           pers_nvisits + # Total number of office visits for COVID 
-           pers_XP,       # Total expenditures for office visits for COVID
-           design = covid_dsgn)
+svytotal(~ any_OB +       # Total people w/ office visit for cancer 
+           pers_nvisits + # Total number of office visits for cancer 
+           pers_XP,       # Total expenditures for office visits for cancer
+           design = cancer_dsgn)
 
 
-# Percent of ppl with office visit for COVID
+# Percent of ppl with office visit for cancer
   svymean( ~any_OB,  design = meps_dsgn)  
   
-# Avg per-person exp. for office visits for COVID
-  svymean( ~pers_XP, design = covid_dsgn) 
+# Avg per-person exp. for office visits for cancer
+  svymean( ~pers_XP, design = cancer_dsgn) 
 
     
 
 # By Age Groups:
 
-# - Percent of ppl with office visit for COVID, by age group
+# - Percent of ppl with office visit for cancer, by age group
     svyby(~any_OB, by = ~agegrps, FUN = svymean, design = meps_dsgn)
 
-# - Avg per-person exp. for office visits for COVID, by age group
-    svyby( ~pers_XP, by = ~agegrps, FUN = svymean, design = covid_dsgn) 
+# - Avg per-person exp. for office visits for cancer, by age group
+    svyby( ~pers_XP, by = ~agegrps, FUN = svymean, design = cancer_dsgn) 
 
     
 
     
-# BONUS: A note on Telehealth --------------------------------------------------
-#  - telehealth questions were added to the survey in Fall of 2020           
-#  - TELEHEALTHFLAG = -15 for events reported before telehealth questions    
-#  - Recommendation: imputation or sensitivity analysis                      
-
-covid_merged %>% 
-  count(OBDATEMM, TELEHEALTHFLAG) %>% 
-  pivot_wider(names_from = TELEHEALTHFLAG, values_from = n)
-
-
 
 
 

@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # This program generates the following estimates on national health care for 
-# the U.S. civilian non-institutionalized population, 2020:
+# the U.S. civilian non-institutionalized population, 2021:
 #  - Overall expenses (National totals)
 #  - Percentage of persons with an expense
 #  - Mean expense per person
@@ -10,7 +10,7 @@
 #    - Median expense per person with an expense, by age group
 #
 # Input file:
-#  - C:/MEPS/h224.dta (2020 Full-year file - Stata format)
+#  - C:/MEPS/h233.dta (2021 Full-year file - Stata format)
 #
 # -----------------------------------------------------------------------------
 
@@ -36,62 +36,69 @@
 
 # Set survey option for lonely PSUs
   options(survey.lonely.psu='adjust')
-  options(survey.adjust.domain.lonely = TRUE)
+  
+  # Additional option for adjusting variance for lonely PSUs within a domain
+  #  - More info at https://r-survey.r-forge.r-project.org/survey/html/surveyoptions.html
+  #  - Not running in these exercises, so SEs will match SAS, Stata
+  #
+  # options(survey.adjust.domain.lonely = TRUE) 
   
 
 # Load datasets ---------------------------------------------------------------
  
 # Option 1 - load data files using read_MEPS from the MEPS package
-  fyc20 = read_MEPS(year = 2020, type = "FYC") # 2020 FYC
+  fyc21 = read_MEPS(year = 2021, type = "FYC") # 2021 FYC
 
 # Option 2 - load Stata data files using read_dta from the haven package 
 #  >> Replace "C:/MEPS" below with the directory you saved the files to.
   
-  fyc20_opt2 = read_dta("C:/MEPS/h224.dta")
+  fyc21_opt2 = read_dta("C:/MEPS/h233.dta")
 
   
 # View data
-  head(fyc20) 
-  head(fyc20_opt2)
+  head(fyc21) 
+  head(fyc21_opt2)
   
 
 # Keep only needed variables --------------------------------------------------
-# - codebook: https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=h224
+# - codebook: 
+#  https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H233 
+  
 
 # Using tidyverse syntax. The '%>%' is a pipe operator, which inverts
 # the order of the function call. For example, mean(x) becomes x %>% mean
   
-  fyc20_sub = fyc20 %>%
+  fyc21_sub = fyc21 %>%
     select(
-      AGELAST, TOTEXP20,
-      DUPERSID, VARSTR, VARPSU, PERWT20F) # needed for survey design
+      AGELAST, TOTEXP21,
+      DUPERSID, VARSTR, VARPSU, PERWT21F) # needed for survey design
   
-  head(fyc20_sub)
+  head(fyc21_sub)
   
   
 # Add variables for persons with any expense and persons under 65 -------------
 
-  fyc20x = fyc20_sub %>%
+  fyc21x = fyc21_sub %>%
     mutate(
-      has_exp = (TOTEXP20 > 0),                     # persons with any expense
+      has_exp = (TOTEXP21 > 0),                     # persons with any expense
       age_cat = ifelse(AGELAST < 65, "<65", "65+")  # persons under age 65
     )
   
-  head(fyc20x)
+  head(fyc21x)
 
 
 # QC check on new variables
   
-  fyc20x %>% 
+  fyc21x %>% 
     count(has_exp, age_cat)
   
-  fyc20x %>%
+  fyc21x %>%
     group_by(has_exp) %>%
     summarise(
-      min = min(TOTEXP20), 
-      max = max(TOTEXP20))
+      min = min(TOTEXP21), 
+      max = max(TOTEXP21))
   
-  fyc20x %>%
+  fyc21x %>%
     group_by(age_cat) %>%
     summarise(
       min = min(AGELAST), 
@@ -103,8 +110,8 @@
   mepsdsgn = svydesign(
     id = ~VARPSU,
     strata = ~VARSTR,
-    weights = ~PERWT20F,
-    data = fyc20x,
+    weights = ~PERWT21F,
+    data = fyc21x,
     nest = TRUE)
 
   
@@ -117,14 +124,18 @@
 #    - Mean expense per person with an expense, by age group
 #    - Median expense per person with an expense, by age group
 
+  
+  options(digits = 10)
+  
+  
 # Overall expenses (National totals)
-  svytotal(~TOTEXP20, design = mepsdsgn) 
+  svytotal(~TOTEXP21, design = mepsdsgn) 
 
 # Percentage of persons with an expense
   svymean(~has_exp, design = mepsdsgn)
 
 # Mean expense per person
-  svymean(~TOTEXP20, design = mepsdsgn) 
+  svymean(~TOTEXP21, design = mepsdsgn) 
   
   
 # Mean/median expense per person with an expense --------------------
@@ -132,12 +143,12 @@
   has_exp_dsgn <- subset(mepsdsgn, has_exp)
   
 # Mean expense per person with an expense
-  svymean(~TOTEXP20, design = has_exp_dsgn)
+  svymean(~TOTEXP21, design = has_exp_dsgn)
 
 # Mean expense per person with an expense, by age category
-  svyby(~TOTEXP20, by = ~age_cat, FUN = svymean, design = has_exp_dsgn)
+  svyby(~TOTEXP21, by = ~age_cat, FUN = svymean, design = has_exp_dsgn)
 
 
 # Median expense per person with an expense, by age category
-  svyby(~TOTEXP20, by  = ~age_cat, FUN = svyquantile, design = has_exp_dsgn,
+  svyby(~TOTEXP21, by  = ~age_cat, FUN = svyquantile, design = has_exp_dsgn,
     quantiles = c(0.5))

@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # This program generates the following estimates on national health care for 
-# the U.S. civilian non-institutionalized population, 2020:
+# the U.S. civilian non-institutionalized population, 2021:
 #  - Overall expenses (National totals)
 #  - Percentage of persons with an expense
 #  - Mean expense per person
@@ -10,7 +10,7 @@
 #    - Median expense per person with an expense, by age group
 #
 # Input file:
-#  - C:/MEPS/h224.dta (2020 Full-year file - Stata format)
+#  - C:/MEPS/h233.dta (2021 Full-year file - Stata format)
 #
 # -----------------------------------------------------------------------------
 
@@ -29,26 +29,31 @@
 # Load libraries (run this part each time you re-start R)
 
   
-  
-  
 
 
 # Set survey option for lonely PSUs
+ 
+  
+  
+  
+  # Additional option for adjusting variance for lonely PSUs within a domain
+  #  - More info at https://r-survey.r-forge.r-project.org/survey/html/surveyoptions.html
+  #  - Not running in these exercises, so SEs will match SAS, Stata
+  #
+  # options(survey.adjust.domain.lonely = TRUE) 
+  
 
   
   
-  
-
 # Load datasets ---------------------------------------------------------------
  
 # Option 1 - load data files using read_MEPS from the MEPS package
 
+ 
   
   
 # Option 2 - load Stata data files using read_dta from the haven package 
 #  >> Replace "C:/MEPS" below with the directory you saved the files to.
-  
-
   
   
   
@@ -60,12 +65,14 @@
     
 
 # Keep only needed variables --------------------------------------------------
-# - codebook: https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=h224
+# - codebook: 
+#  https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H233 
+  
 
 # Using tidyverse syntax. The '%>%' is a pipe operator, which inverts
 # the order of the function call. For example, mean(x) becomes x %>% mean
   
-
+ 
   
   
   
@@ -83,7 +90,6 @@
   
 
   
-  
 
 
 # Define the survey design ----------------------------------------------------
@@ -92,7 +98,6 @@
   
   
   
-
   
 # Calculate estimates ---------------------------------------------------------
 #  - Overall expenses (National totals)
@@ -104,19 +109,17 @@
 #    - Median expense per person with an expense, by age group
 
   
+  
 # Overall expenses (National totals)
 
   
   
-  
 # Percentage of persons with an expense
- 
-  
+
   
   
 # Mean expense per person
 
-  
   
     
   
@@ -125,20 +128,20 @@
  
   
   
-    
+   
 # Mean expense per person with an expense
 
   
   
   
 # Mean expense per person with an expense, by age category
-
-  
+ 
   
   
 
 # Median expense per person with an expense, by age category
  
+  
   
   
   
