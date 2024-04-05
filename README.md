@@ -30,9 +30,9 @@ Pooling multiple years of MEPS data. The example calculates:
 #### Exercise 3
 Linking medical conditions to office-based visits: 
 1. Overall:
-    - Number of people with office-based visit for COVID
-    - Number of office visits for COVID
-    - Expenditures for office visits for COVID 
+    - Number of people with office-based visit for CANCER
+    - Number of office visits for CANCER
+    - Expenditures for office visits for CANCER 
 2. By age groups:
-    - Percent of people with office visit for COVID
-    - Average per-person expenditures for office visits for COVID
+    - Percent of people with office visit for CANCER
+    - Average per-person expenditures for office visits for CANCER
