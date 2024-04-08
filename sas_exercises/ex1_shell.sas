@@ -1,5 +1,5 @@
 /**********************************************************************************
-This program generates the following estimates of national health care expenses for 2020:
+This program generates the following estimates of national health care expenses for 2021:
   	- overall expenses (national totals)
   	- proportion/percentage of people with an expense
   	- mean expense per person
@@ -7,16 +7,18 @@ This program generates the following estimates of national health care expenses 
   	- median expense per person with an expense, overall and by age group (0-64 vs. 65+)
 
  Input file: 
-	- C:\MEPS\h224.sas7bdat (2020 Full-Year Consolidated (FYC) file)
+	- C:\MEPS\h233.sas7bdat (2021 Full-Year Consolidated (FYC) file)
 *******************************************************************************************************/
 
 /* Define a SAS library and assign a libref to it */
 
 
 
+
 /**** Prepare data ****/
 
-/* Read in the 2020 FYC SAS data file, keep only needed variables, and create new variables for estimation */
+/* Read in the 2021 FYC SAS data file, keep only needed variables, and create new variables for estimation */
+
 
 
 
@@ -30,8 +32,10 @@ This program generates the following estimates of national health care expenses 
 
 
 
+
 /* Check the min and max of total expenditures for people with and without expenses
 Note - min and max should BOTH be zero for people with no expenses */
+
 
 
 
@@ -42,22 +46,26 @@ Note - max of agelast within the 'under 65' category should be <= 64 */
 
 
 
+
 /**** Estimation ****/ 
 
 /* Suppress the graphics - for easier viewing of estimates in ods output */
 
 
 
+
 /* Method 1 for estimating the proportion of people with an expense - taking the mean of our 0/1 numeric variable */
 
-title 'Proportion of people with an expense in 2020 - method 1 (numeric 0/1 variable)';
+title 'Proportion of people with an expense in 2021 - method 1 (numeric 0/1 variable)';
+
 
 
 
 
 /* Method 2 for estimating the proportion of people with an expense - using character variable */ 
 
-title 'Proportion of people with an expense in 2020 - method 2 (2-category character variable)';
+title 'Proportion of people with an expense in 2021 - method 2 (2-category character variable)';
+
 
 
 
@@ -65,16 +73,17 @@ title 'Proportion of people with an expense in 2020 - method 2 (2-category chara
 
 /* Method 3 for estimating the percent of people with an expense - using surveyfreq to output PERCENT (not proportion) */ 
 
-title 'Percentage of people with an expense, 2020 - method 3 (using surveyfreq)';
+title 'Percentage of people with an expense, 2021 - method 3 (using surveyfreq)';
 
 
 
 
 
-/* Total expenditures, mean expense (overall), and mean and median expense among those with an expense 
+
+/* Total expenditures, mean expense (overall), mean and median expense among those with an expense 
 (overall and by age group) */
 
-title 'Mean and median expenses, overall and by whether person has an expense and by age group';
+title 'Total, mean, and median expenses, 2021, overall and by whether person has an expense and by age group';
 
 
 
@@ -82,7 +91,6 @@ title 'Mean and median expenses, overall and by whether person has an expense an
 
 
 title;  /* cancel the TITLE statements */
-
 
 
 

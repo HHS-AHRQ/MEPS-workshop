@@ -1,20 +1,20 @@
 /* ----------------------------------------------------------------------------------------------------------------
 
-MEPS-HC: Office-based medical visits and expenditures for the treatment of COVID-19
+MEPS-HC: Office-based medical visits and expenditures for the treatment of cancer
 
 This example code shows how to link the MEPS-HC Medical Conditions file to the Office-based medical visits file for 
-data year 2020 in order to estimate the following:
-	- Total number of people with an office-based visit for the treatment of COVID-19 
-	- Total number of office-based visits for the treatment of COVID-19
-	- Total expenditures on office-based visits for the treatment of COVID-19 
-	- Percent of people with an office-based visit for COVID-19, by age
-	- Mean office-based expenditures per person on COVID-19 among people with an office-based visit for COVID-19, by age
+data year 2021 in order to estimate the following:
+	- Total number of people with an office-based visit for the treatment of cancer 
+	- Total number of office-based visits for the treatment of cancer
+	- Total expenditures on office-based visits for the treatment of cancer 
+	- Percent of people with an office-based visit for cancer, by age
+	- Mean office-based expenditures per person on cancer among people with an office-based visit for cancer, by age
 
 Input files:
-  - h220g.sas7bdat        (2020 Office-Based Medical Visits file)
-  - h222.sas7bdat         (2020 Medical Conditions file)
-  - h220if1.sas7bdat      (2020 CLNK: Condition-Event Link file)
-  - h224.sas7bdat         (2020 Full-Year Consolidated file)
+  - h229g.sas7bdat        (2021 Office-Based Medical Visits file)
+  - h231.sas7bdat         (2021 Medical Conditions file)
+  - h229if1.sas7bdat      (2021 CLNK: Condition-Event Link file)
+  - h233.sas7bdat         (2021 Full-Year Consolidated file)
 
 Resources:
   - CCSR codes: 
@@ -32,11 +32,9 @@ Resources:
 
 
 
-
 /**** Read in data files and keep only needed variables ------------------------------------------------------- */ 
 
 /* Office-based (OB) medical visits file (record = office-based visit for a person) */
-
 
 
 
@@ -46,9 +44,7 @@ Resources:
 
 
 
-
 /* Conditions-event link file (crosswalk between conditions and medical events) */
-
 
 
 
@@ -61,37 +57,42 @@ Resources:
 
 /**** Prepare data for estimation --------------------------------------------------------------------------------- */
 
-/* Subset to only condition records for COVID-19 (any CCSR = "INF012") */
-/* Note: you can find the CCSRs for collapsed condition categories here: 
+/* Subset to only condition records for cancer.  Cancer is any CCSR starting with "NEO" EXCEPT for NEO073, which is
+benign neoplasms.  We are also including FAC006 which is "encounter for antineoplastic therapies". */
+/* Note: you can find the CCSRs for collapsed condition categories, including cancer, here: 
 https://github.com/HHS-AHRQ/MEPS/blob/master/Quick_Reference_Guides/meps_ccsr_conditions.csv */ 
 
 
 
 
 
-/* Example to show someone with 'duplicate' COVID-19 conditions with different CONDIDXs. */
+/* Example to show someone with 'duplicate' cancer conditions with different CONDIDXs. DUPERSID = '2320291102' */
 
 
 
 
 
-/* Get EVNTIDX values for COVID-19 records from CLNK file */
+/* Get EVNTIDX values for cancer records from CLNK file */
 
 
 
 
 
-/* Sort data to prepare for merge between clnk_covid and ob20 */
+/* Sort data to prepare for merge between clnk_cancer and ob21 */
 
 
 
 
 
-/* Because some people can have multiple CONDIDX values for COVID-19 as shown in the example above, and each of 
-these different CONDIDX IDs can link to the same OB stay, it is necessary to de-duplicate on EVNTIDX. 
-!!Note - we do not have an issue with duplicates in this particular example, but there can be issues with duplicates
-when analyzing another condition/event pair. */
+/* Example to show OB visits that treat multiple cancer conditions for the same person. DUPERSID = '2320379102' */
 
+
+
+
+
+/* Because some people can have multiple CONDIDX values for cancer, and each of these different CONDIDXs can link 
+to the same OB visit, it is necessary to de-duplicate on EVNTIDX before merging so these OB visits are not double
+counted. */
 
 
 
@@ -104,13 +105,14 @@ Create dummy variable for each unique OB visit (this will be used for estimating
 
 
 
-/* Sum number of OB stays and OB expenditures on COVID-19 within each person */
+/* Sum number of OB stays and OB expenditures on cancer within each person */
 
 
 
 
 
-/* Merge person-level totals back to FYC and create flag for whether a person has any OB visits for COVID-19 */
+/* Merge person-level totals back to FYC and create flag for whether a person has any OB visits for cancer */
+
 
 
 
@@ -122,7 +124,7 @@ Create dummy variable for each unique OB visit (this will be used for estimating
 
 
 
-/* QC: check counts of covid_ob_flag=1 and compare to the number of rows in ob_by_pers.  
+/* QC: check counts of cancer_ob_flag=1 and compare to the number of rows in ob_by_pers.  
 Confirm there are no missing values */
 
 
@@ -135,7 +137,7 @@ Confirm there are no missing values */
 
 
 
-/* QC: There should be no records where covid_ob_flag=0 and (tot_exp > 0 or tot_ob > 0) */
+/* QC: There should be no records where cancer_ob_flag=0 and (tot_exp > 0 or tot_ob > 0) */
 
 
 
@@ -147,49 +149,39 @@ Confirm there are no missing values */
 
 
 
-
 * National Totals; 
 
 /* Estimates for the following:
-	- sum of covid_ob_flag = total people with OB visit for COVID-19
-	- sum of tot_ob = total number of OB visits for COVID-19
-	- sum of tot_exp = total OB expenditures for COVID-19 */
+	- sum of cancer_ob_flag = total people with OB visit for cancer
+	- sum of tot_ob = total number of OB visits for cancer
+	- sum of tot_exp = total OB expenditures for cancer */
 
-title 'National Totals for OB visits related to COVID-19';
-
-
-
-
-
-
-/* Proportion of people with an OB visit for COVID-19 by age group */
-/* To convert to percentages, multiply by 100.  See exercise 1 for alternate methods of calculating percents */ 
-
-title 'Proportion of people with an OB visit for COVID-19 by age group'; 
+title 'National Totals';
 
 
 
 
 
 
-/* Average expenditures per person on OB visits for COVID-19 among people with at least one OB visit for COVID-19 
-(covid_ob_flag = '1'), by age */ 
+/* Proportion of people with an OB visit for cancer by age group */
+/* To convert to percentages, multiply by 100.  See exercise 1 for alternate methods to directly calculate percents */ 
 
-title 'Average per-person expenditures on COVID-19 OB visits among people with COVID-19 OB visits';
-
-
+title 'Proportion of people with an OB visit for cancer by age group';
 
 
 
 
 
 
-title;  /* Cancel title statement */
+/* Average expenditures per person on OB visits for cancer among people with at least one OB visit for cancer
+(cancer_ob_flag = '1'), by age */ 
+
+title 'Avg. exp. per person on OB visits for cancer among people with 1+ OB visit for cancer';
 
 
-/******** Bonus! **********/ 
 
-/* A note about telehealth:
-   - telehealth questions were added to the survey in fall 2020           
-   - TELEHEALTHFLAG = -15 for events reported before telehealth questions were added   
-   - Recommendation: imputation or sensitivity analysis  */ 
+
+
+
+
+title; /* cancel the title statement */ 
