@@ -1,19 +1,19 @@
 * Exercise 3:
 * This program is an example of how to link the MEPS-HC Medical Conditions file, 
 * the Office Visits Event file, and the Full-Year Consolidated file for 
-* data year 2020 in order to estimate the following:
+* data year 2021 in order to estimate the following:
 *
-*   - Total number of people with office-based medical visit for COVID
-*   - Total number of office visits for COVID
-*   - Total expenditures on office visits for COVID 
-*   - Percent of people with office visit for COVID, by age
-*   - Average expenditure on office visits for COVID, by age
+*   - Total number of people with office-based medical visit for cancer (malignant neoplasms)
+*   - Total number of office visits for cancer
+*   - Total expenditures on office visits for cancer 
+*   - Percent of people with office visit for cancer, by age
+*   - Average expenditure on office visits for cancer, by age
 * 
 * Input files:
-*   - h220d.dta        (2020 Inpatient Stays file)
-*   - h222.dta         (2020 Conditions file)
-*   - h220if1.dta      (2020 CLNK: Condition-Event Link file)
-*   - h224.dta         (2020 Full-Year Consolidated file)
+*   - h229g.dta        (2021 Office visits file)
+*   - h231.dta         (2021 Conditions file)
+*   - h229if1.dta      (2021 CLNK: Condition-Event Link file)
+*   - h233.dta         (2021 Full-Year Consolidated file)
 * 
 * Resources:
 *   - CCSR codes: 
@@ -34,29 +34,46 @@ cd C:\MEPS
 log using Ex3.log, replace 
 
 /* Get data from web (you can also download manually) */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220g/h220gdta.zip" "h220gdta.zip", replace
-unzipfile "h220gdta.zip", replace 
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h222/h222dta.zip" "h222dta.zip", replace
-unzipfile "h222dta.zip", replace 
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h220i/h220if1dta.zip" "h220if1dta.zip", replace
-unzipfile "h220if1dta.zip", replace 
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
-unzipfile "h224dta.zip", replace 
+/* Office visits */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229g/h229gdta.zip" "h229gdta.zip", replace
+unzipfile "h229gdta.zip", replace 
+/* Conditions */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h231/h231dta.zip" "h231dta.zip", replace
+unzipfile "h231dta.zip", replace 
+/* CLNK */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229i/h229if1dta.zip" "h229if1dta.zip", replace
+unzipfile "h229if1dta.zip", replace 
+/* Full-year consolidated file */
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h233/h233dta.zip" "h233dta.zip", replace
+unzipfile "h233dta.zip", replace 
 
 /* linkage file */
+
 // inspect file, save
 
+
+
+
 /* FY condolidated file, person-level */
+
+
+
 
 /* Office-based file, visit-level */
 
 // inspect file, save
 
-/* Conditions file, condition-level, subset to COVID */
+
+
+
+/* Conditions file, condition-level, subset to cancer--malignant neoplasms */
 
 // keep only records for COVID
 
 // inspect file, save 
+
+
+
 
 /* merge conditions to CLNK file by condidx, drop unmatched */
 
@@ -68,6 +85,8 @@ unzipfile "h224dta.zip", replace
 
 // inspect file after de-duplication
 
+
+
 /* merge to inpatient file by evntidx, drop unmatched */
 
 // drop observations for that do not match
@@ -76,20 +95,20 @@ unzipfile "h224dta.zip", replace
 
 /* collapse to person-level (DUPERSID), sum to get number of office visits and expenditures */
 
-/* merge to FY file, create flag for any ipat for COVID */
 
+/* merge to FY file, create flag for any office visit for malignant neoplasm */
 
 
 /* Set survey options */
 
-/* total people with office visit for COVID */
+/* total people with office visit for malignant neoplasm */
 
-/* total number of office visits for COVID */
+/* total number of office visits for malignant neoplasm */
 
-/* total expenditures for office visits for COVID */
+/* total expenditures for office visits for malignant neoplasm */
 
-/* percent with office visit for COVID by age */
+/* percent with office visit for malignant neoplasm by age */
 
-/* average number of office visits for COVID per person by age */
+/* average number of office visits for malignant neoplasm per person by age */
  
-/* average expenditure on office visits for COVID per person by age */
+/* average expenditure on office visits for malignant neoplasm per person by age */
