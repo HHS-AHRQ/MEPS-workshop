@@ -68,7 +68,7 @@ unzipfile "h233dta.zip", replace
 
 /* Conditions file, condition-level, subset to cancer--malignant neoplasms */
 
-// keep only records for COVID
+// keep only records for malignant neoplasms
 
 // inspect file, save 
 
@@ -81,13 +81,13 @@ unzipfile "h233dta.zip", replace
 
 // inspect file
 
-// drop duplicate fills--- fills that would otherwise be counted twice */
+// drop duplicate office visits--- single visits that would otherwise be counted multiple times */
 
 // inspect file after de-duplication
 
 
 
-/* merge to inpatient file by evntidx, drop unmatched */
+/* merge to office visit file by evntidx, drop unmatched */
 
 // drop observations for that do not match
 

@@ -81,7 +81,7 @@ describe
 /* Conditions file, condition-level, subset to cancer--malignant neoplasms */
 use DUPERSID CONDIDX ICD10CDX CCSR1X CCSR2X CCSR3X using h231, clear
 rename *, lower
-// keep only records for COVID
+// keep only records for malignant neoplasms
 gen malneo1=((substr(ccsr1x,1,3)=="NEO" & ccsr1x~="NEO073") | (ccsr1x=="FAC006"))
 gen malneo2=((substr(ccsr2x,1,3)=="NEO" & ccsr2x~="NEO073") | (ccsr2x=="FAC006"))
 gen malneo3=((substr(ccsr3x,1,3)=="NEO" & ccsr3x~="NEO073") | (ccsr3x=="FAC006"))
@@ -99,13 +99,13 @@ drop if _merge~=3
 drop _merge
 // inspect file
 list dupersid condidx evntidx icd10cdx if _n<21
-// drop duplicate fills--- fills that would otherwise be counted twice */
+// drop duplicate office visits--- single visits that would otherwise be counted multiple times */
 duplicates drop evntidx, force
 // inspect file after de-duplication
 list dupersid condidx evntidx icd10cdx if _n<21
 describe
 
-/* merge to inpatient file by evntidx, drop unmatched */
+/* merge to office visits file by evntidx, drop unmatched */
 merge 1:m evntidx using OB_2021
 // drop observations for that do not match
 drop if _merge~=3
