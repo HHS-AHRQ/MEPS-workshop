@@ -1,17 +1,11 @@
 # -----------------------------------------------------------------------------
 # This program shows how to link the MEPS-HC Medical Conditions file 
 # to the Office-based medical visits file for data year 2021 to estimate:
-#
-#
-# Overall:
 #   - Total number of people w office-based visit for cancer
 #   - Total number of office visits for cancer
 #   - Total expenditures for office visits for cancer 
-#
-# By Age groups:
 #   - Percent of people with office visit for cancer
-#   - Avg per-person expenditures for office visits for cancer
-#
+#   - Average per-person expense for office visits for cancer
 #
 # Input files:
 #   - h229g.dta        (2021 Office-based medical visits file)
@@ -202,33 +196,13 @@ fyc_cancer <- fyc21x %>%
   full_join(pers, by = "DUPERSID")  %>% 
   
   # replace NA with 0
-  replace_na(list(pers_nvisits = 0, any_OB = 0)) %>% 
-  
-  # create age groups
-  mutate(agegrps = case_when(
-    AGELAST < 18 ~ "<18",
-    AGELAST < 65 ~ "18-64",
-    AGELAST >= 65 ~ "65+",
-    TRUE ~ "ERROR"
-  ))
+  replace_na(list(pers_nvisits = 0, any_OB = 0)) 
 
 
 # QC: should have same number of rows as FYC file
   nrow(fyc21x) == nrow(fyc_cancer)
   
-# QC: age groups created correctly
-  fyc_cancer %>% 
-    group_by(agegrps) %>% 
-    summarize(
-      min_age = min(AGELAST),
-      max_age = max(AGELAST))
     
-  
-# Check number of people with office visit, by age
-  fyc_cancer %>% 
-    count(any_OB, agegrps)
-  
-  
 
 # Define the survey design ----------------------------------------------------
 
@@ -244,35 +218,16 @@ cancer_dsgn = subset(meps_dsgn, any_OB == 1)
 
 # Calculate estimates ---------------------------------------------------------
 
-
-# Overall:
-
 svytotal(~ any_OB +       # Total people w/ office visit for cancer 
            pers_nvisits + # Total number of office visits for cancer 
            pers_XP,       # Total expenditures for office visits for cancer
            design = cancer_dsgn)
 
 
-# Percent of ppl with office visit for cancer
+# Percent of people with office visit for cancer
   svymean( ~any_OB,  design = meps_dsgn)  
   
-# Avg per-person exp. for office visits for cancer
+# Average per-person expense for office visits for cancer
   svymean( ~pers_XP, design = cancer_dsgn) 
-
-#     
-# 
-# # By Age Groups:
-# 
-# # - Percent of ppl with office visit for cancer, by age group
-#     svyby(~any_OB, by = ~agegrps, FUN = svymean, design = meps_dsgn)
-# 
-# # - Avg per-person exp. for office visits for cancer, by age group
-#     svyby( ~pers_XP, by = ~agegrps, FUN = svymean, design = cancer_dsgn) 
-# 
-#     
-
-    
-
-
 
 
