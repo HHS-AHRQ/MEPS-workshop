@@ -218,6 +218,7 @@ cancer_dsgn = subset(meps_dsgn, any_OB == 1)
 
 # Calculate estimates ---------------------------------------------------------
 
+# National Totals:
 svytotal(~ any_OB +       # Total people w/ office visit for cancer 
            pers_nvisits + # Total number of office visits for cancer 
            pers_XP,       # Total expenditures for office visits for cancer

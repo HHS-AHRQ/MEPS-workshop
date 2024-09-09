@@ -1,17 +1,11 @@
 # -----------------------------------------------------------------------------
 # This program shows how to link the MEPS-HC Medical Conditions file 
 # to the Office-based medical visits file for data year 2021 to estimate:
-#
-#
-# Overall:
 #   - Total number of people w office-based visit for cancer
 #   - Total number of office visits for cancer
 #   - Total expenditures for office visits for cancer 
-#
-# By Age groups:
 #   - Percent of people with office visit for cancer
-#   - Avg per-person expenditures for office visits for cancer
-#
+#   - Average per-person expense for office visits for cancer
 #
 # Input files:
 #   - h229g.dta        (2021 Office-based medical visits file)
@@ -193,16 +187,7 @@
 # QC: should have same number of rows as FYC file
  
      
-     
-      
-# QC: age groups created correctly
-
-     
-     
-     
-  
-# Check number of people with office visit, by age
-
+    
      
      
 
@@ -217,7 +202,7 @@
 # Calculate estimates ---------------------------------------------------------
 
 
-# Overall:
+# National Totals:
 
      
      
