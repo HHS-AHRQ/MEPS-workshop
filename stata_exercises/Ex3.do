@@ -6,8 +6,8 @@
 *   - Total number of people with office-based medical visit for cancer (malignant neoplasms)
 *   - Total number of office visits for cancer
 *   - Total expenditures on office visits for cancer 
-*   - Percent of people with office visit for cancer, by age
-*   - Average expenditure on office visits for cancer, by age
+*   - Percent of people with office visit for cancer
+*   - Average expenditure on office visits for cancer
 * 
 * Input files:
 *   - h229g.dta        (2021 Office visits file)
@@ -31,54 +31,42 @@ clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex3.log, replace 
+log using Ex3, replace 
 
-/* Get data from web (you can also download manually) */
-/* Office visits */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229g/h229gdta.zip" "h229gdta.zip", replace
-unzipfile "h229gdta.zip", replace 
-/* Conditions */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h231/h231dta.zip" "h231dta.zip", replace
-unzipfile "h231dta.zip", replace 
-/* CLNK */
+****************************
+/* condition linkage file */
+****************************
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229i/h229if1dta.zip" "h229if1dta.zip", replace
 unzipfile "h229if1dta.zip", replace 
-/* Full-year consolidated file */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h233/h233dta.zip" "h233dta.zip", replace
-unzipfile "h233dta.zip", replace 
-
-/* linkage file */
 use h229if1, clear
 rename *, lower
-// inspect file, save
-describe
-list dupersid condidx evntidx eventype if _n<20
 save CLNK_2021, replace
 
-/* FY condolidated file, person-level */
-use DUPERSID AGELAST VARSTR VARPSU PERWT21F using h233, clear
-rename *, lower
-gen agecat=.
-replace agecat=1 if agelast < 18
-replace agecat=2 if agelast >= 18 & agelast < 65
-replace agecat=3 if agelast >= 65
 
-label define agecat 1 "<18" 2 "18-64" 3 "65+"
-label values agecat agecat
-tab1 agecat, m 
-
-save FY_2021, replace
-describe
-
-/* Office-based file, visit-level */
+*************************************
+/* Office visits file, visit level */
+*************************************
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229g/h229gdta.zip" "h229gdta.zip", replace
+unzipfile "h229gdta.zip", replace
 use DUPERSID EVNTIDX OBXP21X using h229g, clear
 rename *, lower
-// inspect file, save
-list dupersid evntidx obxp21x if _n<21
 save OB_2021, replace
-describe
 
-/* Conditions file, condition-level, subset to cancer--malignant neoplasms */
+****************************************
+/* FY condolidated file, person-level */
+****************************************
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h233/h233dta.zip" "h233dta.zip", replace
+unzipfile "h233dta.zip", replace 
+use DUPERSID SEX RACETHX CHOLDX INSURC21 POVCAT21 VARSTR VARPSU PERWT21F using h233, clear
+rename *, lower
+save FY_2021, replace
+
+
+***************************************************************************
+/* Conditions file, person-condition-level, subset to malignant neoplasms */
+***************************************************************************
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h231/h231dta.zip" "h231dta.zip", replace
+unzipfile "h231dta.zip", replace
 use DUPERSID CONDIDX ICD10CDX CCSR1X CCSR2X CCSR3X using h231, clear
 rename *, lower
 // keep only records for malignant neoplasms
@@ -86,13 +74,12 @@ gen malneo1=((substr(ccsr1x,1,3)=="NEO" & ccsr1x~="NEO073") | (ccsr1x=="FAC006")
 gen malneo2=((substr(ccsr2x,1,3)=="NEO" & ccsr2x~="NEO073") | (ccsr2x=="FAC006"))
 gen malneo3=((substr(ccsr3x,1,3)=="NEO" & ccsr3x~="NEO073") | (ccsr3x=="FAC006"))
 keep if malneo1==1 | malneo2==1 | malneo3==1
-
-// inspect file, save 
-list dupersid condidx ccsr1x ccsr2x ccsr3x icd10cdx if _n<21
 save COND_2021, replace
-describe
 
-/* merge conditions to CLNK file by condidx, drop unmatched */
+
+****************************************************************
+/* merge to CLNK file by dupersid and condidx, drop unmatched */
+****************************************************************
 merge m:m condidx using CLNK_2021
 // drop observations that do not match
 drop if _merge~=3
@@ -105,7 +92,9 @@ duplicates drop evntidx, force
 list dupersid condidx evntidx icd10cdx if _n<21
 describe
 
-/* merge to office visits file by evntidx, drop unmatched */
+*******************************************************************************************
+/* merge to office visits by dupersid and evntidx, drop unmatched, drop duplicates */
+*******************************************************************************************
 merge 1:m evntidx using OB_2021
 // drop observations for that do not match
 drop if _merge~=3
@@ -114,16 +103,28 @@ drop _merge
 list dupersid condidx icd10cdx evntidx obxp21x if _n<21
 describe
 
-/* collapse to person-level (DUPERSID), sum to get number of office visits and expenditures */
+***************************************************************************************
+/* collapse to person-level (DUPERSID), sum to get number of visits and expenditures */
+***************************************************************************************
 gen one=1
 collapse (sum) num_obvis=one (sum) exp_obvis=obxp21x, by(dupersid)
-
-/* merge to FY file, create flag for any office visit for malignant neoplasm */
+/* merge to FY file, create flag for any Rx fill for HL */
 merge 1:1 dupersid using FY_2021
-replace exp_obvis=0 if _merge==2
 replace num_obvis=0 if _merge==2
+replace exp_obvis=0 if _merge==2
 gen any_obvis=(num_obvis>0)
+drop _merge
 
+*********************************************************************************************
+/* merge to FY file to get any individual characteristics of interest (e.g. age, sex, race) */
+*********************************************************************************************
+merge 1:1 dupersid using FY_2021
+
+
+
+*******************************************
+/* Analysis                              */
+*******************************************
 /* Set survey options */
 svyset varpsu [pw = perwt21f], strata(varstr) vce(linearized) singleunit(centered)
 
@@ -142,14 +143,11 @@ svy: total exp_obvis
 di %15.0f r(table)[1,1]
 di %15.0f r(table)[2,1]
 
-/* percent with office visit for malignant neoplasm by age */
+/* percent with office visit for malignant neoplasm */
 svy: mean any_obvis
-svy: mean any_obvis, over(agecat)
 
-/* average number of office visits for malignant neoplasm per person by age */
+/* average number of office visits for malignant neoplasm per person */
 svy, sub(if any_obvis==1): mean num_obvis
-svy, sub(if any_obvis==1): mean num_obvis, over(agecat)
  
-/* average expenditure on office visits for malignant neoplasm per person by age */
+/* average expenditure on office visits for malignant neoplasm per person */
 svy, sub(if any_obvis==1): mean exp_obvis
-svy, sub(if any_obvis==1): mean exp_obvis, over(agecat)

@@ -6,8 +6,8 @@
 *   - Total number of people with office-based medical visit for cancer (malignant neoplasms)
 *   - Total number of office visits for cancer
 *   - Total expenditures on office visits for cancer 
-*   - Percent of people with office visit for cancer, by age
-*   - Average expenditure on office visits for cancer, by age
+*   - Percent of people with office visit for cancer
+*   - Average expenditure on office visits for cancer
 * 
 * Input files:
 *   - h229g.dta        (2021 Office visits file)
@@ -31,51 +31,55 @@ clear
 set more off
 capture log close
 cd C:\MEPS
-log using Ex3.log, replace 
+log using Ex3, replace 
 
-/* Get data from web (you can also download manually) */
-/* Office visits */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229g/h229gdta.zip" "h229gdta.zip", replace
-unzipfile "h229gdta.zip", replace 
-/* Conditions */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h231/h231dta.zip" "h231dta.zip", replace
-unzipfile "h231dta.zip", replace 
-/* CLNK */
+****************************
+/* condition linkage file */
+****************************
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229i/h229if1dta.zip" "h229if1dta.zip", replace
 unzipfile "h229if1dta.zip", replace 
-/* Full-year consolidated file */
+use h229if1, clear
+rename *, lower
+save CLNK_2021, replace
+
+
+*************************************
+/* Office visits file, visit level */
+*************************************
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229g/h229gdta.zip" "h229gdta.zip", replace
+unzipfile "h229gdta.zip", replace
+use DUPERSID EVNTIDX OBXP21X using h229g, clear
+rename *, lower
+save OB_2021, replace
+
+****************************************
+/* FY condolidated file, person-level */
+****************************************
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h233/h233dta.zip" "h233dta.zip", replace
 unzipfile "h233dta.zip", replace 
-
-/* linkage file */
-
-// inspect file, save
-
+use DUPERSID SEX RACETHX CHOLDX INSURC21 POVCAT21 VARSTR VARPSU PERWT21F using h233, clear
+rename *, lower
+save FY_2021, replace
 
 
-
-/* FY condolidated file, person-level */
-
-
-
-
-/* Office-based file, visit-level */
-
-// inspect file, save
-
-
-
-
-/* Conditions file, condition-level, subset to cancer--malignant neoplasms */
-
+***************************************************************************
+/* Conditions file, person-condition-level, subset to malignant neoplasms */
+***************************************************************************
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h231/h231dta.zip" "h231dta.zip", replace
+unzipfile "h231dta.zip", replace
+use DUPERSID CONDIDX ICD10CDX CCSR1X CCSR2X CCSR3X using h231, clear
+rename *, lower
 // keep only records for malignant neoplasms
+gen malneo1=((substr(ccsr1x,1,3)=="NEO" & ccsr1x~="NEO073") | (ccsr1x=="FAC006"))
+gen malneo2=((substr(ccsr2x,1,3)=="NEO" & ccsr2x~="NEO073") | (ccsr2x=="FAC006"))
+gen malneo3=((substr(ccsr3x,1,3)=="NEO" & ccsr3x~="NEO073") | (ccsr3x=="FAC006"))
+keep if malneo1==1 | malneo2==1 | malneo3==1
+save COND_2021, replace
 
-// inspect file, save 
 
-
-
-
-/* merge conditions to CLNK file by condidx, drop unmatched */
+********************************************************************************
+/* merge to CLNK file by dupersid and condidx, drop unmatched, drop duplicates */
+********************************************************************************
 
 // drop observations that do not match
 
@@ -85,21 +89,32 @@ unzipfile "h233dta.zip", replace
 
 // inspect file after de-duplication
 
-
-
-/* merge to office visit file by evntidx, drop unmatched */
+*******************************************************************************************
+/* merge to office visits by dupersid and evntidx, drop unmatched, drop duplicates */
+*******************************************************************************************
 
 // drop observations for that do not match
 
 // inspect file
 
-/* collapse to person-level (DUPERSID), sum to get number of office visits and expenditures */
+***************************************************************************************
+/* collapse to person-level (DUPERSID), sum to get number of visits and expenditures */
+***************************************************************************************
+
+/* merge to FY file, create flag for any Rx fill for HL */
 
 
-/* merge to FY file, create flag for any office visit for malignant neoplasm */
+*********************************************************************************************
+/* merge to FY file to get any individual characteristics of interest (e.g. age, sex, race) */
+*********************************************************************************************
 
 
+
+*******************************************
+/* Analysis                              */
+*******************************************
 /* Set survey options */
+svyset varpsu [pw = perwt21f], strata(varstr) vce(linearized) singleunit(centered)
 
 /* total people with office visit for malignant neoplasm */
 
@@ -107,8 +122,8 @@ unzipfile "h233dta.zip", replace
 
 /* total expenditures for office visits for malignant neoplasm */
 
-/* percent with office visit for malignant neoplasm by age */
+/* percent with office visit for malignant neoplasm */
 
-/* average number of office visits for malignant neoplasm per person by age */
+/* average number of office visits for malignant neoplasm per person */
  
-/* average expenditure on office visits for malignant neoplasm per person by age */
+/* average expenditure on office visits for malignant neoplasm per person */

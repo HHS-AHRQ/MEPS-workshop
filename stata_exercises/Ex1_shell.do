@@ -30,20 +30,28 @@ unzipfile "h233dta.zip", replace
 /* Read in 2021 Full-year consolidated file */ 
 
 
+
 /* define expenditure variables (transformations, etc.)  */
+
 
 
 /* create age categorical variable */
 
+// here's an alternative way to create a categorical variable 
+*egen agecat2=cut(agelast), at(0 65 100)
+
 // create and assign value labels to age 
-label define agecat 1 "<65" 2 "65+"
-label values agecat agecat
+
 
 
 /* QC check new variables*/
 
 
+
+
 /* identify the survey design characteristics */
+
+
 
 
 /* total expenses */
@@ -53,22 +61,27 @@ label values agecat agecat
 // display results without scientific notation 
 
 
+
 /* percent of people with any expense */
+
 
 
 /* mean expense per person */
 
 
+
 /* mean expense per person with an expense */
+
 
 
 /* mean expense per person with an expense, by age */
 
 
+
 /* median expense per person with an expense, by age */
 
-
-// alternative way 2 
+// alternative way  
+*table agecat [pw=perwt] if total_exp>0, stat(median total_exp)
 
 
 

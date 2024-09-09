@@ -55,6 +55,7 @@ unzipfile "h233dta.zip", replace
 
 
 
+
 /* create pooled person-level weight and subpop */
 
 
@@ -62,7 +63,10 @@ unzipfile "h233dta.zip", replace
 /* set up survey parameters */
 
 
+
 /* estimate percent with any bladder cancer */
+
+
 
 /* estimate mean expenditures per person by whether they have bladder cancer*/
 // Total expenditures
