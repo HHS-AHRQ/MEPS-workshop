@@ -3,21 +3,18 @@
 *  This program illustrates how to pool MEPS data files from multiple years to enable 
 *  the analysis of a small sub-sample (people with bladder cancer)
 *  
-*  The program pools 2018-2020 data and calculates:
+*  The program pools 2019-2021 data and calculates:
 *   - Percentage of people with bladder cancer 
 *   - Average expenditures per person, with and without bladder cancer
 * 
 *  Notes:
-*   - strata and psu variables must be taken from the pooled-linkage file
 *   - Variables with year-specific names must be renamed before combining files
-*     (e.g. 'TOTEXP18' renamed to 'totexp')
+*     (e.g. 'TOTEXP19' renamed to 'totexp')
 * 
 *  Input files: 
-*   - C:/MEPS/H36u21.dta (pooled linkage file)
-*   - C:/MEPS/h209.dta (2018 Full-year file)
 *   - C:/MEPS/h216.dta (2019 Full-year file)
 *   - C:/MEPS/h224.dta (2020 Full-year file)
-* 
+*   - C:/MEPS/h233.dta (2021 Full-year file)
 *  This program is available at:
 *  https://github.com/HHS-AHRQ/MEPS-workshop/tree/master/stata_exercises
 **********************************************************************************************
@@ -28,23 +25,14 @@ cd C:\MEPS
 log using Ex2.log, replace
 
 /* Get Data */
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h209/h209dta.zip" "h209dta.zip", replace
-unzipfile "h209dta.zip", replace 
-
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h216/h216dta.zip" "h216dta.zip", replace
 unzipfile "h216dta.zip", replace 
 
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h224/h224dta.zip" "h224dta.zip", replace
 unzipfile "h224dta.zip", replace 
 
-copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h036/h36u21dta.zip" "h36u21dta.zip", replace
-unzipfile "h36u21dta.zip", replace 
-
-/* prepare pooled linkage file */
-
-
-/* rename 2018 variables, merge on pooled-linkage variables */
-
+copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h233/h233dta.zip" "h233dta.zip", replace
+unzipfile "h233dta.zip", replace 
 
 
 /* rename 2019 variables, merge on pooled-linkage variables */
@@ -55,14 +43,24 @@ unzipfile "h36u21dta.zip", replace
 
 
 
+/* rename 2021 variables, merge on pooled-linkage variables */
+
+
+
 /* append years together, erase temp files */
+
+
 
 /* create common bladder cancer variable */ 
 
 
+
 /* create pooled person-level weight and subpop */
 
+
+
 /* set up survey parameters */
+
 
 /* estimate percent with any bladder cancer */
 

@@ -1,21 +1,22 @@
 
 /******************************************************************************************
 
-This program pools 2018, 2019, and 2020 MEPS FYC files and calculates annual averages for: 
+This program pools 2019, 2020, and 2021 MEPS FYC files and calculates annual averages for: 
   - proportion of people diagnosed with bladder cancer
   - average expenditures and average amount paid out of pocket per person by bladder cancer diagnosis status 
-  - standard errors by specifying common variance structure
+  - standard errors for annual averages
 
  Input files:
-  - C:\MEPS\h209.sas7bdat (2018 Full-Year Consolidated (FYC) file)
   - C:\MEPS\h216.sas7bdat (2019 Full-Year Consolidated (FYC) file)
   - C:\MEPS\h224.sas7bdat (2020 Full-Year Consolidated (FYC) file)
-  - C:\MEPS\h36u21.sas7bdat (1996-2021 Pooled Linkage File for Common Variance Structure)
+  - C:\MEPS\h233.sas7bdat (2021 Full-Year Consolidated (FYC) file)
 
-When pooling data years before and after 2002 or 2019, the Pooled Linkage File (h36u21) must be used for correct 
-variance estimation.  
+!!Note: When pooling data years before and after 2002 or 2019, the Pooled Linkage File (h36u22) must be used for correct 
+variance estimation.  The name of the Pooled Linkage File changes with each new year of data (e.g. 'h36u23' once 2023 
+data is added).  The Pooled Linkage File is NOT needed for this example because all data years are after 2019.
 
-!!Note: The name of the Pooled Linkage File changes with each new year of data (e.g. 'h36u22' once 2022 data is added).
+The pooled linkage file and documentation is available here: 
+https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-036
 
 **********************************************************************/
 
@@ -23,18 +24,11 @@ variance estimation.
 
 libname meps "C:/MEPS";
 
-/* Read in 2018-2020 FYC data files, rename year-specific variables to common names across years, create year variable,
-and keep only needed variables */ 
 
-/* 2018 */ 
-data fyc18;
-	set meps.h209;
-	year = 2018;
-	totexp = totexp18;
-	totslf = totslf18;
-	perwt = perwt18f;
-	keep year dupersid panel perwt cancerdx cabladdr totexp totslf;
-run;
+/********** Read in data files **********/
+
+/* Read in 2019, 2020, and 2021 FYC data files, rename year-specific variables to common names across years, 
+create year variable, and keep only needed variables */ 
 
 /* 2019 */
 data fyc19;
@@ -43,7 +37,7 @@ data fyc19;
 	totexp = totexp19;
 	totslf = totslf19;
 	perwt = perwt19f;
-	keep year dupersid panel perwt cancerdx cabladdr totexp totslf;
+	keep year dupersid panel cancerdx cabladdr totexp totslf perwt varstr varpsu;
 run;
 
 /* 2020 */
@@ -53,27 +47,40 @@ data fyc20;
 	totexp = totexp20;
 	totslf = totslf20;
 	perwt = perwt20f;
-	keep year dupersid panel perwt cancerdx cabladdr totexp totslf;
+	keep year dupersid panel cancerdx cabladdr totexp totslf perwt varstr varpsu;
 run;
+
+/* 2021 */
+data fyc21;
+	set meps.h233;
+	year = 2021;
+	totexp = totexp21;
+	totslf = totslf21;
+	perwt = perwt21f;
+	keep year dupersid panel cancerdx cabladdr totexp totslf perwt varstr varpsu;
+run;
+
+
+/********** Prepare the data **********/
 
 /* Look at the variable cabladdr and cancerdx for one year to understand skip pattern */
 /* From the documentation: 
 		 - Questions about cancer were asked only of persons aged 18 or older 
-		 - CANCERDX asks whether person ever diagnosed with cancer 
+		 - CANCERDX asks whether person was ever diagnosed with cancer 
 	 	 - Only if YES to CANCERDX, then asked what type (CABLADDR, CABLOOD, CABREAST...) */
 
-proc freq data=fyc20;
+proc freq data=fyc21;
 	tables cabladdr*cancerdx / missing;
 run;
 
-
-/* Concatenate (stack) 2018, 2019 and 2020 full year consolidated files, create pooled weight, and create variable
+/* Concatenate (stack) 2019, 2020, and 2021 full year consolidated files, create pooled weight, and create variable
 for bladder cancer diagnosis */
 
 data meps_pooled;
-	set fyc18 fyc19 fyc20;
+	set fyc19 fyc20 fyc21;
 
- 	/* Create pooled weight by dividing by the number of years being pooled */
+ 	/* Create pooled weight by dividing by the number of years being pooled.
+		This will produce an annual average across the number of years being pooled as your estimate. */
 
 	 poolwt = perwt/3;
 
@@ -91,80 +98,34 @@ proc freq data=meps_pooled;
 run;
 
 
-/* Read in the Pooled Linkage Variance file.
-
- !! Note: DUPERSID changed from 8 characters to 10 characters starting in panel 22.  If using panels 1-21, 
- you will need to add the panel number to DUPERSID to create comparable DUPERSID across panels. */
-
-data plf;				 
-	set meps.h36u21; 
-	where panel ge 22; 	/* only need panels 22 + for 2018-2020 */
-	keep dupersid panel stra9621 psu9621;
-run;
-
-/* Sort the pooled linkage file for merging */ 
-
-proc sort data= plf;
- 	by dupersid panel;
- run;
-
-/* Sort the pooled 2018-2020 meps file for merging */
-
-proc sort data=meps_pooled;
-	by dupersid panel;
-run;
-
-/* Merge the pooled 2018-2020 meps file with the PLF file to get common variance structure across years*/
-/* Note: Because DUPERSID are recycled, you need to merge by both DUPERSID and PANEL */ 
-
-data meps_pooled_plf;
- 	merge meps_pooled (in=a) plf;
-  	by dupersid panel;
- 	if a; /* keep only records in 2018-2020 pooled MEPS file - note that Panel 22 includes 2017 and Panel 26 includes 2021 */
-run;
-
-/* QC merge - results should be the same for each output below*/
-
-proc freq data=meps_pooled;
-	tables panel;
-run;
-
-proc freq data=meps_pooled_plf;
-	tables panel;
-run;
-
-/* QC - check for missings in merged on pooled variance estimation variables */
-
-proc print data=meps_pooled_plf;
-	where psu9621 = . or stra9621 = .;
-run;
+/********** Estimation **********/
 
 /* Suppress the graphics for easier viewing */ 
 
 ods graphics off; 
 
-/* Proportion of people diagnosed with bladder cancer - ANNUAL AVERAGE from 2018-2020 */
+/* Proportion of people diagnosed with bladder cancer - ANNUAL AVERAGE from 2019-2021 */
 
-title 'Proportion of people diagnosed with bladder cancer, 2018-2020 annual average';
+title 'Proportion of people diagnosed with bladder cancer, 2019-2021 annual average';
 
-proc surveymeans data=meps_pooled_plf nobs mean sum;
-    stratum stra9621;	/* common variance stratum from PLF */
-	cluster psu9621; 	/* common variance PSU from PLF */ 
-    weight poolwt; 		/* pooled weight */
-	var bladder_cancer; /* 1/0 variable for whether person has bladder cancer, will exclude missings */ 
+proc surveymeans data=meps_pooled nobs mean;
+    stratum varstr;		/* stratum from FYCs*/
+	cluster varpsu; 	/* PSU from FYCs */ 
+    weight poolwt; 		/* pooled weight we created */
+	var bladder_cancer; /* 1/0 variable for whether person has bladder cancer */ 
 run;
 
 /* Average expenditures and out of pocket payments per person by bladder cancer status,
-ANNUAL AVERAGES from 2018-2020 */
+ANNUAL AVERAGES from 2019-2021 */
 
-title 'Average expenditures and out of pocket per person with and without bladder cancer, 2018-2020 annual average';
+title 'Average expenditures and out of pocket per person with and without bladder cancer, 2019-2021 annual average';
 
-proc surveymeans data=meps_pooled_plf nobs mean;
-    stratum stra9621; 		/* common variance stratum from PLF */
-	cluster psu9621; 		/* common variance PSU from PLF */
-    weight poolwt;			/* pooled weight */
+proc surveymeans data=meps_pooled nobs mean;
+    stratum varstr; 		/* stratum from FYCs */
+	cluster varpsu; 		/* PSU from FYCs */
+    weight poolwt;			/* pooled weight we created */
 	var totexp totslf;		/* total expenditures and OOP expenditures */
-	domain bladder_cancer;	/* subpops are people who have and don't have bladder cancer, with missings excluded */
+	domain bladder_cancer;	/* subpops are people who have and don't have bladder cancer */
 run;
 
 title;  /* cancel the TITLE statements */
