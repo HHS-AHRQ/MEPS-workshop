@@ -7,8 +7,8 @@ data year 2021 in order to estimate the following:
 	- Total number of people with an office-based visit for the treatment of cancer 
 	- Total number of office-based visits for the treatment of cancer
 	- Total expenditures on office-based visits for the treatment of cancer 
-	- Percent of people with an office-based visit for cancer, by age
-	- Mean office-based expenditures per person on cancer among people with an office-based visit for cancer, by age
+	- Percent of people with an office-based visit for cancer
+	- Mean office-based expenditures per person on cancer among people with an office-based visit for cancer
 
 Input files:
   - h229g.sas7bdat        (2021 Office-Based Medical Visits file)
@@ -162,19 +162,6 @@ data fyc_merged;
 
 	if tot_ob = . then tot_ob = 0; /* replace missings caused by the merge with 0's */
 	if tot_exp = . then tot_exp = 0; 
-
-	/* create age group variable */
-
-	if agelast < 18 then agecat = "Under 18";
-	else if 18 <= agelast <= 64 then agecat = "18-64";
-	else if agelast ge 65 then agecat = "65+";
-	else agecat = "Error!"; /* this is a QC, there should be no records with this value for agecat */ 
-run;
-
-/* QC creation of agecat and confirm there are no values of 'Error!' or missing values */ 
-
-proc freq data=fyc_merged;
-	tables agecat / missing;
 run;
 
 
@@ -183,13 +170,6 @@ Confirm there are no missing values */
 
 proc freq data=fyc_merged;
 	tables cancer_ob_flag / missing;
-run;
-
-
-/* Check sample sizes in each age group to make sure they are sufficient */ 
-
-proc freq data=fyc_merged;
-	tables cancer_ob_flag*agecat;
 run;
 
 
@@ -222,22 +202,21 @@ proc surveymeans data=fyc_merged sum;
 	var cancer_ob_flag tot_ob tot_exp;  /* variables we want to estimate totals for */
 run;
 
-/* Proportion of people with an OB visit for cancer by age group */
+/* Proportion of people with an OB visit for cancer */
 /* To convert to percentages, multiply by 100.  See exercise 1 for alternate methods to directly calculate percents */ 
 
-title 'Proportion of people with an OB visit for cancer by age group';
+title 'Proportion of people with an OB visit for cancer';
 
 proc surveymeans data=fyc_merged mean;
 	stratum varstr; 	/* stratum */
 	cluster varpsu; 	/* PSU */ 
 	weight perwt21f;	/* person weight */ 
 	var cancer_ob_flag; /* 1/0 variable for whether someone had an OB visit for cancer */
-	domain agecat;      /* subpopulation we want estimates for */
 run;
 
 
 /* Average expenditures per person on OB visits for cancer among people with at least one OB visit for cancer
-(cancer_ob_flag = '1'), by age */ 
+(cancer_ob_flag = '1') */ 
 
 title 'Avg. exp. per person on OB visits for cancer among people with 1+ OB visit for cancer';
 
@@ -246,7 +225,7 @@ proc surveymeans data=fyc_merged mean;
 	cluster varpsu; 	/* PSU */ 
 	weight perwt21f;	/* person weight */ 
 	var tot_exp; 		/* total expenditures on OB visits for cancer*/
-	domain cancer_ob_flag cancer_ob_flag('1')*agecat; 	/*subpopulations for estimates */ 
+	domain cancer_ob_flag; 	/*subpopulation for estimates */ 
 run;
 
 
