@@ -259,17 +259,17 @@ svytotal(~ any_OB +       # Total people w/ office visit for cancer
 # Avg per-person exp. for office visits for cancer
   svymean( ~pers_XP, design = cancer_dsgn) 
 
-    
-
-# By Age Groups:
-
-# - Percent of ppl with office visit for cancer, by age group
-    svyby(~any_OB, by = ~agegrps, FUN = svymean, design = meps_dsgn)
-
-# - Avg per-person exp. for office visits for cancer, by age group
-    svyby( ~pers_XP, by = ~agegrps, FUN = svymean, design = cancer_dsgn) 
-
-    
+#     
+# 
+# # By Age Groups:
+# 
+# # - Percent of ppl with office visit for cancer, by age group
+#     svyby(~any_OB, by = ~agegrps, FUN = svymean, design = meps_dsgn)
+# 
+# # - Avg per-person exp. for office visits for cancer, by age group
+#     svyby( ~pers_XP, by = ~agegrps, FUN = svymean, design = cancer_dsgn) 
+# 
+#     
 
     
 
