@@ -38,7 +38,7 @@ log using Ex3, replace
 ****************************
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229i/h229if1dta.zip" "h229if1dta.zip", replace
 unzipfile "h229if1dta.zip", replace 
-use h229if1, clear
+use DUPERSID CONDIDX EVNTIDX CLNKIDX EVENTYPE PANEL using h229if1, clear
 rename *, lower
 save CLNK_2021, replace
 
@@ -77,9 +77,9 @@ keep if malneo1==1 | malneo2==1 | malneo3==1
 save COND_2021, replace
 
 
-****************************************************************
-/* merge to CLNK file by dupersid and condidx, drop unmatched */
-****************************************************************
+*********************************************************************************************
+/* merge to CLNK file by dupersid and condidx, drop unmatched, drop duplicate office visits */
+*********************************************************************************************
 merge m:m condidx using CLNK_2021
 // drop observations that do not match
 drop if _merge~=3
@@ -93,7 +93,7 @@ list dupersid condidx evntidx icd10cdx if _n<21
 describe
 
 *******************************************************************************************
-/* merge to office visits by dupersid and evntidx, drop unmatched, drop duplicates */
+/* merge to office visits by dupersid and evntidx, drop unmatched                        */
 *******************************************************************************************
 merge 1:m evntidx using OB_2021
 // drop observations for that do not match

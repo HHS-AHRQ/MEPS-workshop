@@ -38,7 +38,7 @@ log using Ex3, replace
 ****************************
 copy "https://meps.ahrq.gov/mepsweb/data_files/pufs/h229i/h229if1dta.zip" "h229if1dta.zip", replace
 unzipfile "h229if1dta.zip", replace 
-use h229if1, clear
+use DUPERSID CONDIDX EVNTIDX CLNKIDX EVENTYPE PANEL using h229if1, clear
 rename *, lower
 save CLNK_2021, replace
 
@@ -83,19 +83,15 @@ save COND_2021, replace
 
 // drop observations that do not match
 
-// inspect file
-
 // drop duplicate office visits--- single visits that would otherwise be counted multiple times */
 
-// inspect file after de-duplication
 
 *******************************************************************************************
-/* merge to office visits by dupersid and evntidx, drop unmatched, drop duplicates */
+/* merge to office visits by dupersid and evntidx, drop unmatched                        */
 *******************************************************************************************
 
 // drop observations for that do not match
 
-// inspect file
 
 ***************************************************************************************
 /* collapse to person-level (DUPERSID), sum to get number of visits and expenditures */
