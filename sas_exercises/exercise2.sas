@@ -13,7 +13,7 @@ This program pools 2019, 2020, and 2021 MEPS FYC files and calculates annual ave
 
 !!Note: When pooling data years before and after 2002 or 2019, the Pooled Linkage File (h36u22) must be used for correct 
 variance estimation.  The name of the Pooled Linkage File changes with each new year of data (e.g. 'h36u23' once 2023 
-data is added).  The Pooled Linkage File is NOT needed for this example because all data years are after 2019.
+data is added).  The Pooled Linkage File is NOT needed for this example because all data years are 2019 and after.
 
 The pooled linkage file and documentation is available here: 
 https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_detail.jsp?cboPufNumber=HC-036

@@ -7,8 +7,8 @@ data year 2021 in order to estimate the following:
 	- Total number of people with an office-based visit for the treatment of cancer 
 	- Total number of office-based visits for the treatment of cancer
 	- Total expenditures on office-based visits for the treatment of cancer 
-	- Percent of people with an office-based visit for cancer, by age
-	- Mean office-based expenditures per person on cancer among people with an office-based visit for cancer, by age
+	- Percent of people with an office-based visit for cancer
+	- Mean office-based expenditures per person on cancer among people with an office-based visit for cancer
 
 Input files:
   - h229g.sas7bdat        (2021 Office-Based Medical Visits file)
@@ -117,21 +117,8 @@ Create dummy variable for each unique OB visit (this will be used for estimating
 
 
 
-
-/* QC creation of agecat and confirm there are no values of 'Error!' or missing values */ 
-
-
-
-
-
 /* QC: check counts of cancer_ob_flag=1 and compare to the number of rows in ob_by_pers.  
 Confirm there are no missing values */
-
-
-
-
-
-/* Check sample sizes in each age group to make sure they are sufficient */ 
 
 
 
@@ -163,10 +150,10 @@ title 'National Totals';
 
 
 
-/* Proportion of people with an OB visit for cancer by age group */
+/* Proportion of people with an OB visit for cancer */
 /* To convert to percentages, multiply by 100.  See exercise 1 for alternate methods to directly calculate percents */ 
 
-title 'Proportion of people with an OB visit for cancer by age group';
+title 'Proportion of people with an OB visit for cancer';
 
 
 
@@ -174,7 +161,7 @@ title 'Proportion of people with an OB visit for cancer by age group';
 
 
 /* Average expenditures per person on OB visits for cancer among people with at least one OB visit for cancer
-(cancer_ob_flag = '1'), by age */ 
+(cancer_ob_flag = '1') */ 
 
 title 'Avg. exp. per person on OB visits for cancer among people with 1+ OB visit for cancer';
 
