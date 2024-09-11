@@ -170,7 +170,7 @@ pool_dsgn = svydesign(
 
 # Calculate survey estimates ---------------------------------------------------
 #  - Percentage of adults with Bladder Cancer
-#  - Average expenditures per person, by Joint Pain status (totexp, totslf)
+#  - Average expenditures per person, by cancer status (totexp, totslf)
 
 # Percent with bladder cancer
 svymean(~bladder_cancer, design = subset(pool_dsgn, bladder_cancer != "Missing"))
