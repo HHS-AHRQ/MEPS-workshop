@@ -218,16 +218,6 @@
      
     
 
-# By Age Groups:
-
-# - Percent of ppl with office visit for cancer, by age group
-  
-     
-# - Avg per-person exp. for office visits for cancer, by age group
-  
-     
-    
-
     
 
 
